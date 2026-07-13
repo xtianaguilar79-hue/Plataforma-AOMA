@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        /* ESTILOS COMPLETOS (incluidos todos) */
+        /* ===== ESTILOS COMPLETOS ===== */
         :root {
             --primary: #1a1a1a;
             --accent: #f47b20;
@@ -207,7 +207,7 @@
     </div>
 </div>
 
-<!-- MODAL REGISTRO (con Auth) -->
+<!-- MODAL REGISTRO -->
 <div class="modal-overlay" id="modalRegistro">
     <div class="modal-box">
         <div class="modal-header">
@@ -242,7 +242,7 @@
     </div>
 </div>
 
-<!-- MODAL RECUPERACIÓN (con Auth) -->
+<!-- MODAL RECUPERACIÓN -->
 <div class="modal-overlay" id="modalRecuperacion">
     <div class="modal-box" style="max-width:450px;">
         <div class="modal-header">
@@ -304,7 +304,8 @@
 const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Usar un nombre de variable único para evitar conflictos
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
 let currentUserProfile = null;
@@ -351,7 +352,7 @@ document.getElementById('formRegistro').addEventListener('submit', async (e) => 
 
     try {
         // 1. Registrar en Auth
-        const { data, error } = await supabase.auth.signUp({
+        const { data, error } = await supabaseClient.auth.signUp({
             email,
             password,
             options: {
@@ -362,13 +363,13 @@ document.getElementById('formRegistro').addEventListener('submit', async (e) => 
         if (error) throw error;
 
         // 2. Verificar si es el primer usuario (para asignar admin)
-        const { count } = await supabase
+        const { count } = await supabaseClient
             .from('perfiles')
             .select('*', { count: 'exact', head: true });
 
         if (count === 0) {
             // Primer usuario → admin
-            await supabase
+            await supabaseClient
                 .from('perfiles')
                 .update({ role: 'admin', activo: true })
                 .eq('id', data.user.id);
@@ -400,7 +401,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     document.getElementById('loginSuccess').style.display = 'none';
 
     try {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
             email,
             password
         });
@@ -408,7 +409,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         if (error) throw error;
 
         // Obtener perfil del usuario
-        const { data: perfil, error: perfilError } = await supabase
+        const { data: perfil, error: perfilError } = await supabaseClient
             .from('perfiles')
             .select('*')
             .eq('id', data.user.id)
@@ -417,7 +418,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         if (perfilError) throw perfilError;
 
         if (!perfil.activo) {
-            await supabase.auth.signOut();
+            await supabaseClient.auth.signOut();
             document.getElementById('loginError').textContent = '❌ Tu cuenta no ha sido activada por el administrador.';
             document.getElementById('loginError').style.display = 'block';
             return;
@@ -445,7 +446,7 @@ document.getElementById('formRecuperacion').addEventListener('submit', async (e)
     document.getElementById('recSuccess').style.display = 'none';
 
     try {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
             redirectTo: window.location.origin + '/reset-password.html'
         });
 
@@ -464,7 +465,7 @@ document.getElementById('formRecuperacion').addEventListener('submit', async (e)
 // ============================================
 async function cerrarSesion() {
     if (!confirm('¿Cerrar sesión?')) return;
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     localStorage.removeItem('aoma_session');
     currentUser = null;
     currentUserProfile = null;
@@ -523,7 +524,7 @@ function cerrarPanelUsuarios() {
 
 async function cargarUsuarios() {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('perfiles')
             .select('*, auth.users(email)')
             .order('created_at', { ascending: false });
@@ -558,7 +559,7 @@ async function cargarUsuarios() {
 
 async function aprobarUsuario(id) {
     try {
-        await supabase.from('perfiles').update({ activo: true }).eq('id', id);
+        await supabaseClient.from('perfiles').update({ activo: true }).eq('id', id);
         await cargarUsuarios();
         alert('✅ Usuario activado.');
     } catch (e) {
@@ -570,7 +571,7 @@ async function eliminarUsuario(id) {
     if (!confirm('¿Eliminar este usuario de forma permanente?')) return;
     try {
         // Primero eliminar perfil
-        await supabase.from('perfiles').delete().eq('id', id);
+        await supabaseClient.from('perfiles').delete().eq('id', id);
         // Luego eliminar usuario de Auth (solo admin puede hacerlo desde Supabase)
         alert('⚠️ El usuario ha sido eliminado de la tabla perfiles. Para eliminar completamente de Auth, hazlo desde la consola de Supabase.');
         await cargarUsuarios();
@@ -605,7 +606,7 @@ function navigateTo(page) {
 }
 
 // ============================================
-// RENDERIZADOS (idénticos a antes)
+// RENDERIZADOS
 // ============================================
 function renderDashboard(container) {
     container.innerHTML = `
@@ -751,9 +752,9 @@ function renderOrganigrama(container) {
 // ============================================
 async function init() {
     // Verificar sesión activa
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
-        const { data: perfil } = await supabase
+        const { data: perfil } = await supabaseClient
             .from('perfiles')
             .select('*')
             .eq('id', session.user.id)
