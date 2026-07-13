@@ -296,16 +296,17 @@
     </form>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+</script>
 <script>
 // ============================================
 // CONFIGURACIÓN SUPABASE
 // ============================================
-const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
+const supabaseUrl = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
 
-// Usar un nombre de variable único para evitar conflictos
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Crear cliente (solo una vez)
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 let currentUser = null;
 let currentUserProfile = null;
@@ -352,7 +353,7 @@ document.getElementById('formRegistro').addEventListener('submit', async (e) => 
 
     try {
         // 1. Registrar en Auth
-        const { data, error } = await supabaseClient.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
@@ -363,16 +364,19 @@ document.getElementById('formRegistro').addEventListener('submit', async (e) => 
         if (error) throw error;
 
         // 2. Verificar si es el primer usuario (para asignar admin)
-        const { count } = await supabaseClient
+        const { count, error: countError } = await supabase
             .from('perfiles')
             .select('*', { count: 'exact', head: true });
 
+        if (countError && countError.code !== 'PGRST301') throw countError; // ignora error si tabla vacía
+
         if (count === 0) {
             // Primer usuario → admin
-            await supabaseClient
+            const { error: updateError } = await supabase
                 .from('perfiles')
-                .update({ role: 'admin', activo: true })
+                .update({ role: 'admin' })
                 .eq('id', data.user.id);
+            if (updateError) throw updateError;
         }
 
         document.getElementById('regSuccess').textContent = '✅ Registro exitoso. Revisá tu email para confirmar (si está activada la verificación).';
@@ -401,7 +405,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     document.getElementById('loginSuccess').style.display = 'none';
 
     try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password
         });
@@ -409,24 +413,55 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         if (error) throw error;
 
         // Obtener perfil del usuario
-        const { data: perfil, error: perfilError } = await supabaseClient
+        const { data: perfil, error: perfilError } = await supabase
             .from('perfiles')
             .select('*')
             .eq('id', data.user.id)
-            .single();
+            .maybeSingle(); // <-- USAMOS maybeSingle() para evitar error si no existe
 
-        if (perfilError) throw perfilError;
+        if (perfilError && perfilError.code !== 'PGRST116') throw perfilError;
 
-        if (!perfil.activo) {
-            await supabaseClient.auth.signOut();
-            document.getElementById('loginError').textContent = '❌ Tu cuenta no ha sido activada por el administrador.';
-            document.getElementById('loginError').style.display = 'block';
-            return;
+        if (!perfil) {
+            // Si no existe perfil, lo creamos (por seguridad)
+            const { error: insertError } = await supabase
+                .from('perfiles')
+                .insert([{
+                    id: data.user.id,
+                    nombre: data.user.user_metadata?.nombre || data.user.email,
+                    role: 'afiliado',
+                    activo: true
+                }]);
+            if (insertError) throw insertError;
+            
+            // Obtener perfil recién creado
+            const { data: newPerfil } = await supabase
+                .from('perfiles')
+                .select('*')
+                .eq('id', data.user.id)
+                .single();
+            if (!newPerfil) throw new Error('No se pudo crear el perfil');
+            
+            if (!newPerfil.activo) {
+                await supabase.auth.signOut();
+                document.getElementById('loginError').textContent = '❌ Tu cuenta no ha sido activada por el administrador.';
+                document.getElementById('loginError').style.display = 'block';
+                return;
+            }
+            
+            currentUser = data.user;
+            currentUserProfile = newPerfil;
+        } else {
+            if (!perfil.activo) {
+                await supabase.auth.signOut();
+                document.getElementById('loginError').textContent = '❌ Tu cuenta no ha sido activada por el administrador.';
+                document.getElementById('loginError').style.display = 'block';
+                return;
+            }
+            currentUser = data.user;
+            currentUserProfile = perfil;
         }
 
-        currentUser = data.user;
-        currentUserProfile = perfil;
-        localStorage.setItem('aoma_session', JSON.stringify({ user: data.user, profile: perfil }));
+        localStorage.setItem('aoma_session', JSON.stringify({ user: currentUser, profile: currentUserProfile }));
         mostrarApp();
 
     } catch (error) {
@@ -446,7 +481,7 @@ document.getElementById('formRecuperacion').addEventListener('submit', async (e)
     document.getElementById('recSuccess').style.display = 'none';
 
     try {
-        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo: window.location.origin + '/reset-password.html'
         });
 
@@ -465,7 +500,7 @@ document.getElementById('formRecuperacion').addEventListener('submit', async (e)
 // ============================================
 async function cerrarSesion() {
     if (!confirm('¿Cerrar sesión?')) return;
-    await supabaseClient.auth.signOut();
+    await supabase.auth.signOut();
     localStorage.removeItem('aoma_session');
     currentUser = null;
     currentUserProfile = null;
@@ -524,9 +559,9 @@ function cerrarPanelUsuarios() {
 
 async function cargarUsuarios() {
     try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabase
             .from('perfiles')
-            .select('*, auth.users(email)')
+            .select('*')
             .order('created_at', { ascending: false });
 
         if (error) throw error;
@@ -541,7 +576,7 @@ async function cargarUsuarios() {
             <div class="usuario-item">
                 <div class="info">
                     <span class="nombre">${p.nombre}</span>
-                    <span class="email">${p.email || 'sin email'}</span>
+                    <span class="email">${p.id}</span>
                     <span style="font-size:0.8rem;color:var(--text-muted);">Rol: ${p.role || 'afiliado'} | Activo: ${p.activo ? '✅' : '❌'}</span>
                 </div>
                 <div class="acciones">
@@ -559,7 +594,7 @@ async function cargarUsuarios() {
 
 async function aprobarUsuario(id) {
     try {
-        await supabaseClient.from('perfiles').update({ activo: true }).eq('id', id);
+        await supabase.from('perfiles').update({ activo: true }).eq('id', id);
         await cargarUsuarios();
         alert('✅ Usuario activado.');
     } catch (e) {
@@ -570,10 +605,8 @@ async function aprobarUsuario(id) {
 async function eliminarUsuario(id) {
     if (!confirm('¿Eliminar este usuario de forma permanente?')) return;
     try {
-        // Primero eliminar perfil
-        await supabaseClient.from('perfiles').delete().eq('id', id);
-        // Luego eliminar usuario de Auth (solo admin puede hacerlo desde Supabase)
-        alert('⚠️ El usuario ha sido eliminado de la tabla perfiles. Para eliminar completamente de Auth, hazlo desde la consola de Supabase.');
+        await supabase.from('perfiles').delete().eq('id', id);
+        alert('⚠️ Usuario eliminado de la tabla perfiles. Para eliminar de Auth, hazlo desde la consola de Supabase.');
         await cargarUsuarios();
     } catch (e) {
         alert('❌ Error: ' + e.message);
@@ -606,7 +639,7 @@ function navigateTo(page) {
 }
 
 // ============================================
-// RENDERIZADOS
+// RENDERIZADOS (idénticos)
 // ============================================
 function renderDashboard(container) {
     container.innerHTML = `
@@ -752,18 +785,21 @@ function renderOrganigrama(container) {
 // ============================================
 async function init() {
     // Verificar sesión activa
-    const { data: { session } } = await supabaseClient.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-        const { data: perfil } = await supabaseClient
+        const { data: perfil } = await supabase
             .from('perfiles')
             .select('*')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
         if (perfil && perfil.activo) {
             currentUser = session.user;
             currentUserProfile = perfil;
             mostrarApp();
             return;
+        } else {
+            // Si hay sesión pero perfil no activo o no existe, cerrar sesión
+            await supabase.auth.signOut();
         }
     }
     mostrarLogin();
@@ -785,7 +821,8 @@ async function init() {
     });
 }
 
-init();
+// Ejecutar init cuando la página esté cargada
+document.addEventListener('DOMContentLoaded', init);
 
 // ============================================
 // FUNCIONES GLOBALES
