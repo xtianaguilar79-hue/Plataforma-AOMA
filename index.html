@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        /* Estilos mínimos pero funcionales */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family: 'Inter', sans-serif; background: #f4f7fc; color: #1a1a1a; }
         .hidden { display: none !important; }
@@ -32,13 +31,15 @@
         .login-box .logo p { color:#6b7280; font-size:0.9rem; }
         .form-group { margin-bottom:1.25rem; }
         .form-group label { display:block; font-weight:600; font-size:0.875rem; margin-bottom:0.25rem; }
-        .form-group input { width:100%; padding:0.75rem 1rem; border:2px solid #e5e7eb; border-radius:8px; font-size:1rem; background:#f9fafb; }
-        .form-group input:focus { border-color:#f47b20; outline:none; }
+        .form-group input, .form-group select, .form-group textarea { width:100%; padding:0.75rem 1rem; border:2px solid #e5e7eb; border-radius:8px; font-size:1rem; background:#f9fafb; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:#f47b20; outline:none; }
         .password-wrapper { position:relative; }
         .password-wrapper input { padding-right:3rem; }
         .password-toggle { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#6b7280; }
         .btn { width:100%; padding:0.875rem; background:#f47b20; color:white; border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; }
         .btn:hover { background:#d96b1a; }
+        .btn-secondary { background:#6b7280; }
+        .btn-secondary:hover { background:#4b5563; }
         .login-links { text-align:center; margin-top:1rem; font-size:0.875rem; }
         .login-links a { color:#f47b20; font-weight:600; cursor:pointer; }
         .error-msg { background:#fee2e2; color:#b91c1c; padding:0.75rem; border-radius:8px; margin-bottom:1rem; display:none; }
@@ -61,8 +62,40 @@
         .card-description { color:#6b7280; font-size:0.9rem; }
         .section { background:white; padding:1.5rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.08); margin-bottom:2rem; border:1px solid #e5e7eb; }
         .section-title { font-size:1.3rem; font-weight:700; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:3px solid #f47b20; display:inline-block; }
-        @media (max-width:768px) { .header { padding:0 1rem; } .stats-grid { grid-template-columns:1fr 1fr; } }
-        @media (max-width:480px) { .stats-grid { grid-template-columns:1fr; } .login-box { padding:1.5rem; } }
+        
+        /* Tabla de usuarios */
+        .users-table { width:100%; border-collapse:collapse; margin-top:1rem; }
+        .users-table th, .users-table td { padding:1rem; text-align:left; border-bottom:1px solid #e5e7eb; }
+        .users-table th { background:#f9fafb; font-weight:600; }
+        .users-table tr:hover { background:#f9fafb; }
+        .status-badge { padding:0.25rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:600; }
+        .status-active { background:#d1fae5; color:#065f46; }
+        .status-pending { background:#fef3c7; color:#92400e; }
+        .status-inactive { background:#fee2e2; color:#b91c1c; }
+        .btn-small { padding:0.5rem 1rem; font-size:0.875rem; border-radius:6px; border:none; cursor:pointer; }
+        .btn-approve { background:#10b981; color:white; }
+        .btn-reject { background:#ef4444; color:white; }
+        .btn-edit { background:#3b82f6; color:white; }
+        
+        /* Perfil de usuario */
+        .profile-header { background:linear-gradient(135deg,#f47b20,#d96b1a); color:white; padding:2rem; border-radius:12px; margin-bottom:2rem; text-align:center; }
+        .profile-avatar { width:100px; height:100px; border-radius:50%; background:white; color:#f47b20; display:flex; align-items:center; justify-content:center; font-size:2.5rem; font-weight:700; margin:0 auto 1rem; }
+        .profile-info { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+        .profile-field { background:#f9fafb; padding:1rem; border-radius:8px; }
+        .profile-field label { display:block; font-size:0.875rem; color:#6b7280; margin-bottom:0.25rem; }
+        .profile-field value { font-weight:600; font-size:1rem; }
+        
+        @media (max-width:768px) { 
+            .header { padding:0 1rem; } 
+            .stats-grid { grid-template-columns:1fr 1fr; } 
+            .profile-info { grid-template-columns:1fr; }
+            .users-table { font-size:0.875rem; }
+            .users-table th, .users-table td { padding:0.75rem 0.5rem; }
+        }
+        @media (max-width:480px) { 
+            .stats-grid { grid-template-columns:1fr; } 
+            .login-box { padding:1.5rem; } 
+        }
     </style>
 </head>
 <body>
@@ -80,8 +113,9 @@
             </div>
             <div class="user-avatar" id="userAvatar">U</div>
             <div class="dropdown">
-                <a href="#" id="adminPanelLink" style="display:none;" onclick="alert('Panel de administración en construcción')">👥 Gestionar Usuarios</a>
-                <a href="#" onclick="cerrarSesion()">🚪 Cerrar Sesión</a>
+                <a onclick="navigateTo('perfil')"><i class="fas fa-user"></i> Mi Perfil</a>
+                <a href="#" id="adminPanelLink" style="display:none;" onclick="navigateTo('admin')"><i class="fas fa-users-cog"></i> Panel Admin</a>
+                <a href="#" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
             </div>
         </div>
     </div>
@@ -144,6 +178,10 @@
                 <input type="email" id="regEmail" placeholder="ejemplo@correo.com" required />
             </div>
             <div class="form-group">
+                <label>Teléfono</label>
+                <input type="tel" id="regTelefono" placeholder="Ej: 2641234567" />
+            </div>
+            <div class="form-group">
                 <label>Contraseña <span style="color:red;">*</span></label>
                 <div class="password-wrapper">
                     <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" required minlength="6" />
@@ -171,7 +209,7 @@
         <div id="recSuccess" class="success-msg"></div>
         <form id="formRecuperacion">
             <div class="form-group">
-                <label>Email</label>
+                <label>Email registrado</label>
                 <input type="email" id="recEmail" placeholder="tu@email.com" required />
             </div>
             <button type="submit" class="btn">Enviar enlace de recuperación</button>
@@ -182,16 +220,49 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-</script>
+<!-- MODAL EDITAR PERFIL -->
+<div class="modal-overlay" id="modalEditarPerfil">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2><i class="fas fa-user-edit"></i> Editar Perfil</h2>
+            <button class="modal-close" onclick="cerrarModalEditarPerfil()">&times;</button>
+        </div>
+        <div id="editError" class="error-msg"></div>
+        <div id="editSuccess" class="success-msg"></div>
+        <form id="formEditarPerfil">
+            <div class="form-group">
+                <label>Nombre completo</label>
+                <input type="text" id="editNombre" required />
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="editEmail" readonly style="background:#e5e7eb;" />
+            </div>
+            <div class="form-group">
+                <label>Teléfono</label>
+                <input type="tel" id="editTelefono" />
+            </div>
+            <div class="form-group">
+                <label>Nueva contraseña (dejar en blanco para no cambiar)</label>
+                <div class="password-wrapper">
+                    <input type="password" id="editPassword" placeholder="Mínimo 6 caracteres" minlength="6" />
+                    <button type="button" class="password-toggle" onclick="togglePassword('editPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="btn">Guardar cambios</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ============================================
-// CONFIGURACIÓN SUPABASE - UN SOLO CLIENTE
+// CONFIGURACIÓN SUPABASE
 // ============================================
 const supabaseUrl = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
-
-// Crear cliente UNA SOLA VEZ
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 let currentUser = null;
@@ -214,19 +285,20 @@ function togglePassword(inputId, btn) {
 }
 
 // ============================================
-// REGISTRO
+// REGISTRO DE USUARIOS
 // ============================================
 document.getElementById('formRegistro').addEventListener('submit', async (e) => {
     e.preventDefault();
     const nombre = document.getElementById('regNombre').value.trim();
     const email = document.getElementById('regEmail').value.trim();
+    const telefono = document.getElementById('regTelefono').value.trim();
     const password = document.getElementById('regPassword').value;
 
     document.getElementById('regError').style.display = 'none';
     document.getElementById('regSuccess').style.display = 'none';
 
     if (!nombre || !email || !password) {
-        document.getElementById('regError').textContent = 'Todos los campos son obligatorios.';
+        document.getElementById('regError').textContent = 'Todos los campos obligatorios deben ser completados.';
         document.getElementById('regError').style.display = 'block';
         return;
     }
@@ -237,99 +309,42 @@ document.getElementById('formRegistro').addEventListener('submit', async (e) => 
     }
 
     try {
-        // Verificar si es el primer usuario (para asignar admin)
-        // Como no tenemos tabla, contamos cuántos usuarios hay en Auth (solo admins pueden listar, pero podemos usar un trigger)
-        // En su lugar, usamos una tabla 'admins' que crearemos manualmente o usamos un flag en metadata.
-        // Opción simple: el primer usuario siempre será admin (lo guardamos en metadata)
-        const { data: { users }, error: listError } = await supabase.auth.admin.listUsers();
-        let isFirstUser = false;
-        if (!listError && users && users.length === 0) {
-            isFirstUser = true;
-        } else {
-            // Si no tenemos permiso, asumimos que no es el primero (pero si falla, lo intentamos igual)
-            // Mejor: siempre intentar registrar y luego asignar admin si es el primero
-            // Pero el admin.listUsers requiere permisos de servicio, no está disponible con anon key.
-            // Así que usamos un enfoque alternativo: el primer usuario registrado será admin.
-            // Para ello, intentamos leer la tabla 'admins' o 'perfiles' si existe.
-            // Pero para no complicar, simplemente guardamos en metadata el rol.
-            // Y si no hay ningún usuario en la tabla, lo asignamos como admin.
-            // Vamos a usar la tabla 'perfiles' que ya debería existir (si no, la creamos).
-            // Pero para simplificar al máximo, vamos a usar una tabla 'usuarios' manual.
-            // Pero ya es demasiado. Voy a usar un enfoque diferente:
-            // Intentamos leer el primer usuario de la tabla 'perfiles' usando RLS.
-            // Como no tenemos RLS aún, usamos una función de Supabase.
-            // Mejor: vamos a crear la tabla 'perfiles' y el trigger como ya hicimos.
-            // El usuario debe haber ejecutado el SQL. Si no, vamos a crear la tabla ahora mismo.
-            // Pero no podemos crear tablas desde el frontend. Así que el usuario debe ejecutar el SQL.
-            // Pero para que funcione de inmediato, voy a intentar crear la tabla si no existe.
-            // Eso no se puede hacer desde el cliente. Así que le digo al usuario que cree la tabla.
-            // Pero para no depender de la tabla, voy a guardar el rol en 'user_metadata' directamente.
-            // Entonces, al registrar, actualizo el metadata con el rol.
-        }
-
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
-                data: { nombre: nombre, role: 'afiliado' }
+                data: { 
+                    nombre: nombre, 
+                    telefono: telefono,
+                    role: 'afiliado',
+                    activo: false // Los nuevos usuarios quedan pendientes de aprobación
+                }
             }
         });
 
         if (error) throw error;
 
-        // Verificar si es el primer usuario (usamos un flag en la sesión)
-        // Como no podemos listar usuarios, usamos un enfoque: intentamos actualizar el metadata
-        // y si falla, lo intentamos de nuevo.
-        // Pero lo mejor es simplemente asignar admin al primer usuario que se registra.
-        // Para eso, usamos un truco: intentamos leer un registro de una tabla 'config' que creamos.
-        // Pero vamos a simplificar: el primer usuario siempre será admin, y lo guardamos en metadata.
-        // Para saber si es el primero, intentamos leer el metadata de un usuario existente.
-        // Como no tenemos forma, le pedimos al usuario que ejecute el SQL de la tabla perfiles.
-        // Entonces, asumo que la tabla perfiles existe y funciona.
-        // Voy a usar la tabla perfiles que ya debería existir.
-
-        // Como no puedo garantizar que exista, voy a crear una tabla 'admins' manualmente.
-        // Pero eso no se puede desde el frontend.
-        // Entonces, la solución es: el usuario debe crear la tabla 'perfiles' con el SQL que ya le di.
-        // Asumo que ya lo hizo.
-
-        // Entonces, el flujo:
-        // 1. Registrar usuario en Auth.
-        // 2. El trigger crea el perfil en 'perfiles' automáticamente.
-        // 3. Verificamos si es el primer usuario (contando registros en perfiles).
-        // 4. Si es el primero, actualizamos el rol a 'admin'.
-
-        // Contar cuántos perfiles hay
-        const { count, error: countError } = await supabase
+        // Crear perfil en la tabla perfiles
+        const { error: perfilError } = await supabase
             .from('perfiles')
-            .select('*', { count: 'exact', head: true });
+            .insert([{
+                id: data.user.id,
+                nombre: nombre,
+                email: email,
+                telefono: telefono,
+                role: 'afiliado',
+                activo: false
+            }]);
 
-        if (countError && countError.code !== 'PGRST301') {
-            // Si la tabla no existe, crearla (pero no podemos desde el cliente)
-            // Entonces, mostramos error y pedimos que ejecute SQL.
-            document.getElementById('regError').textContent = '❌ La tabla de perfiles no existe. Por favor, ejecuta el script SQL en Supabase.';
-            document.getElementById('regError').style.display = 'block';
-            return;
-        }
+        if (perfilError) throw perfilError;
 
-        const esPrimerUsuario = count === 0;
-
-        if (esPrimerUsuario) {
-            // Actualizar el perfil del usuario a admin
-            const { error: updateError } = await supabase
-                .from('perfiles')
-                .update({ role: 'admin' })
-                .eq('id', data.user.id);
-            if (updateError) throw updateError;
-        }
-
-        document.getElementById('regSuccess').textContent = '✅ Registro exitoso. Revisá tu email para confirmar (si está activada la verificación).';
+        document.getElementById('regSuccess').textContent = '✅ Registro exitoso. Tu cuenta está pendiente de aprobación por el administrador. Recibirás un email cuando sea activada.';
         document.getElementById('regSuccess').style.display = 'block';
         
         setTimeout(() => {
             cerrarModalRegistro();
             document.getElementById('loginEmail').value = email;
-        }, 2000);
+        }, 3000);
 
     } catch (error) {
         document.getElementById('regError').textContent = '❌ ' + error.message;
@@ -356,28 +371,29 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
         if (error) throw error;
 
-        // Obtener perfil del usuario desde la tabla perfiles
+        // Obtener perfil del usuario
         const { data: perfil, error: perfilError } = await supabase
             .from('perfiles')
             .select('*')
             .eq('id', data.user.id)
             .maybeSingle();
 
-        if (perfilError && perfilError.code !== 'PGRST116') throw perfilError;
+        if (perfilError) throw perfilError;
 
         if (!perfil) {
-            // Si no existe perfil, crearlo
+            // Crear perfil si no existe
             const { error: insertError } = await supabase
                 .from('perfiles')
                 .insert([{
                     id: data.user.id,
                     nombre: data.user.user_metadata?.nombre || data.user.email,
-                    role: 'afiliado',
+                    email: data.user.email,
+                    telefono: data.user.user_metadata?.telefono || '',
+                    role: data.user.user_metadata?.role || 'afiliado',
                     activo: true
                 }]);
             if (insertError) throw insertError;
             
-            // Obtener perfil recién creado
             const { data: newPerfil } = await supabase
                 .from('perfiles')
                 .select('*')
@@ -385,19 +401,12 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 .single();
             if (!newPerfil) throw new Error('No se pudo crear el perfil');
             
-            if (!newPerfil.activo) {
-                await supabase.auth.signOut();
-                document.getElementById('loginError').textContent = '❌ Tu cuenta no ha sido activada por el administrador.';
-                document.getElementById('loginError').style.display = 'block';
-                return;
-            }
-            
             currentUser = data.user;
             currentUserMetadata = newPerfil;
         } else {
             if (!perfil.activo) {
                 await supabase.auth.signOut();
-                document.getElementById('loginError').textContent = '❌ Tu cuenta no ha sido activada por el administrador.';
+                document.getElementById('loginError').textContent = '❌ Tu cuenta aún no ha sido aprobada por el administrador. Recibirás un email cuando sea activada.';
                 document.getElementById('loginError').style.display = 'block';
                 return;
             }
@@ -415,7 +424,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 });
 
 // ============================================
-// RECUPERACIÓN
+// RECUPERACIÓN DE CONTRASEÑA
 // ============================================
 document.getElementById('formRecuperacion').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -426,18 +435,183 @@ document.getElementById('formRecuperacion').addEventListener('submit', async (e)
 
     try {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.origin + '/reset-password.html'
+            redirectTo: window.location.origin
         });
 
         if (error) throw error;
 
-        document.getElementById('recSuccess').textContent = '✅ Te enviamos un email con el enlace para restablecer tu contraseña.';
+        document.getElementById('recSuccess').textContent = '✅ Te enviamos un email con el enlace para restablecer tu contraseña. Revisá tu bandeja de entrada y spam.';
         document.getElementById('recSuccess').style.display = 'block';
+        
+        setTimeout(() => {
+            cerrarModalRecuperacion();
+        }, 3000);
     } catch (error) {
         document.getElementById('recError').textContent = '❌ ' + error.message;
         document.getElementById('recError').style.display = 'block';
     }
 });
+
+// ============================================
+// ACTUALIZAR PERFIL
+// ============================================
+document.getElementById('formEditarPerfil').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const nombre = document.getElementById('editNombre').value.trim();
+    const telefono = document.getElementById('editTelefono').value.trim();
+    const newPassword = document.getElementById('editPassword').value;
+
+    document.getElementById('editError').style.display = 'none';
+    document.getElementById('editSuccess').style.display = 'none';
+
+    try {
+        // Actualizar perfil en la tabla perfiles
+        const { error: perfilError } = await supabase
+            .from('perfiles')
+            .update({ 
+                nombre: nombre,
+                telefono: telefono
+            })
+            .eq('id', currentUser.id);
+
+        if (perfilError) throw perfilError;
+
+        // Actualizar metadata en auth
+        const { error: metadataError } = await supabase.auth.updateUser({
+            data: { nombre: nombre, telefono: telefono }
+        });
+
+        if (metadataError) throw metadataError;
+
+        // Si hay nueva contraseña, actualizarla
+        if (newPassword && newPassword.length >= 6) {
+            const { error: passError } = await supabase.auth.updateUser({
+                password: newPassword
+            });
+            if (passError) throw passError;
+        }
+
+        // Actualizar datos locales
+        currentUserMetadata.nombre = nombre;
+        currentUserMetadata.telefono = telefono;
+        localStorage.setItem('aoma_session', JSON.stringify({ user: currentUser, profile: currentUserMetadata }));
+        
+        // Actualizar UI
+        document.getElementById('userName').textContent = nombre;
+        document.getElementById('userAvatar').textContent = nombre.charAt(0).toUpperCase();
+
+        document.getElementById('editSuccess').textContent = '✅ Perfil actualizado correctamente';
+        document.getElementById('editSuccess').style.display = 'block';
+        
+        setTimeout(() => {
+            cerrarModalEditarPerfil();
+            navigateTo('perfil');
+        }, 1500);
+
+    } catch (error) {
+        document.getElementById('editError').textContent = '❌ ' + error.message;
+        document.getElementById('editError').style.display = 'block';
+    }
+});
+
+// ============================================
+// PANEL DE ADMINISTRACIÓN
+// ============================================
+async function cargarUsuariosPendientes() {
+    try {
+        const { data: usuarios, error } = await supabase
+            .from('perfiles')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const tbody = document.getElementById('usersTableBody');
+        if (!tbody) return;
+
+        tbody.innerHTML = '';
+
+        if (usuarios.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:#6b7280;">No hay usuarios registrados</td></tr>';
+            return;
+        }
+
+        usuarios.forEach(user => {
+            const tr = document.createElement('tr');
+            const statusClass = user.activo ? 'status-active' : 'status-pending';
+            const statusText = user.activo ? 'Activo' : 'Pendiente';
+            
+            tr.innerHTML = `
+                <td>${user.nombre || 'Sin nombre'}</td>
+                <td>${user.email}</td>
+                <td>${user.telefono || '-'}</td>
+                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td>
+                    ${!user.activo ? `
+                        <button class="btn-small btn-approve" onclick="aprobarUsuario('${user.id}')">
+                            <i class="fas fa-check"></i> Aprobar
+                        </button>
+                        <button class="btn-small btn-reject" onclick="eliminarUsuario('${user.id}')">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    ` : `
+                        <button class="btn-small btn-reject" onclick="eliminarUsuario('${user.id}')">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    `}
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+    } catch (error) {
+        console.error('Error cargando usuarios:', error);
+    }
+}
+
+async function aprobarUsuario(userId) {
+    if (!confirm('¿Aprobar este usuario? Podrá acceder al sistema.')) return;
+
+    try {
+        const { error } = await supabase
+            .from('perfiles')
+            .update({ activo: true })
+            .eq('id', userId);
+
+        if (error) throw error;
+
+        alert('✅ Usuario aprobado correctamente');
+        cargarUsuariosPendientes();
+    } catch (error) {
+        alert('❌ Error: ' + error.message);
+    }
+}
+
+async function eliminarUsuario(userId) {
+    if (!confirm('¿Eliminar este usuario? Esta acción no se puede deshacer.')) return;
+
+    try {
+        // Eliminar de la tabla perfiles
+        const { error: perfilError } = await supabase
+            .from('perfiles')
+            .delete()
+            .eq('id', userId);
+
+        if (perfilError) throw perfilError;
+
+        // Eliminar de auth (solo admin puede hacerlo)
+        const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+        
+        if (authError && authError.status !== 404) {
+            console.warn('No se pudo eliminar de auth:', authError);
+        }
+
+        alert('✅ Usuario eliminado correctamente');
+        cargarUsuariosPendientes();
+    } catch (error) {
+        alert('❌ Error: ' + error.message);
+    }
+}
 
 // ============================================
 // CERRAR SESIÓN
@@ -492,7 +666,7 @@ function navigateTo(page) {
     
     if (page === 'inicio') {
         content.innerHTML = `
-            <div class="page-header">
+            <div class="page-header" style="margin-bottom:2rem;">
                 <h1>¡Bienvenido, ${currentUserMetadata.nombre.split(' ')[0]}! 👋</h1>
                 <p>Panel de control del Campus Virtual AOMA</p>
             </div>
@@ -505,22 +679,139 @@ function navigateTo(page) {
             <div class="section">
                 <h2 class="section-title">Accesos Rápidos</h2>
                 <div class="cards-grid">
-                    <div class="card"><div class="card-header" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas fa-gift"></i></div><div class="card-body"><div class="card-title">Beneficios Sociales</div><div class="card-description">Reintegros de medicamentos, estadías, becas.</div></div></div>
-                    <div class="card"><div class="card-header" style="background:#1a1a1a;"><i class="fas fa-file-contract"></i></div><div class="card-body"><div class="card-title">Convenios CCT</div><div class="card-description">Por actividad y por empresa.</div></div></div>
-                    <div class="card"><div class="card-header" style="background:#f47b20;"><i class="fas fa-balance-scale"></i></div><div class="card-body"><div class="card-title">Legislación Laboral</div><div class="card-description">LCT, Ley de Higiene, Asociaciones Sindicales.</div></div></div>
+                    <div class="card" onclick="alert('Sección en desarrollo')">
+                        <div class="card-header" style="background:linear-gradient(135deg,#10b981,#059669);">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">Beneficios Sociales</div>
+                            <div class="card-description">Reintegros de medicamentos, estadías, becas.</div>
+                        </div>
+                    </div>
+                    <div class="card" onclick="alert('Sección en desarrollo')">
+                        <div class="card-header" style="background:#1a1a1a;">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">Convenios CCT</div>
+                            <div class="card-description">Por actividad y por empresa.</div>
+                        </div>
+                    </div>
+                    <div class="card" onclick="alert('Sección en desarrollo')">
+                        <div class="card-header" style="background:#f47b20;">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">Legislación Laboral</div>
+                            <div class="card-description">LCT, Ley de Higiene, Asociaciones Sindicales.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
+    } else if (page === 'perfil') {
+        content.innerHTML = `
+            <div class="profile-header">
+                <div class="profile-avatar">${(currentUserMetadata.nombre || currentUser.email).charAt(0).toUpperCase()}</div>
+                <h2>${currentUserMetadata.nombre}</h2>
+                <p>${currentUserMetadata.role === 'admin' ? 'Administrador' : currentUserMetadata.role === 'dirigente' ? 'Dirigente' : 'Afiliado'}</p>
+            </div>
+            <div class="section">
+                <h2 class="section-title">Información del Perfil</h2>
+                <div class="profile-info">
+                    <div class="profile-field">
+                        <label>Nombre completo</label>
+                        <value>${currentUserMetadata.nombre || 'No especificado'}</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>Email</label>
+                        <value>${currentUser.email}</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>Teléfono</label>
+                        <value>${currentUserMetadata.telefono || 'No especificado'}</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>Rol</label>
+                        <value>${currentUserMetadata.role === 'admin' ? 'Administrador' : currentUserMetadata.role === 'dirigente' ? 'Dirigente' : 'Afiliado'}</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>Estado</label>
+                        <value>${currentUserMetadata.activo ? '<span class="status-badge status-active">Activo</span>' : '<span class="status-badge status-pending">Pendiente</span>'}</value>
+                    </div>
+                </div>
+                <button class="btn" style="margin-top:2rem;max-width:300px;" onclick="abrirModalEditarPerfil()">
+                    <i class="fas fa-edit"></i> Editar Perfil
+                </button>
+            </div>
+        `;
+    } else if (page === 'admin') {
+        if (currentUserMetadata.role !== 'admin') {
+            content.innerHTML = '<div style="text-align:center;padding:3rem;"><h2 style="color:#ef4444;">Acceso denegado</h2><p>Solo los administradores pueden acceder a esta sección.</p></div>';
+            return;
+        }
+        content.innerHTML = `
+            <div class="section">
+                <h2 class="section-title"><i class="fas fa-users-cog"></i> Panel de Administración</h2>
+                <p style="margin-bottom:1rem;color:#6b7280;">Gestioná los registros de usuarios. Aprobá o rechazá las solicitudes de acceso.</p>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr><td colspan="5" style="text-align:center;padding:2rem;">Cargando usuarios...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+        cargarUsuariosPendientes();
     } else {
         content.innerHTML = `<div style="text-align:center;padding:3rem;color:#6b7280;"><i class="fas fa-construction" style="font-size:3rem;"></i><h3>Página en construcción</h3></div>`;
     }
 }
 
 // ============================================
+// MODALES
+// ============================================
+function cerrarModalRegistro() {
+    document.getElementById('modalRegistro').style.display = 'none';
+}
+function mostrarRegistro() {
+    document.getElementById('modalRegistro').style.display = 'flex';
+    document.getElementById('regError').style.display = 'none';
+    document.getElementById('regSuccess').style.display = 'none';
+}
+function cerrarModalRecuperacion() {
+    document.getElementById('modalRecuperacion').style.display = 'none';
+}
+function mostrarRecuperacion() {
+    document.getElementById('modalRecuperacion').style.display = 'flex';
+    document.getElementById('recError').style.display = 'none';
+    document.getElementById('recSuccess').style.display = 'none';
+}
+function abrirModalEditarPerfil() {
+    document.getElementById('editNombre').value = currentUserMetadata.nombre || '';
+    document.getElementById('editEmail').value = currentUser.email;
+    document.getElementById('editTelefono').value = currentUserMetadata.telefono || '';
+    document.getElementById('editPassword').value = '';
+    document.getElementById('editError').style.display = 'none';
+    document.getElementById('editSuccess').style.display = 'none';
+    document.getElementById('modalEditarPerfil').style.display = 'flex';
+}
+function cerrarModalEditarPerfil() {
+    document.getElementById('modalEditarPerfil').style.display = 'none';
+}
+
+// ============================================
 // INICIALIZACIÓN
 // ============================================
 async function init() {
-    // Verificar sesión activa
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
         const { data: perfil } = await supabase
@@ -541,26 +832,6 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-
-// ============================================
-// FUNCIONES GLOBALES
-// ============================================
-function cerrarModalRegistro() {
-    document.getElementById('modalRegistro').style.display = 'none';
-}
-function mostrarRegistro() {
-    document.getElementById('modalRegistro').style.display = 'flex';
-    document.getElementById('regError').style.display = 'none';
-    document.getElementById('regSuccess').style.display = 'none';
-}
-function cerrarModalRecuperacion() {
-    document.getElementById('modalRecuperacion').style.display = 'none';
-}
-function mostrarRecuperacion() {
-    document.getElementById('modalRecuperacion').style.display = 'flex';
-    document.getElementById('recError').style.display = 'none';
-    document.getElementById('recSuccess').style.display = 'none';
-}
 </script>
 </body>
 </html>
