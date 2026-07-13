@@ -205,8 +205,8 @@
         <div id="loginSuccess" class="success-msg"></div>
         <form id="loginForm">
             <div class="form-group">
-                <label><i class="fas fa-envelope"></i> Email</label>
-                <input type="email" id="loginEmail" placeholder="tu@email.com" required />
+                <label><i class="fas fa-user"></i> Usuario o Email</label>
+                <input type="text" id="loginUsername" placeholder="Tu usuario o email" required />
             </div>
             <div class="form-group">
                 <label><i class="fas fa-lock"></i> Contraseña</label>
@@ -300,6 +300,20 @@
                     </div>
                 </div>
             </div>
+            <!-- Pregunta de seguridad -->
+            <div class="form-group">
+                <label>Pregunta de seguridad <span class="required">*</span></label>
+                <select id="regPregunta" required>
+                    <option value="">Seleccionar</option>
+                    <option value="¿Cuál es el nombre de tu madre?">¿Cuál es el nombre de tu madre?</option>
+                    <option value="¿Cuál es tu ciudad natal?">¿Cuál es tu ciudad natal?</option>
+                    <option value="¿Cuál es el nombre de tu primera mascota?">¿Cuál es el nombre de tu primera mascota?</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Respuesta <span class="required">*</span></label>
+                <input type="text" id="regRespuesta" placeholder="Tu respuesta" required />
+            </div>
             <button type="submit" class="btn">Registrarme</button>
         </form>
         <p style="margin-top:1rem;text-align:center;font-size:0.875rem;">
@@ -317,8 +331,8 @@
         </div>
         <form id="formRecuperacion">
             <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="recEmail" placeholder="tu@email.com" required />
+                <label>Usuario o Email</label>
+                <input type="text" id="recUser" placeholder="Tu usuario o email" required />
             </div>
             <div id="recPreguntaContainer" style="display:none;">
                 <div class="form-group">
@@ -377,9 +391,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ============================================
-// CONFIGURACIÓN SUPABASE (CORREGIDA)
+// CONFIGURACIÓN SUPABASE
 // ============================================
-const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co'; // ← SIN /rest/v1/
+const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co'; // SIN /rest/v1/
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
 
 let supabaseClient;
@@ -413,11 +427,11 @@ function togglePassword(inputId, btn) {
 // ============================================
 // FUNCIONES DE USUARIOS (SUPABASE)
 // ============================================
-async function obtenerUsuariosActivos() {
+async function obtenerUsuariosAprobados() {
     const { data, error } = await supabaseClient
         .from('usuarios')
         .select('*')
-        .eq('activo', true);
+        .eq('aprobado', true);
     if (error) { console.error(error); return []; }
     return data || [];
 }
@@ -426,7 +440,7 @@ async function obtenerUsuariosPendientes() {
     const { data, error } = await supabaseClient
         .from('usuarios')
         .select('*')
-        .eq('activo', false);
+        .eq('aprobado', false);
     if (error) { console.error(error); return []; }
     return data || [];
 }
@@ -472,15 +486,17 @@ async function handleRegistro(e) {
     const rol = document.getElementById('regRol').value;
     const username = document.getElementById('regUsername').value.trim();
     const password = document.getElementById('regPassword').value;
+    const pregunta = document.getElementById('regPregunta').value;
+    const respuesta = document.getElementById('regRespuesta').value.trim();
 
-    if (!nombre || !dni || !email || !username || !password || !empresa || !actividad || !rol) {
+    if (!nombre || !dni || !email || !username || !password || !empresa || !actividad || !rol || !pregunta || !respuesta) {
         alert('Todos los campos marcados con * son obligatorios.');
         return;
     }
     if (password.length < 6) { alert('La contraseña debe tener al menos 6 caracteres.'); return; }
 
     try {
-        // Verificar si ya existe el email o username
+        // Verificar si ya existe email o username
         const { data: existentes } = await supabaseClient
             .from('usuarios')
             .select('id')
@@ -491,13 +507,13 @@ async function handleRegistro(e) {
             return;
         }
 
-        // Verificar si hay algún usuario activo (para saber si es el primero)
-        const { data: activos } = await supabaseClient
+        // Verificar si hay algún usuario aprobado (para saber si es el primero)
+        const { data: aprobados } = await supabaseClient
             .from('usuarios')
             .select('id')
-            .eq('activo', true);
+            .eq('aprobado', true);
         
-        const esPrimerUsuario = !activos || activos.length === 0;
+        const esPrimerUsuario = !aprobados || aprobados.length === 0;
 
         const nuevoUsuario = {
             username: username,
@@ -508,14 +524,16 @@ async function handleRegistro(e) {
             telefono: telefono,
             empresa: empresa,
             actividad: actividad,
-            role: rol,  // 'afiliado', 'delegado', 'dirigente'
-            activo: esPrimerUsuario, // el primero se activa automáticamente
+            rol: rol,  // 'afiliado', 'delegado', 'dirigente'
+            aprobado: esPrimerUsuario, // el primero se aprueba automáticamente
+            pregunta_seguridad: pregunta,
+            respuesta_seguridad: respuesta
         };
 
         await guardarUsuario(nuevoUsuario);
         
         if (esPrimerUsuario) {
-            alert('✅ ¡Usuario administrador creado! Ahora podés iniciar sesión.');
+            alert('✅ Registro completado. Ahora podés iniciar sesión.');
         } else {
             alert('📩 Registro enviado. Esperá la aprobación del administrador.');
         }
@@ -535,16 +553,17 @@ async function handleRegistro(e) {
 // ============================================
 async function handleLogin(e) {
     e.preventDefault();
-    const email = document.getElementById('loginEmail').value.trim();
+    const identifier = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
 
     try {
+        // Buscar por username o email
         const { data, error } = await supabaseClient
             .from('usuarios')
             .select('*')
-            .eq('email', email)
+            .or(`username.eq.${identifier},email.eq.${identifier}`)
             .eq('password', password)
-            .eq('activo', true);
+            .eq('aprobado', true);
 
         if (error) throw error;
 
@@ -595,24 +614,24 @@ function mostrarApp() {
     if (!currentUser) return;
 
     document.getElementById('userName').textContent = currentUser.nombre;
-    const roleText = currentUser.role === 'admin' ? 'Administrador' :
-                     currentUser.role === 'dirigente' ? 'Dirigente' : 'Delegado';
+    const roleText = currentUser.rol === 'admin' ? 'Administrador' :
+                     currentUser.rol === 'dirigente' ? 'Dirigente' : 'Delegado';
     document.getElementById('userRole').textContent = roleText;
     document.getElementById('userAvatar').textContent = currentUser.nombre.split(' ').map(n => n[0]).join('').toUpperCase();
     
     const adminLink = document.getElementById('adminPanelLink');
     if (adminLink) {
-        adminLink.style.display = currentUser.role === 'admin' ? 'block' : 'none';
+        adminLink.style.display = (currentUser.rol === 'admin' || currentUser.rol === 'administrador') ? 'block' : 'none';
     }
     
     navigateTo('inicio');
 }
 
 // ============================================
-// PANEL DE USUARIOS
+// PANEL DE USUARIOS (ADMIN)
 // ============================================
 async function mostrarPanelUsuarios() {
-    if (currentUser.role !== 'admin') {
+    if (currentUser.rol !== 'admin' && currentUser.rol !== 'administrador') {
         alert('Solo el administrador puede acceder a este panel.');
         return;
     }
@@ -627,7 +646,7 @@ function cerrarPanelUsuarios() {
 async function actualizarListasUsuarios() {
     try {
         const pendientes = await obtenerUsuariosPendientes();
-        const activos = await obtenerUsuariosActivos();
+        const aprobados = await obtenerUsuariosAprobados();
         
         const contPend = document.getElementById('listaPendientes');
         if (contPend) {
@@ -638,7 +657,7 @@ async function actualizarListasUsuarios() {
                     <div class="usuario-item">
                         <div class="info">
                             <span class="nombre">${u.nombre}</span>
-                            <span class="email">${u.email}</span>
+                            <span class="email">${u.email} (${u.username})</span>
                             <span style="font-size:0.8rem;color:var(--text-muted);">DNI: ${u.dni || 'N/A'} - ${u.empresa || ''}</span>
                         </div>
                         <div class="acciones">
@@ -652,13 +671,13 @@ async function actualizarListasUsuarios() {
         
         const contAct = document.getElementById('listaActivos');
         if (contAct) {
-            if (activos.length === 0) {
+            if (aprobados.length === 0) {
                 contAct.innerHTML = '<p style="color:var(--text-muted);">No hay usuarios activos.</p>';
             } else {
-                contAct.innerHTML = activos.filter(u => u.role !== 'admin').map(u => `
+                contAct.innerHTML = aprobados.filter(u => u.rol !== 'admin' && u.rol !== 'administrador').map(u => `
                     <div class="usuario-item">
                         <div class="info">
-                            <span class="nombre">${u.nombre} (${u.role})</span>
+                            <span class="nombre">${u.nombre} (${u.rol})</span>
                             <span class="email">${u.email}</span>
                             <span style="font-size:0.8rem;color:var(--text-muted);">${u.empresa || ''}</span>
                         </div>
@@ -676,9 +695,10 @@ async function actualizarListasUsuarios() {
 
 async function aprobarUsuario(id) {
     try {
-        await actualizarUsuario(id, { activo: true, role: 'delegado' });
+        // Al aprobar, asignamos rol 'delegado' por defecto, pero podría ser 'afiliado'
+        await actualizarUsuario(id, { aprobado: true, rol: 'delegado' });
         await actualizarListasUsuarios();
-        alert('✅ Usuario aprobado.');
+        alert('✅ Usuario aprobado como delegado.');
     } catch (e) {
         alert('❌ Error: ' + e.message);
     }
@@ -696,38 +716,62 @@ async function rechazarUsuario(id) {
 }
 
 // ============================================
-// RECUPERACIÓN DE CONTRASEÑA
+// RECUPERACIÓN DE CONTRASEÑA (básica)
 // ============================================
 async function handleRecuperacion(e) {
     e.preventDefault();
-    const email = document.getElementById('recEmail').value.trim();
+    const identifier = document.getElementById('recUser').value.trim();
     const btn = document.getElementById('recBtn');
     
-    if (!email) { alert('Ingresá tu email.'); return; }
+    if (!identifier) { alert('Ingresá tu usuario o email.'); return; }
 
     try {
         const { data } = await supabaseClient
             .from('usuarios')
             .select('*')
-            .eq('email', email)
+            .or(`username.eq.${identifier},email.eq.${identifier}`)
             .single();
 
         if (!data) {
-            alert('No se encontró ningún usuario con ese email.');
+            alert('No se encontró ningún usuario con esos datos.');
             return;
         }
 
-        // Simplemente enviamos un correo (por ahora solo mostramos un mensaje)
-        alert('📧 Se ha enviado un correo con instrucciones para recuperar tu contraseña (funcionalidad en desarrollo). Por ahora, contactá al administrador.');
-        cerrarModalRecuperacion();
-        mostrarLogin();
+        const preguntaContainer = document.getElementById('recPreguntaContainer');
+        const nuevaPassContainer = document.getElementById('recNuevaPassContainer');
+
+        if (btn.textContent === 'Buscar usuario') {
+            document.getElementById('recPreguntaLabel').textContent = data.pregunta_seguridad;
+            preguntaContainer.style.display = 'block';
+            btn.textContent = 'Verificar respuesta';
+            btn.dataset.userId = data.id;
+        } else if (btn.textContent === 'Verificar respuesta') {
+            const respuesta = document.getElementById('recRespuesta').value.trim();
+            if (respuesta.toLowerCase() !== data.respuesta_seguridad.toLowerCase()) {
+                alert('Respuesta incorrecta.');
+                return;
+            }
+            nuevaPassContainer.style.display = 'block';
+            btn.textContent = 'Cambiar contraseña';
+            document.getElementById('recRespuesta').setAttribute('readonly', true);
+        } else if (btn.textContent === 'Cambiar contraseña') {
+            const nuevaPass = document.getElementById('recNuevaPass').value;
+            if (!nuevaPass || nuevaPass.length < 6) {
+                alert('La nueva contraseña debe tener al menos 6 caracteres.');
+                return;
+            }
+            await actualizarUsuario(data.id, { password: nuevaPass });
+            alert('✅ Contraseña actualizada. Iniciá sesión.');
+            cerrarModalRecuperacion();
+            mostrarLogin();
+        }
     } catch (e) {
         alert('❌ Error: ' + e.message);
     }
 }
 
 // ============================================
-// NAVEGACIÓN
+// NAVEGACIÓN Y RENDERIZADOS
 // ============================================
 function navigateTo(page) {
     currentPage = page;
@@ -751,9 +795,6 @@ function navigateTo(page) {
     }
 }
 
-// ============================================
-// RENDER DASHBOARD
-// ============================================
 function renderDashboard(container) {
     container.innerHTML = `
         <div class="page-header">
@@ -810,9 +851,6 @@ function renderDashboard(container) {
     `;
 }
 
-// ============================================
-// RENDER BENEFICIOS
-// ============================================
 function renderBeneficios(container) {
     container.innerHTML = `
         <div class="page-header"><h1>Beneficios Sociales 🎁</h1><p>Beneficios para afiliados</p></div>
@@ -845,9 +883,6 @@ function renderBeneficios(container) {
     `;
 }
 
-// ============================================
-// RENDER CURSOS
-// ============================================
 function renderCursos(container) {
     container.innerHTML = `
         <div class="page-header"><h1>Capacitaciones 🎓</h1></div>
@@ -872,9 +907,6 @@ function renderCursos(container) {
     `;
 }
 
-// ============================================
-// RENDER CONVENIOS
-// ============================================
 function renderConvenios(container) {
     container.innerHTML = `
         <div class="page-header"><h1>Convenios Colectivos 📋</h1></div>
@@ -902,9 +934,6 @@ function renderConvenios(container) {
     `;
 }
 
-// ============================================
-// RENDER LEGISLACIÓN
-// ============================================
 function renderLegislacion(container) {
     container.innerHTML = `
         <div class="page-header"><h1>Legislación Laboral ⚖️</h1></div>
@@ -935,9 +964,6 @@ function renderLegislacion(container) {
     `;
 }
 
-// ============================================
-// RENDER ORGANIGRAMA
-// ============================================
 function renderOrganigrama(container) {
     container.innerHTML = `
         <div class="page-header"><h1>📋 Estructura Orgánica</h1></div>
@@ -968,7 +994,7 @@ async function initSession() {
                 .from('usuarios')
                 .select('*')
                 .eq('id', user.id)
-                .eq('activo', true)
+                .eq('aprobado', true)
                 .single();
             if (data) {
                 currentUser = data;
@@ -991,6 +1017,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('formRegistro').addEventListener('submit', handleRegistro);
     document.getElementById('formRecuperacion').addEventListener('submit', handleRecuperacion);
     
+    // Chat simple
     document.getElementById('chatForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const input = document.getElementById('chatInput');
@@ -1026,7 +1053,7 @@ function mostrarRecuperacion() {
     document.getElementById('recPreguntaContainer').style.display = 'none';
     document.getElementById('recNuevaPassContainer').style.display = 'none';
     document.getElementById('recBtn').textContent = 'Buscar usuario';
-    document.getElementById('recEmail').value = '';
+    document.getElementById('recUser').value = '';
     document.getElementById('recRespuesta').value = '';
     document.getElementById('recNuevaPass').value = '';
 }
