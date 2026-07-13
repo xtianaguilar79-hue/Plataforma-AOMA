@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campus Virtual AOMA | Con Supabase</title>
+    <title>Campus Virtual AOMA | Con Supabase Auth</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        /* ===== ESTILOS COMPLETOS ===== */
+        /* ESTILOS COMPLETOS (incluidos todos) */
         :root {
             --primary: #1a1a1a;
             --accent: #f47b20;
@@ -31,18 +31,13 @@
             min-height: 100vh;
         }
         .hidden { display: none !important; }
-        
-        /* HEADER */
         .header {
             position: fixed; top:0; left:0; right:0; height:var(--header-height);
             background: white; border-bottom:1px solid var(--border);
             z-index:100; display:flex; align-items:center; padding:0 2rem;
             box-shadow: var(--shadow);
         }
-        .header .brand {
-            display:flex; align-items:center; gap:0.75rem; cursor:pointer;
-            font-weight:700; font-size:1.2rem;
-        }
+        .header .brand { display:flex; align-items:center; gap:0.75rem; cursor:pointer; font-weight:700; font-size:1.2rem; }
         .brand img { height:40px; }
         .brand span { color:var(--accent); }
         .header-right { margin-left:auto; display:flex; align-items:center; gap:1rem; }
@@ -53,16 +48,12 @@
         .user-role { font-size:0.75rem; color:var(--text-muted); }
         .dropdown { position:absolute; top:100%; right:0; background:white; border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); min-width:200px; display:none; z-index:10; }
         .user-menu:hover .dropdown { display:block; }
-        .dropdown a { display:block; padding:0.75rem 1rem; color:var(--text-primary); text-decoration:none; font-size:0.9rem; }
+        .dropdown a { display:block; padding:0.75rem 1rem; color:var(--text-primary); text-decoration:none; font-size:0.9rem; cursor:pointer; }
         .dropdown a:hover { background:var(--bg-body); }
-        
-        /* MAIN */
         .main { margin-top:var(--header-height); padding:2rem; min-height:calc(100vh - var(--header-height)); }
         .page-header { margin-bottom:2rem; }
         .page-header h1 { font-size:2rem; }
         .page-header p { color:var(--text-muted); }
-        
-        /* LOGIN OVERLAY */
         #loginOverlay {
             position:fixed; inset:0; z-index:1000;
             background:linear-gradient(135deg,#1a1a1a 0%,#333 100%);
@@ -87,16 +78,11 @@
         }
         .btn { width:100%; padding:0.875rem; background:var(--accent); color:white; border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; }
         .btn:hover { background:var(--accent-dark); }
-        .btn-secondary { background:var(--bg-body); color:var(--text-primary); border:1px solid var(--border); }
-        .btn-secondary:hover { background:var(--border); }
         .login-links { text-align:center; margin-top:1rem; font-size:0.875rem; }
         .login-links a { color:var(--accent); text-decoration:none; font-weight:600; cursor:pointer; }
         .login-links a:hover { text-decoration:underline; }
         .error-msg { background:#fee2e2; color:#b91c1c; padding:0.75rem; border-radius:8px; margin-bottom:1rem; display:none; }
         .success-msg { background:#d1fae5; color:#065f46; padding:0.75rem; border-radius:8px; margin-bottom:1rem; display:none; }
-        .info-msg { background:#dbeafe; color:#1e40af; padding:0.75rem; border-radius:8px; margin-bottom:1rem; display:none; }
-        
-        /* MODAL */
         .modal-overlay {
             position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000;
             display:none; align-items:center; justify-content:center; padding:1rem;
@@ -112,8 +98,6 @@
         .form-row { display:flex; gap:1rem; flex-wrap:wrap; }
         .form-row .form-group { flex:1; min-width:200px; }
         .required { color:#ef4444; margin-left:2px; }
-        
-        /* CARDS / DASHBOARD */
         .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1.5rem; margin-bottom:2rem; }
         .stat-card { background:white; padding:1.5rem; border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border); cursor:pointer; transition:0.2s; }
         .stat-card:hover { transform:translateY(-4px); box-shadow:0 8px 20px rgba(0,0,0,0.1); }
@@ -130,8 +114,6 @@
         .card-description { color:var(--text-secondary); font-size:0.9rem; }
         .section { background:white; padding:1.5rem; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:2rem; border:1px solid var(--border); }
         .section-title { font-size:1.3rem; font-weight:700; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:3px solid var(--accent); display:inline-block; }
-        
-        /* USUARIOS PANEL */
         .usuario-item { display:flex; justify-content:space-between; align-items:center; padding:0.75rem; background:var(--bg-body); border-radius:8px; margin-bottom:0.5rem; }
         .usuario-item .info { display:flex; flex-direction:column; }
         .usuario-item .info .nombre { font-weight:600; }
@@ -142,8 +124,6 @@
         .btn-rechazar:hover { background:#b91c1c; }
         .btn-eliminar { background:#9ca3af; color:white; border:none; padding:0.25rem 0.75rem; border-radius:6px; cursor:pointer; }
         .btn-eliminar:hover { background:#6b7280; }
-        
-        /* CHAT */
         .chat-window { position:fixed; bottom:80px; right:20px; width:340px; height:400px; background:white; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.2); display:none; flex-direction:column; overflow:hidden; border:1px solid var(--border); z-index:100; }
         .chat-window.active { display:flex; }
         .chat-header { background:var(--primary); color:white; padding:0.75rem 1rem; display:flex; justify-content:space-between; align-items:center; }
@@ -152,8 +132,6 @@
         .chat-form input { flex:1; padding:0.5rem 0.75rem; border:1px solid var(--border); border-radius:50px; font-size:0.9rem; }
         .chat-form button { background:var(--accent); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; }
         .chat-btn { position:fixed; bottom:20px; right:20px; width:60px; height:60px; border-radius:50%; background:var(--accent); color:white; border:none; font-size:2rem; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:100; }
-        
-        /* RESPONSIVE */
         @media (max-width:768px) {
             .header { padding:0 1rem; }
             .login-box { padding:1.5rem; }
@@ -185,7 +163,7 @@
             <div class="user-avatar" id="userAvatar">U</div>
             <div class="dropdown">
                 <a href="#" id="adminPanelLink" style="display:none;" onclick="mostrarPanelUsuarios()">👥 Gestionar Usuarios</a>
-                <a href="#" onclick="logout()">🚪 Cerrar Sesión</a>
+                <a href="#" onclick="cerrarSesion()">🚪 Cerrar Sesión</a>
             </div>
         </div>
     </div>
@@ -196,23 +174,19 @@
     <div id="pageContent"></div>
 </main>
 
-<!-- ===== LOGIN OVERLAY ===== -->
+<!-- LOGIN OVERLAY -->
 <div id="loginOverlay">
     <div class="login-box">
         <div class="logo">
             <h1>🏔️ Campus Virtual AOMA</h1>
             <p>Asociación Obrera Minera Argentina<br>Seccional San Juan</p>
-            <p style="font-size:0.75rem;color:var(--accent);background:#fef3c7;padding:0.25rem 0.75rem;border-radius:50px;display:inline-block;margin-top:0.5rem;">
-                El primer registro será Administrador
-            </p>
         </div>
         <div id="loginError" class="error-msg"></div>
         <div id="loginSuccess" class="success-msg"></div>
-        <div id="loginInfo" class="info-msg"></div>
         <form id="loginForm">
             <div class="form-group">
-                <label><i class="fas fa-user"></i> Usuario o Email</label>
-                <input type="text" id="loginUsername" placeholder="Tu usuario o email" required />
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="loginEmail" placeholder="tu@email.com" required />
             </div>
             <div class="form-group">
                 <label><i class="fas fa-lock"></i> Contraseña</label>
@@ -230,130 +204,45 @@
             <span style="margin:0 0.5rem;">|</span>
             <a onclick="mostrarRecuperacion()">¿Olvidaste tu contraseña?</a>
         </div>
-        <div style="text-align:center;margin-top:0.75rem;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
-            <button onclick="resetearUsuarios()" style="background:none;border:none;color:#9ca3af;font-size:0.7rem;cursor:pointer;text-decoration:underline;">
-                <i class="fas fa-trash-alt"></i> Reiniciar usuarios
-            </button>
-            <button onclick="forzarAdmin()" style="background:none;border:none;color:#f47b20;font-size:0.7rem;cursor:pointer;text-decoration:underline;font-weight:600;">
-                <i class="fas fa-user-cog"></i> Forzar administrador
-            </button>
-            <button onclick="verUsuarios()" style="background:none;border:none;color:#3b82f6;font-size:0.7rem;cursor:pointer;text-decoration:underline;">
-                <i class="fas fa-database"></i> Ver usuarios en DB
-            </button>
-        </div>
-        <div style="text-align:center;margin-top:0.75rem;font-size:0.7rem;color:var(--text-muted);">
-            Usuarios de prueba: admin / admin123 | delegado / delegado123
-        </div>
     </div>
 </div>
 
-<!-- ===== MODAL REGISTRO ===== -->
+<!-- MODAL REGISTRO (con Auth) -->
 <div class="modal-overlay" id="modalRegistro">
     <div class="modal-box">
         <div class="modal-header">
-            <h2><i class="fas fa-user-plus"></i> Registro de Afiliado</h2>
+            <h2><i class="fas fa-user-plus"></i> Registro</h2>
             <button class="modal-close" onclick="cerrarModalRegistro()">&times;</button>
         </div>
+        <div id="regError" class="error-msg"></div>
+        <div id="regSuccess" class="success-msg"></div>
         <form id="formRegistro">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Nombre completo <span class="required">*</span></label>
-                    <input type="text" id="regNombre" placeholder="Ej: Juan Pérez" required />
-                </div>
-                <div class="form-group">
-                    <label>DNI <span class="required">*</span></label>
-                    <input type="number" id="regDni" placeholder="Número de documento" required />
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Email <span class="required">*</span></label>
-                    <input type="email" id="regEmail" placeholder="ejemplo@correo.com" required />
-                </div>
-                <div class="form-group">
-                    <label>Teléfono</label>
-                    <input type="tel" id="regTelefono" placeholder="264-1234567" />
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>¿Dirigente?</label>
-                    <select id="regDirigente"><option value="no">No</option><option value="si">Sí</option></select>
-                </div>
-                <div class="form-group">
-                    <label>¿Delegado?</label>
-                    <select id="regDelegado"><option value="no">No</option><option value="si">Sí</option></select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Empresa <span class="required">*</span></label>
-                    <select id="regEmpresa" required>
-                        <option value="">Seleccionar</option>
-                        <option value="veladero">Mina Veladero</option>
-                        <option value="gualcamayo">Mina Gualcamayo</option>
-                        <option value="vicuna">Mina Vicuña</option>
-                        <option value="otra">Otra</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Actividad <span class="required">*</span></label>
-                    <select id="regActividad" required>
-                        <option value="">Seleccionar</option>
-                        <option value="mineria-extractiva">Minería Extractiva</option>
-                        <option value="cemento">Cemento</option>
-                        <option value="cal-piedra">Cal y Piedra</option>
-                        <option value="molienda">Molienda</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label>Nombre completo <span class="required">*</span></label>
+                <input type="text" id="regNombre" placeholder="Ej: Juan Pérez" required />
             </div>
             <div class="form-group">
-                <label>Convenio <span class="required">*</span></label>
-                <select id="regConvenio" required>
-                    <option value="">Seleccionar</option>
-                    <option value="36/89">CCT 36/89 (Minería)</option>
-                    <option value="38/89">CCT 38/89 (Cemento)</option>
-                    <option value="54/89">CCT 54/89 (Cal y Piedra)</option>
-                    <option value="673/04">CCT 673/04 (Molienda)</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Usuario <span class="required">*</span></label>
-                    <input type="text" id="regUsuario" placeholder="Elegí un usuario" required />
-                </div>
-                <div class="form-group">
-                    <label>Contraseña <span class="required">*</span></label>
-                    <div class="password-wrapper">
-                        <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" required minlength="6" />
-                        <button type="button" class="password-toggle" onclick="togglePassword('regPassword', this)">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
+                <label>Email <span class="required">*</span></label>
+                <input type="email" id="regEmail" placeholder="ejemplo@correo.com" required />
             </div>
             <div class="form-group">
-                <label>Pregunta de seguridad <span class="required">*</span></label>
-                <select id="regPregunta" required>
-                    <option value="">Seleccionar</option>
-                    <option value="¿Cuál es el nombre de tu madre?">¿Cuál es el nombre de tu madre?</option>
-                    <option value="¿Cuál es tu ciudad natal?">¿Cuál es tu ciudad natal?</option>
-                    <option value="¿Cuál es el nombre de tu primera mascota?">¿Cuál es el nombre de tu primera mascota?</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Respuesta <span class="required">*</span></label>
-                <input type="text" id="regRespuesta" placeholder="Tu respuesta" required />
+                <label>Contraseña <span class="required">*</span></label>
+                <div class="password-wrapper">
+                    <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" required minlength="6" />
+                    <button type="button" class="password-toggle" onclick="togglePassword('regPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
             </div>
             <button type="submit" class="btn">Registrarme</button>
         </form>
         <p style="margin-top:1rem;text-align:center;font-size:0.875rem;">
-            ¿Ya tenés cuenta? <a onclick="cerrarModalRegistro(); mostrarLogin();" style="color:var(--accent);cursor:pointer;font-weight:600;">Iniciá sesión</a>
+            ¿Ya tenés cuenta? <a onclick="cerrarModalRegistro();" style="color:var(--accent);cursor:pointer;font-weight:600;">Iniciá sesión</a>
         </p>
     </div>
 </div>
 
-<!-- ===== MODAL RECUPERACIÓN (CORREGIDO - SIN EMAIL) ===== -->
+<!-- MODAL RECUPERACIÓN (con Auth) -->
 <div class="modal-overlay" id="modalRecuperacion">
     <div class="modal-box" style="max-width:450px;">
         <div class="modal-header">
@@ -364,35 +253,18 @@
         <div id="recSuccess" class="success-msg"></div>
         <form id="formRecuperacion">
             <div class="form-group">
-                <label>Usuario o Email</label>
-                <input type="text" id="recUser" placeholder="Tu usuario o email" required />
+                <label>Email</label>
+                <input type="email" id="recEmail" placeholder="tu@email.com" required />
             </div>
-            <div id="recPreguntaContainer" style="display:none;">
-                <div class="form-group">
-                    <label id="recPreguntaLabel">Pregunta de seguridad</label>
-                    <input type="text" id="recRespuesta" placeholder="Tu respuesta" required />
-                </div>
-            </div>
-            <div id="recNuevaPassContainer" style="display:none;">
-                <div class="form-group">
-                    <label>Nueva contraseña</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="recNuevaPass" placeholder="Mínimo 6 caracteres" required minlength="6" />
-                        <button type="button" class="password-toggle" onclick="togglePassword('recNuevaPass', this)">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <button type="submit" class="btn" id="recBtn">Buscar usuario</button>
+            <button type="submit" class="btn">Enviar enlace de recuperación</button>
         </form>
         <p style="margin-top:1rem;text-align:center;font-size:0.875rem;">
-            <a onclick="cerrarModalRecuperacion(); mostrarLogin();" style="color:var(--accent);cursor:pointer;font-weight:600;">Volver al inicio de sesión</a>
+            <a onclick="cerrarModalRecuperacion();" style="color:var(--accent);cursor:pointer;font-weight:600;">Volver al inicio</a>
         </p>
     </div>
 </div>
 
-<!-- ===== MODAL PANEL USUARIOS ===== -->
+<!-- MODAL PANEL USUARIOS -->
 <div class="modal-overlay" id="modalPanelUsuarios">
     <div class="modal-box" style="max-width:750px;">
         <div class="modal-header">
@@ -400,16 +272,17 @@
             <button class="modal-close" onclick="cerrarPanelUsuarios()">&times;</button>
         </div>
         <div id="panelContent">
-            <h3>Pendientes de aprobación</h3>
-            <div id="listaPendientes"><p>Cargando...</p></div>
+            <h3>Usuarios registrados</h3>
+            <div id="listaUsuarios"><p>Cargando...</p></div>
             <hr style="margin:1.5rem 0;" />
-            <h3>Usuarios activos</h3>
-            <div id="listaActivos"><p>Cargando...</p></div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">
+                <p>Para cambiar roles, usa la consola de Supabase.</p>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- ===== CHAT ===== -->
+<!-- CHAT -->
 <button class="chat-btn" onclick="document.getElementById('chatWindow').classList.toggle('active')">💬</button>
 <div class="chat-window" id="chatWindow">
     <div class="chat-header">
@@ -423,30 +296,22 @@
     </form>
 </div>
 
-<!-- ===== SCRIPTS ===== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ============================================
 // CONFIGURACIÓN SUPABASE
 // ============================================
-const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co/rest/v1/';
+const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
 
-let supabaseClient;
-
-try {
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log('✅ Supabase conectado');
-} catch(e) {
-    console.error('❌ Error al conectar Supabase:', e);
-    alert('Error de conexión con Supabase. Verifica las credenciales.');
-}
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
+let currentUserProfile = null;
 let currentPage = 'inicio';
 
 // ============================================
-// TOGGLE PASSWORD (OJITO)
+// TOGGLE PASSWORD
 // ============================================
 function togglePassword(inputId, btn) {
     const input = document.getElementById(inputId);
@@ -462,204 +327,148 @@ function togglePassword(inputId, btn) {
 }
 
 // ============================================
-// FUNCIONES DE USUARIOS (SUPABASE)
+// REGISTRO CON AUTH
 // ============================================
-async function obtenerUsuariosActivos() {
-    const { data, error } = await supabaseClient
-        .from('usuarios')
-        .select('*')
-        .eq('activo', true);
-    if (error) { console.error(error); return []; }
-    return data || [];
-}
-
-async function obtenerUsuariosPendientes() {
-    const { data, error } = await supabaseClient
-        .from('usuarios')
-        .select('*')
-        .eq('activo', false);
-    if (error) { console.error(error); return []; }
-    return data || [];
-}
-
-async function guardarUsuario(usuario) {
-    const { data, error } = await supabaseClient
-        .from('usuarios')
-        .insert([usuario]);
-    if (error) throw error;
-    return data;
-}
-
-async function actualizarUsuario(id, updates) {
-    const { data, error } = await supabaseClient
-        .from('usuarios')
-        .update(updates)
-        .eq('id', id);
-    if (error) throw error;
-    return data;
-}
-
-async function eliminarUsuarioDB(id) {
-    const { error } = await supabaseClient
-        .from('usuarios')
-        .delete()
-        .eq('id', id);
-    if (error) throw error;
-}
-
-// ============================================
-// VER USUARIOS EN DB (DEBUG)
-// ============================================
-async function verUsuarios() {
-    try {
-        const { data, error } = await supabaseClient
-            .from('usuarios')
-            .select('*');
-        if (error) throw error;
-        console.log('📊 Usuarios en DB:', data);
-        alert('📊 Revisá la consola (F12) para ver los usuarios.\n\nTotal: ' + data.length);
-    } catch (e) {
-        alert('❌ Error al obtener usuarios: ' + e.message);
-    }
-}
-
-// ============================================
-// REGISTRO
-// ============================================
-async function handleRegistro(e) {
+document.getElementById('formRegistro').addEventListener('submit', async (e) => {
     e.preventDefault();
-    console.log('📝 Registrando...');
-
     const nombre = document.getElementById('regNombre').value.trim();
-    const dni = document.getElementById('regDni').value.trim();
-    const email = document.getElementById('regEmail').value.trim().toLowerCase();
-    const telefono = document.getElementById('regTelefono').value.trim();
-    const dirigente = document.getElementById('regDirigente').value === 'si';
-    const delegado = document.getElementById('regDelegado').value === 'si';
-    const empresa = document.getElementById('regEmpresa').value;
-    const actividad = document.getElementById('regActividad').value;
-    const convenio = document.getElementById('regConvenio').value;
-    const usuario = document.getElementById('regUsuario').value.trim().toLowerCase();
+    const email = document.getElementById('regEmail').value.trim();
     const password = document.getElementById('regPassword').value;
-    const pregunta = document.getElementById('regPregunta').value;
-    const respuesta = document.getElementById('regRespuesta').value.trim();
 
-    if (!nombre || !dni || !email || !usuario || !password || !pregunta || !respuesta || !empresa || !actividad || !convenio) {
-        alert('Todos los campos marcados con * son obligatorios.');
+    document.getElementById('regError').style.display = 'none';
+    document.getElementById('regSuccess').style.display = 'none';
+
+    if (!nombre || !email || !password) {
+        document.getElementById('regError').textContent = 'Todos los campos son obligatorios.';
+        document.getElementById('regError').style.display = 'block';
         return;
     }
-    if (password.length < 6) { alert('La contraseña debe tener al menos 6 caracteres.'); return; }
+    if (password.length < 6) {
+        document.getElementById('regError').textContent = 'La contraseña debe tener al menos 6 caracteres.';
+        document.getElementById('regError').style.display = 'block';
+        return;
+    }
 
     try {
-        const { data: existentes } = await supabaseClient
-            .from('usuarios')
-            .select('id')
-            .or(`username.ilike.${usuario},email.ilike.${email}`);
-        
-        if (existentes && existentes.length > 0) {
-            alert('❌ Ese usuario o email ya está registrado.');
-            return;
+        // 1. Registrar en Auth
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: { nombre: nombre }
+            }
+        });
+
+        if (error) throw error;
+
+        // 2. Verificar si es el primer usuario (para asignar admin)
+        const { count } = await supabase
+            .from('perfiles')
+            .select('*', { count: 'exact', head: true });
+
+        if (count === 0) {
+            // Primer usuario → admin
+            await supabase
+                .from('perfiles')
+                .update({ role: 'admin', activo: true })
+                .eq('id', data.user.id);
         }
 
-        const { data: activos } = await supabaseClient
-            .from('usuarios')
-            .select('id')
-            .eq('activo', true);
+        document.getElementById('regSuccess').textContent = '✅ Registro exitoso. Revisá tu email para confirmar (si está activada la verificación).';
+        document.getElementById('regSuccess').style.display = 'block';
         
-        const esPrimerUsuario = !activos || activos.length === 0;
+        setTimeout(() => {
+            cerrarModalRegistro();
+            document.getElementById('loginEmail').value = email;
+        }, 2000);
 
-        const nuevoUsuario = {
-            username: usuario,
-            email: email,
-            password: password,
-            nombre: nombre,
-            dni: dni,
-            telefono: telefono,
-            dirigente: dirigente,
-            delegado: delegado,
-            empresa: empresa,
-            actividad: actividad,
-            convenio: convenio,
-            role: esPrimerUsuario ? 'admin' : 'afiliado',
-            activo: esPrimerUsuario,
-            pregunta_seguridad: pregunta,
-            respuesta_seguridad: respuesta
-        };
-
-        await guardarUsuario(nuevoUsuario);
-        
-        if (esPrimerUsuario) {
-            alert('✅ ¡Usuario administrador creado! Ahora podés iniciar sesión.');
-        } else {
-            alert('📩 Registro enviado. Esperá la aprobación del administrador.');
-        }
-        
-        cerrarModalRegistro();
-        document.getElementById('formRegistro').reset();
-        mostrarLogin();
-        
     } catch (error) {
-        console.error('Error en registro:', error);
-        alert('❌ Error al registrar: ' + error.message);
+        document.getElementById('regError').textContent = '❌ ' + error.message;
+        document.getElementById('regError').style.display = 'block';
     }
-}
+});
 
 // ============================================
-// LOGIN (CORREGIDO - case insensitive)
+// LOGIN CON AUTH
 // ============================================
-async function handleLogin(e) {
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const username = document.getElementById('loginUsername').value.trim();
+    const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
 
     document.getElementById('loginError').style.display = 'none';
-    document.getElementById('loginInfo').style.display = 'none';
+    document.getElementById('loginSuccess').style.display = 'none';
 
     try {
-        // Buscar por username o email (case insensitive)
-        const { data, error } = await supabaseClient
-            .from('usuarios')
-            .select('*')
-            .or(`username.ilike.${username},email.ilike.${username}`)
-            .eq('password', password);
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
 
         if (error) throw error;
 
-        if (!data || data.length === 0) {
-            document.getElementById('loginError').textContent = '❌ Usuario o contraseña incorrectos.';
+        // Obtener perfil del usuario
+        const { data: perfil, error: perfilError } = await supabase
+            .from('perfiles')
+            .select('*')
+            .eq('id', data.user.id)
+            .single();
+
+        if (perfilError) throw perfilError;
+
+        if (!perfil.activo) {
+            await supabase.auth.signOut();
+            document.getElementById('loginError').textContent = '❌ Tu cuenta no ha sido activada por el administrador.';
             document.getElementById('loginError').style.display = 'block';
             return;
         }
 
-        const user = data[0];
-
-        if (!user.activo) {
-            document.getElementById('loginError').textContent = '❌ Tu cuenta no ha sido aprobada aún. Esperá la confirmación del administrador.';
-            document.getElementById('loginError').style.display = 'block';
-            return;
-        }
-
-        // Login exitoso
-        currentUser = user;
-        localStorage.setItem('aoma_session', JSON.stringify(user));
+        currentUser = data.user;
+        currentUserProfile = perfil;
+        localStorage.setItem('aoma_session', JSON.stringify({ user: data.user, profile: perfil }));
         mostrarApp();
-        
+
     } catch (error) {
-        console.error('Error en login:', error);
-        document.getElementById('loginError').textContent = '❌ Error de conexión: ' + error.message;
+        document.getElementById('loginError').textContent = '❌ ' + error.message;
         document.getElementById('loginError').style.display = 'block';
     }
-}
+});
 
 // ============================================
-// LOGOUT
+// RECUPERACIÓN CON AUTH (envía email real)
 // ============================================
-function logout() {
-    if (confirm('¿Cerrar sesión?')) {
-        localStorage.removeItem('aoma_session');
-        currentUser = null;
-        mostrarLogin();
+document.getElementById('formRecuperacion').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('recEmail').value.trim();
+
+    document.getElementById('recError').style.display = 'none';
+    document.getElementById('recSuccess').style.display = 'none';
+
+    try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/reset-password.html'
+        });
+
+        if (error) throw error;
+
+        document.getElementById('recSuccess').textContent = '✅ Te enviamos un email con el enlace para restablecer tu contraseña.';
+        document.getElementById('recSuccess').style.display = 'block';
+    } catch (error) {
+        document.getElementById('recError').textContent = '❌ ' + error.message;
+        document.getElementById('recError').style.display = 'block';
     }
+});
+
+// ============================================
+// CERRAR SESIÓN
+// ============================================
+async function cerrarSesion() {
+    if (!confirm('¿Cerrar sesión?')) return;
+    await supabase.auth.signOut();
+    localStorage.removeItem('aoma_session');
+    currentUser = null;
+    currentUserProfile = null;
+    mostrarLogin();
 }
 
 // ============================================
@@ -672,7 +481,6 @@ function mostrarLogin() {
     document.getElementById('userMenu').style.display = 'none';
     document.getElementById('loginError').style.display = 'none';
     document.getElementById('loginSuccess').style.display = 'none';
-    document.getElementById('loginInfo').style.display = 'none';
 }
 
 function mostrarApp() {
@@ -681,229 +489,93 @@ function mostrarApp() {
     document.querySelector('.main').style.display = 'block';
     document.getElementById('userMenu').style.display = 'flex';
 
-    if (!currentUser) return;
+    if (!currentUserProfile) return;
 
-    document.getElementById('userName').textContent = currentUser.nombre;
-    const roleText = currentUser.role === 'admin' ? 'Administrador' :
-                     currentUser.role === 'dirigente' ? 'Dirigente' : 'Delegado';
+    document.getElementById('userName').textContent = currentUserProfile.nombre || currentUser.email;
+    const roleText = currentUserProfile.role === 'admin' ? 'Administrador' :
+                     currentUserProfile.role === 'dirigente' ? 'Dirigente' : 'Delegado';
     document.getElementById('userRole').textContent = roleText;
-    document.getElementById('userAvatar').textContent = currentUser.nombre.split(' ').map(n => n[0]).join('').toUpperCase();
+    document.getElementById('userAvatar').textContent = (currentUserProfile.nombre || currentUser.email).split(' ').map(n => n[0]).join('').toUpperCase();
     
     const adminLink = document.getElementById('adminPanelLink');
     if (adminLink) {
-        adminLink.style.display = currentUser.role === 'admin' ? 'block' : 'none';
+        adminLink.style.display = currentUserProfile.role === 'admin' ? 'block' : 'none';
     }
     
     navigateTo('inicio');
 }
 
 // ============================================
-// RESET Y FORZAR ADMIN
-// ============================================
-async function resetearUsuarios() {
-    if (!confirm('⚠️ ¿Borrar TODOS los usuarios de Supabase? Esto es irreversible.')) return;
-    try {
-        const { error } = await supabaseClient
-            .from('usuarios')
-            .delete()
-            .neq('id', 0);
-        if (error) throw error;
-        localStorage.removeItem('aoma_session');
-        alert('✅ Usuarios eliminados. La página se recargará.');
-        location.reload();
-    } catch (e) {
-        alert('❌ Error: ' + e.message);
-    }
-}
-
-async function forzarAdmin() {
-    if (!confirm('⚠️ ¿Crear administrador Cristian Aguilar y eliminar otros usuarios?')) return;
-    try {
-        await supabaseClient.from('usuarios').delete().neq('id', 0);
-        
-        const admin = {
-            username: 'cristian',
-            email: 'aomasjhys@gmail.com',
-            password: 'admin123',
-            nombre: 'Cristian Aguilar',
-            dni: '12345678',
-            telefono: '264-1234567',
-            dirigente: false,
-            delegado: false,
-            empresa: 'veladero',
-            actividad: 'mineria-extractiva',
-            convenio: '36/89',
-            role: 'admin',
-            activo: true,
-            pregunta_seguridad: '¿Cuál es tu color favorito?',
-            respuesta_seguridad: 'azul'
-        };
-        await guardarUsuario(admin);
-        localStorage.removeItem('aoma_session');
-        alert('✅ Administrador creado. Iniciá sesión con usuario "cristian" y contraseña "admin123".');
-        location.reload();
-    } catch (e) {
-        alert('❌ Error: ' + e.message);
-    }
-}
-
-// ============================================
-// PANEL DE USUARIOS
+// PANEL DE USUARIOS (solo admin)
 // ============================================
 async function mostrarPanelUsuarios() {
-    if (currentUser.role !== 'admin') {
+    if (currentUserProfile.role !== 'admin') {
         alert('Solo el administrador puede acceder a este panel.');
         return;
     }
     document.getElementById('modalPanelUsuarios').style.display = 'flex';
-    await actualizarListasUsuarios();
+    await cargarUsuarios();
 }
 
 function cerrarPanelUsuarios() {
     document.getElementById('modalPanelUsuarios').style.display = 'none';
 }
 
-async function actualizarListasUsuarios() {
+async function cargarUsuarios() {
     try {
-        const pendientes = await obtenerUsuariosPendientes();
-        const activos = await obtenerUsuariosActivos();
-        
-        const contPend = document.getElementById('listaPendientes');
-        if (contPend) {
-            if (pendientes.length === 0) {
-                contPend.innerHTML = '<p style="color:var(--text-muted);">No hay usuarios pendientes.</p>';
-            } else {
-                contPend.innerHTML = pendientes.map(u => `
-                    <div class="usuario-item">
-                        <div class="info">
-                            <span class="nombre">${u.nombre}</span>
-                            <span class="email">${u.email} (${u.username})</span>
-                            <span style="font-size:0.8rem;color:var(--text-muted);">DNI: ${u.dni || 'N/A'} - ${u.empresa || ''}</span>
-                        </div>
-                        <div class="acciones">
-                            <button class="btn-aprobar" onclick="aprobarUsuario(${u.id})"><i class="fas fa-check"></i> Aprobar</button>
-                            <button class="btn-rechazar" onclick="rechazarUsuario(${u.id})"><i class="fas fa-times"></i> Rechazar</button>
-                        </div>
-                    </div>
-                `).join('');
-            }
+        const { data, error } = await supabase
+            .from('perfiles')
+            .select('*, auth.users(email)')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const container = document.getElementById('listaUsuarios');
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p>No hay usuarios registrados.</p>';
+            return;
         }
-        
-        const contAct = document.getElementById('listaActivos');
-        if (contAct) {
-            if (activos.length === 0) {
-                contAct.innerHTML = '<p style="color:var(--text-muted);">No hay usuarios activos.</p>';
-            } else {
-                contAct.innerHTML = activos.filter(u => u.role !== 'admin').map(u => `
-                    <div class="usuario-item">
-                        <div class="info">
-                            <span class="nombre">${u.nombre} (${u.role})</span>
-                            <span class="email">${u.email}</span>
-                            <span style="font-size:0.8rem;color:var(--text-muted);">${u.empresa || ''}</span>
-                        </div>
-                        <div class="acciones">
-                            <button class="btn-eliminar" onclick="eliminarUsuarioDB(${u.id})"><i class="fas fa-trash"></i> Eliminar</button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
+
+        container.innerHTML = data.map(p => `
+            <div class="usuario-item">
+                <div class="info">
+                    <span class="nombre">${p.nombre}</span>
+                    <span class="email">${p.email || 'sin email'}</span>
+                    <span style="font-size:0.8rem;color:var(--text-muted);">Rol: ${p.role || 'afiliado'} | Activo: ${p.activo ? '✅' : '❌'}</span>
+                </div>
+                <div class="acciones">
+                    ${p.activo ? '' : `<button class="btn-aprobar" onclick="aprobarUsuario('${p.id}')"><i class="fas fa-check"></i> Aprobar</button>`}
+                    <button class="btn-eliminar" onclick="eliminarUsuario('${p.id}')"><i class="fas fa-trash"></i> Eliminar</button>
+                </div>
+            </div>
+        `).join('');
+
     } catch (e) {
-        console.error('Error al actualizar listas:', e);
+        console.error(e);
+        document.getElementById('listaUsuarios').innerHTML = `<p style="color:red;">Error al cargar usuarios: ${e.message}</p>`;
     }
 }
 
 async function aprobarUsuario(id) {
     try {
-        await actualizarUsuario(id, { activo: true, role: 'delegado' });
-        await actualizarListasUsuarios();
-        alert('✅ Usuario aprobado.');
+        await supabase.from('perfiles').update({ activo: true }).eq('id', id);
+        await cargarUsuarios();
+        alert('✅ Usuario activado.');
     } catch (e) {
         alert('❌ Error: ' + e.message);
     }
 }
 
-async function rechazarUsuario(id) {
-    if (!confirm('¿Rechazar este usuario?')) return;
+async function eliminarUsuario(id) {
+    if (!confirm('¿Eliminar este usuario de forma permanente?')) return;
     try {
-        await eliminarUsuarioDB(id);
-        await actualizarListasUsuarios();
-        alert('✅ Usuario rechazado.');
+        // Primero eliminar perfil
+        await supabase.from('perfiles').delete().eq('id', id);
+        // Luego eliminar usuario de Auth (solo admin puede hacerlo desde Supabase)
+        alert('⚠️ El usuario ha sido eliminado de la tabla perfiles. Para eliminar completamente de Auth, hazlo desde la consola de Supabase.');
+        await cargarUsuarios();
     } catch (e) {
         alert('❌ Error: ' + e.message);
-    }
-}
-
-// ============================================
-// RECUPERACIÓN DE CONTRASEÑA (CORREGIDA - SIN EMAIL)
-// ============================================
-async function handleRecuperacion(e) {
-    e.preventDefault();
-    const identifier = document.getElementById('recUser').value.trim();
-    const btn = document.getElementById('recBtn');
-    
-    document.getElementById('recError').style.display = 'none';
-    document.getElementById('recSuccess').style.display = 'none';
-    
-    if (!identifier) { 
-        document.getElementById('recError').textContent = 'Ingresá tu usuario o email.';
-        document.getElementById('recError').style.display = 'block';
-        return; 
-    }
-
-    try {
-        const { data } = await supabaseClient
-            .from('usuarios')
-            .select('*')
-            .or(`username.ilike.${identifier},email.ilike.${identifier}`)
-            .single();
-
-        if (!data) {
-            document.getElementById('recError').textContent = 'No se encontró ningún usuario con esos datos.';
-            document.getElementById('recError').style.display = 'block';
-            return;
-        }
-
-        const preguntaContainer = document.getElementById('recPreguntaContainer');
-        const nuevaPassContainer = document.getElementById('recNuevaPassContainer');
-
-        if (btn.textContent === 'Buscar usuario') {
-            document.getElementById('recPreguntaLabel').textContent = data.pregunta_seguridad || 'Pregunta de seguridad no configurada';
-            preguntaContainer.style.display = 'block';
-            btn.textContent = 'Verificar respuesta';
-            btn.dataset.userId = data.id;
-            document.getElementById('recSuccess').textContent = '✅ Usuario encontrado. Respondé la pregunta de seguridad.';
-            document.getElementById('recSuccess').style.display = 'block';
-        } else if (btn.textContent === 'Verificar respuesta') {
-            const respuesta = document.getElementById('recRespuesta').value.trim();
-            if (respuesta.toLowerCase() !== (data.respuesta_seguridad || '').toLowerCase()) {
-                document.getElementById('recError').textContent = '❌ Respuesta incorrecta.';
-                document.getElementById('recError').style.display = 'block';
-                return;
-            }
-            nuevaPassContainer.style.display = 'block';
-            btn.textContent = 'Cambiar contraseña';
-            document.getElementById('recRespuesta').setAttribute('readonly', true);
-            document.getElementById('recSuccess').textContent = '✅ Respuesta correcta. Ingresá tu nueva contraseña.';
-            document.getElementById('recSuccess').style.display = 'block';
-        } else if (btn.textContent === 'Cambiar contraseña') {
-            const nuevaPass = document.getElementById('recNuevaPass').value;
-            if (!nuevaPass || nuevaPass.length < 6) {
-                document.getElementById('recError').textContent = 'La nueva contraseña debe tener al menos 6 caracteres.';
-                document.getElementById('recError').style.display = 'block';
-                return;
-            }
-            await actualizarUsuario(data.id, { password: nuevaPass });
-            document.getElementById('recSuccess').textContent = '✅ Contraseña actualizada correctamente. Iniciá sesión.';
-            document.getElementById('recSuccess').style.display = 'block';
-            setTimeout(() => {
-                cerrarModalRecuperacion();
-                mostrarLogin();
-            }, 2000);
-        }
-    } catch (e) {
-        document.getElementById('recError').textContent = '❌ Error: ' + e.message;
-        document.getElementById('recError').style.display = 'block';
     }
 }
 
@@ -933,102 +605,54 @@ function navigateTo(page) {
 }
 
 // ============================================
-// RENDER DASHBOARD
+// RENDERIZADOS (idénticos a antes)
 // ============================================
 function renderDashboard(container) {
     container.innerHTML = `
         <div class="page-header">
-            <h1>¡Bienvenido, ${currentUser.nombre.split(' ')[0]}! 👋</h1>
+            <h1>¡Bienvenido, ${currentUserProfile.nombre.split(' ')[0]}! 👋</h1>
             <p>Panel de control del Campus Virtual AOMA</p>
         </div>
         <div class="stats-grid">
-            <div class="stat-card" onclick="navigateTo('convenios')">
-                <div class="stat-value">8</div>
-                <div class="stat-label">Convenios CCT</div>
-            </div>
-            <div class="stat-card" onclick="navigateTo('beneficios')">
-                <div class="stat-value">1</div>
-                <div class="stat-label">Categorías de Beneficios</div>
-            </div>
-            <div class="stat-card" onclick="navigateTo('cursos')">
-                <div class="stat-value">2</div>
-                <div class="stat-label">Cursos disponibles</div>
-            </div>
-            <div class="stat-card" onclick="navigateTo('legislacion')">
-                <div class="stat-value">5</div>
-                <div class="stat-label">Leyes laborales</div>
-            </div>
+            <div class="stat-card" onclick="navigateTo('convenios')"><div class="stat-value">8</div><div class="stat-label">Convenios CCT</div></div>
+            <div class="stat-card" onclick="navigateTo('beneficios')"><div class="stat-value">1</div><div class="stat-label">Categorías de Beneficios</div></div>
+            <div class="stat-card" onclick="navigateTo('cursos')"><div class="stat-value">2</div><div class="stat-label">Cursos disponibles</div></div>
+            <div class="stat-card" onclick="navigateTo('legislacion')"><div class="stat-value">5</div><div class="stat-label">Leyes laborales</div></div>
         </div>
         <div class="section">
             <h2 class="section-title">Accesos Rápidos</h2>
             <div class="cards-grid">
                 <div class="card" onclick="navigateTo('beneficios')">
                     <div class="card-header" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas fa-gift"></i><span class="card-badge">Nuevo</span></div>
-                    <div class="card-body">
-                        <div class="card-category">Beneficios</div>
-                        <div class="card-title">Beneficios Sociales</div>
-                        <div class="card-description">Reintegros de medicamentos, estadías, becas y más.</div>
-                    </div>
+                    <div class="card-body"><div class="card-category">Beneficios</div><div class="card-title">Beneficios Sociales</div><div class="card-description">Reintegros de medicamentos, estadías, becas y más.</div></div>
                 </div>
                 <div class="card" onclick="navigateTo('convenios')">
                     <div class="card-header" style="background:linear-gradient(135deg,#1a1a1a,#333);"><i class="fas fa-file-contract"></i></div>
-                    <div class="card-body">
-                        <div class="card-category">Convenios</div>
-                        <div class="card-title">Convenios CCT</div>
-                        <div class="card-description">Por actividad y por empresa. Consultá tu convenio.</div>
-                    </div>
+                    <div class="card-body"><div class="card-category">Convenios</div><div class="card-title">Convenios CCT</div><div class="card-description">Por actividad y por empresa. Consultá tu convenio.</div></div>
                 </div>
                 <div class="card" onclick="navigateTo('legislacion')">
                     <div class="card-header" style="background:linear-gradient(135deg,#f47b20,#f69b4c);"><i class="fas fa-balance-scale"></i></div>
-                    <div class="card-body">
-                        <div class="card-category">Legal</div>
-                        <div class="card-title">Legislación Laboral</div>
-                        <div class="card-description">LCT, Ley de Higiene, Asociaciones Sindicales.</div>
-                    </div>
+                    <div class="card-body"><div class="card-category">Legal</div><div class="card-title">Legislación Laboral</div><div class="card-description">LCT, Ley de Higiene, Asociaciones Sindicales.</div></div>
                 </div>
             </div>
         </div>
     `;
 }
 
-// ============================================
-// RENDER BENEFICIOS
-// ============================================
 function renderBeneficios(container) {
     container.innerHTML = `
         <div class="page-header"><h1>Beneficios Sociales 🎁</h1><p>Beneficios para afiliados</p></div>
         <div class="section">
             <h2 class="section-title">Reintegros</h2>
             <div class="cards-grid">
-                <div class="card">
-                    <div class="card-header" style="background:#10b981;"><i class="fas fa-pills"></i></div>
-                    <div class="card-body">
-                        <div class="card-title">Medicamentos 30%</div>
-                        <div class="card-description">Reintegro del 30% con receta médica.</div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header" style="background:#3b82f6;"><i class="fas fa-glasses"></i></div>
-                    <div class="card-body">
-                        <div class="card-title">Anteojos 40%</div>
-                        <div class="card-description">Reintegro del 40% con tope de $100.000.</div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header" style="background:#8b5cf6;"><i class="fas fa-bone"></i></div>
-                    <div class="card-body">
-                        <div class="card-title">Ortopedia 30%</div>
-                        <div class="card-description">Reintegro del 30% con tope de $75.000.</div>
-                    </div>
-                </div>
+                <div class="card"><div class="card-header" style="background:#10b981;"><i class="fas fa-pills"></i></div><div class="card-body"><div class="card-title">Medicamentos 30%</div><div class="card-description">Reintegro del 30% con receta médica.</div></div></div>
+                <div class="card"><div class="card-header" style="background:#3b82f6;"><i class="fas fa-glasses"></i></div><div class="card-body"><div class="card-title">Anteojos 40%</div><div class="card-description">Reintegro del 40% con tope de $100.000.</div></div></div>
+                <div class="card"><div class="card-header" style="background:#8b5cf6;"><i class="fas fa-bone"></i></div><div class="card-body"><div class="card-title">Ortopedia 30%</div><div class="card-description">Reintegro del 30% con tope de $75.000.</div></div></div>
             </div>
         </div>
     `;
 }
 
-// ============================================
-// RENDER CURSOS
-// ============================================
 function renderCursos(container) {
     container.innerHTML = `
         <div class="page-header"><h1>Capacitaciones 🎓</h1></div>
@@ -1036,26 +660,17 @@ function renderCursos(container) {
             <div class="cards-grid">
                 <div class="card" onclick="alert('Negociación Colectiva - 8 módulos')">
                     <div class="card-header" style="background:linear-gradient(135deg,#1a1a1a,#333);"><i class="fas fa-handshake"></i><span class="card-badge">Activo</span></div>
-                    <div class="card-body">
-                        <div class="card-title">Negociación Colectiva</div>
-                        <div class="card-description">8 módulos sobre negociación y derechos laborales.</div>
-                    </div>
+                    <div class="card-body"><div class="card-title">Negociación Colectiva</div><div class="card-description">8 módulos sobre negociación y derechos laborales.</div></div>
                 </div>
                 <div class="card" onclick="alert('Historia del Movimiento Obrero - 6 módulos')">
                     <div class="card-header" style="background:linear-gradient(135deg,#f47b20,#f69b4c);"><i class="fas fa-history"></i><span class="card-badge">Activo</span></div>
-                    <div class="card-body">
-                        <div class="card-title">Historia del Movimiento Obrero</div>
-                        <div class="card-description">6 módulos sobre la historia sindical argentina.</div>
-                    </div>
+                    <div class="card-body"><div class="card-title">Historia del Movimiento Obrero</div><div class="card-description">6 módulos sobre la historia sindical argentina.</div></div>
                 </div>
             </div>
         </div>
     `;
 }
 
-// ============================================
-// RENDER CONVENIOS
-// ============================================
 function renderConvenios(container) {
     container.innerHTML = `
         <div class="page-header"><h1>Convenios Colectivos 📋</h1></div>
@@ -1083,9 +698,6 @@ function renderConvenios(container) {
     `;
 }
 
-// ============================================
-// RENDER LEGISLACIÓN
-// ============================================
 function renderLegislacion(container) {
     container.innerHTML = `
         <div class="page-header"><h1>Legislación Laboral ⚖️</h1></div>
@@ -1116,9 +728,6 @@ function renderLegislacion(container) {
     `;
 }
 
-// ============================================
-// RENDER ORGANIGRAMA
-// ============================================
 function renderOrganigrama(container) {
     container.innerHTML = `
         <div class="page-header"><h1>📋 Estructura Orgánica</h1></div>
@@ -1138,40 +747,27 @@ function renderOrganigrama(container) {
 }
 
 // ============================================
-// RECUPERACIÓN DE SESIÓN
+// INICIALIZACIÓN
 // ============================================
-async function initSession() {
-    const session = localStorage.getItem('aoma_session');
+async function init() {
+    // Verificar sesión activa
+    const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-        try {
-            const user = JSON.parse(session);
-            const { data } = await supabaseClient
-                .from('usuarios')
-                .select('*')
-                .eq('id', user.id)
-                .eq('activo', true)
-                .single();
-            if (data) {
-                currentUser = data;
-                mostrarApp();
-                return;
-            }
-        } catch (e) {
-            console.log('Sesión inválida');
+        const { data: perfil } = await supabase
+            .from('perfiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+        if (perfil && perfil.activo) {
+            currentUser = session.user;
+            currentUserProfile = perfil;
+            mostrarApp();
+            return;
         }
-        localStorage.removeItem('aoma_session');
     }
     mostrarLogin();
-}
 
-// ============================================
-// EVENTOS
-// ============================================
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('loginForm').addEventListener('submit', handleLogin);
-    document.getElementById('formRegistro').addEventListener('submit', handleRegistro);
-    document.getElementById('formRecuperacion').addEventListener('submit', handleRecuperacion);
-    
+    // Chat
     document.getElementById('chatForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const input = document.getElementById('chatInput');
@@ -1186,9 +782,9 @@ document.addEventListener('DOMContentLoaded', () => {
         input.value = '';
         container.scrollTop = container.scrollHeight;
     });
-    
-    initSession();
-});
+}
+
+init();
 
 // ============================================
 // FUNCIONES GLOBALES
@@ -1198,18 +794,14 @@ function cerrarModalRegistro() {
 }
 function mostrarRegistro() {
     document.getElementById('modalRegistro').style.display = 'flex';
+    document.getElementById('regError').style.display = 'none';
+    document.getElementById('regSuccess').style.display = 'none';
 }
 function cerrarModalRecuperacion() {
     document.getElementById('modalRecuperacion').style.display = 'none';
 }
 function mostrarRecuperacion() {
     document.getElementById('modalRecuperacion').style.display = 'flex';
-    document.getElementById('recPreguntaContainer').style.display = 'none';
-    document.getElementById('recNuevaPassContainer').style.display = 'none';
-    document.getElementById('recBtn').textContent = 'Buscar usuario';
-    document.getElementById('recUser').value = '';
-    document.getElementById('recRespuesta').value = '';
-    document.getElementById('recNuevaPass').value = '';
     document.getElementById('recError').style.display = 'none';
     document.getElementById('recSuccess').style.display = 'none';
 }
