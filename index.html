@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
+        /* ===== ESTILOS (igual que antes) ===== */
         :root {
             --primary: #1a1a1a;
             --accent: #f47b20;
@@ -52,7 +53,7 @@
         .user-role { font-size:0.75rem; color:var(--text-muted); }
         .dropdown { position:absolute; top:100%; right:0; background:white; border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); min-width:200px; display:none; z-index:10; }
         .user-menu:hover .dropdown { display:block; }
-        .dropdown a { display:block; padding:0.75rem 1rem; color:var(--text-primary); text-decoration:none; font-size:0.9rem; }
+        .dropdown a { display:block; padding:0.75rem 1rem; color:var(--text-primary); text-decoration:none; font-size:0.9rem; cursor:pointer; }
         .dropdown a:hover { background:var(--bg-body); }
         
         /* MAIN */
@@ -141,6 +142,31 @@
         .btn-eliminar { background:#9ca3af; color:white; border:none; padding:0.25rem 0.75rem; border-radius:6px; cursor:pointer; }
         .btn-eliminar:hover { background:#6b7280; }
         
+        /* PERFIL */
+        .perfil-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .perfil-item {
+            padding: 0.75rem 1rem;
+            background: var(--bg-body);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .perfil-item label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        .perfil-item .valor {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
         /* CHAT */
         .chat-window { position:fixed; bottom:80px; right:20px; width:340px; height:400px; background:white; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.2); display:none; flex-direction:column; overflow:hidden; border:1px solid var(--border); z-index:100; }
         .chat-window.active { display:flex; }
@@ -158,6 +184,7 @@
             .form-row { flex-direction:column; }
             .stats-grid { grid-template-columns:1fr 1fr; }
             .chat-window { width:calc(100vw - 2rem); right:1rem; }
+            .perfil-grid { grid-template-columns:1fr; }
         }
         @media (max-width:480px) {
             .stats-grid { grid-template-columns:1fr; }
@@ -182,6 +209,7 @@
             </div>
             <div class="user-avatar" id="userAvatar">U</div>
             <div class="dropdown">
+                <a href="#" onclick="navigateTo('perfil')">👤 Mi Perfil</a>
                 <a href="#" id="adminPanelLink" style="display:none;" onclick="mostrarPanelUsuarios()">👥 Gestionar Usuarios</a>
                 <a href="#" onclick="logout()">🚪 Cerrar Sesión</a>
             </div>
@@ -205,8 +233,8 @@
         <div id="loginSuccess" class="success-msg"></div>
         <form id="loginForm">
             <div class="form-group">
-                <label><i class="fas fa-user"></i> Usuario o Email</label>
-                <input type="text" id="loginUsername" placeholder="Tu usuario o email" required />
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="loginEmail" placeholder="tu@email.com" required />
             </div>
             <div class="form-group">
                 <label><i class="fas fa-lock"></i> Contraseña</label>
@@ -300,21 +328,10 @@
                     </div>
                 </div>
             </div>
-            <!-- Pregunta de seguridad -->
-            <div class="form-group">
-                <label>Pregunta de seguridad <span class="required">*</span></label>
-                <select id="regPregunta" required>
-                    <option value="">Seleccionar</option>
-                    <option value="¿Cuál es el nombre de tu madre?">¿Cuál es el nombre de tu madre?</option>
-                    <option value="¿Cuál es tu ciudad natal?">¿Cuál es tu ciudad natal?</option>
-                    <option value="¿Cuál es el nombre de tu primera mascota?">¿Cuál es el nombre de tu primera mascota?</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Respuesta <span class="required">*</span></label>
-                <input type="text" id="regRespuesta" placeholder="Tu respuesta" required />
-            </div>
             <button type="submit" class="btn">Registrarme</button>
+            <p style="margin-top:0.75rem;font-size:0.8rem;color:var(--text-muted);text-align:center;">
+                <i class="fas fa-info-circle"></i> Te enviaremos un correo para confirmar tu cuenta.
+            </p>
         </form>
         <p style="margin-top:1rem;text-align:center;font-size:0.875rem;">
             ¿Ya tenés cuenta? <a onclick="cerrarModalRegistro(); mostrarLogin();" style="color:var(--accent);cursor:pointer;font-weight:600;">Iniciá sesión</a>
@@ -331,27 +348,10 @@
         </div>
         <form id="formRecuperacion">
             <div class="form-group">
-                <label>Usuario o Email</label>
-                <input type="text" id="recUser" placeholder="Tu usuario o email" required />
+                <label>Email</label>
+                <input type="email" id="recEmail" placeholder="tu@email.com" required />
             </div>
-            <div id="recPreguntaContainer" style="display:none;">
-                <div class="form-group">
-                    <label id="recPreguntaLabel">Pregunta de seguridad</label>
-                    <input type="text" id="recRespuesta" placeholder="Tu respuesta" required />
-                </div>
-            </div>
-            <div id="recNuevaPassContainer" style="display:none;">
-                <div class="form-group">
-                    <label>Nueva contraseña</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="recNuevaPass" placeholder="Mínimo 6 caracteres" required minlength="6" />
-                        <button type="button" class="password-toggle" onclick="togglePassword('recNuevaPass', this)">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <button type="submit" class="btn" id="recBtn">Buscar usuario</button>
+            <button type="submit" class="btn" id="recBtn">Enviar correo de recuperación</button>
         </form>
     </div>
 </div>
@@ -370,6 +370,58 @@
             <h3>Usuarios activos</h3>
             <div id="listaActivos"><p>Cargando...</p></div>
         </div>
+    </div>
+</div>
+
+<!-- ===== MODAL EDITAR PERFIL ===== -->
+<div class="modal-overlay" id="modalEditarPerfil">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2><i class="fas fa-edit"></i> Editar Perfil</h2>
+            <button class="modal-close" onclick="cerrarEditarPerfil()">&times;</button>
+        </div>
+        <form id="formEditarPerfil">
+            <div class="form-group">
+                <label>Nombre completo</label>
+                <input type="text" id="editNombre" required />
+            </div>
+            <div class="form-group">
+                <label>DNI</label>
+                <input type="number" id="editDni" required />
+            </div>
+            <div class="form-group">
+                <label>Teléfono</label>
+                <input type="tel" id="editTelefono" />
+            </div>
+            <div class="form-group">
+                <label>Empresa</label>
+                <select id="editEmpresa">
+                    <option value="veladero">Mina Veladero</option>
+                    <option value="gualcamayo">Mina Gualcamayo</option>
+                    <option value="vicuna">Mina Vicuña</option>
+                    <option value="otra">Otra</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Actividad</label>
+                <select id="editActividad">
+                    <option value="mineria-extractiva">Minería Extractiva</option>
+                    <option value="cemento">Cemento</option>
+                    <option value="cal-piedra">Cal y Piedra</option>
+                    <option value="molienda">Molienda</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Nueva contraseña (dejar vacío para no cambiar)</label>
+                <div class="password-wrapper">
+                    <input type="password" id="editPassword" placeholder="Mínimo 6 caracteres" minlength="6" />
+                    <button type="button" class="password-toggle" onclick="togglePassword('editPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="btn">Guardar cambios</button>
+        </form>
     </div>
 </div>
 
@@ -425,7 +477,7 @@ function togglePassword(inputId, btn) {
 }
 
 // ============================================
-// FUNCIONES DE USUARIOS (SUPABASE)
+// FUNCIONES DE USUARIOS (SUPABASE TABLA)
 // ============================================
 async function obtenerUsuariosAprobados() {
     const { data, error } = await supabaseClient
@@ -445,20 +497,17 @@ async function obtenerUsuariosPendientes() {
     return data || [];
 }
 
-async function guardarUsuario(usuario) {
-    const { data, error } = await supabaseClient
-        .from('usuarios')
-        .insert([usuario]);
-    if (error) throw error;
-    return data;
-}
-
 async function actualizarUsuario(id, updates) {
+    console.log('🔍 Actualizando usuario con ID:', id, 'Updates:', updates);
     const { data, error } = await supabaseClient
         .from('usuarios')
         .update(updates)
         .eq('id', id);
-    if (error) throw error;
+    if (error) {
+        console.error('❌ Error en actualizarUsuario:', error);
+        throw error;
+    }
+    console.log('✅ Usuario actualizado:', data);
     return data;
 }
 
@@ -471,11 +520,11 @@ async function eliminarUsuarioDB(id) {
 }
 
 // ============================================
-// REGISTRO - PRIMER USUARIO SIEMPRE ADMIN
+// REGISTRO CON SUPABASE AUTH (CONFIRMACIÓN EMAIL)
 // ============================================
 async function handleRegistro(e) {
     e.preventDefault();
-    console.log('📝 Registrando...');
+    console.log('📝 Registrando con Auth...');
 
     const nombre = document.getElementById('regNombre').value.trim();
     const dni = document.getElementById('regDni').value.trim();
@@ -486,39 +535,50 @@ async function handleRegistro(e) {
     const rolElegido = document.getElementById('regRol').value;
     const username = document.getElementById('regUsername').value.trim();
     const password = document.getElementById('regPassword').value;
-    const pregunta = document.getElementById('regPregunta').value;
-    const respuesta = document.getElementById('regRespuesta').value.trim();
 
-    if (!nombre || !dni || !email || !username || !password || !empresa || !actividad || !rolElegido || !pregunta || !respuesta) {
+    if (!nombre || !dni || !email || !username || !password || !empresa || !actividad || !rolElegido) {
         alert('Todos los campos marcados con * son obligatorios.');
         return;
     }
     if (password.length < 6) { alert('La contraseña debe tener al menos 6 caracteres.'); return; }
 
     try {
-        // Verificar si ya existe email o username
-        const { data: existentes } = await supabaseClient
-            .from('usuarios')
-            .select('id')
-            .or(`email.eq.${email},username.eq.${username}`);
-        
-        if (existentes && existentes.length > 0) {
-            alert('❌ Ese email o usuario ya está registrado.');
+        // 1. Registrar en Supabase Auth (envía correo de confirmación)
+        const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    username: username,
+                    nombre: nombre,
+                    dni: dni,
+                    telefono: telefono,
+                    empresa: empresa,
+                    actividad: actividad,
+                    rol: rolElegido
+                }
+            }
+        });
+
+        if (authError) throw authError;
+
+        if (!authData.user) {
+            alert('Error en el registro. Intenta de nuevo.');
             return;
         }
 
-        // Verificar si hay algún usuario aprobado (para saber si es el primero)
+        // 2. Verificar si es el primer usuario (para asignar admin y aprobación automática)
         const { data: aprobados } = await supabaseClient
             .from('usuarios')
             .select('id')
             .eq('aprobado', true);
         
         const esPrimerUsuario = !aprobados || aprobados.length === 0;
-
-        // Si es el primer usuario, forzar rol = 'admin'
         const rolFinal = esPrimerUsuario ? 'admin' : rolElegido;
 
+        // 3. Guardar en la tabla 'usuarios' con el ID del auth
         const nuevoUsuario = {
+            id: authData.user.id,
             username: username,
             email: email,
             password: password,
@@ -528,17 +588,26 @@ async function handleRegistro(e) {
             empresa: empresa,
             actividad: actividad,
             rol: rolFinal,
-            aprobado: esPrimerUsuario, // el primero se aprueba automáticamente
-            pregunta_seguridad: pregunta,
-            respuesta_seguridad: respuesta
+            aprobado: esPrimerUsuario,
+            pregunta_seguridad: '¿Cuál es tu color favorito?',
+            respuesta_seguridad: 'azul'
         };
 
-        await guardarUsuario(nuevoUsuario);
-        
+        console.log('📦 Insertando usuario en tabla:', nuevoUsuario);
+        const { error: insertError } = await supabaseClient
+            .from('usuarios')
+            .insert([nuevoUsuario]);
+
+        if (insertError) {
+            // Si falla la inserción, eliminamos el usuario de auth para no dejar datos huérfanos
+            await supabaseClient.auth.admin.deleteUser(authData.user.id);
+            throw insertError;
+        }
+
         if (esPrimerUsuario) {
-            alert('✅ Registro completado como administrador. Ahora podés iniciar sesión.');
+            alert('✅ Registro completado. Revisá tu correo para confirmar tu cuenta. Serás el administrador.');
         } else {
-            alert('📩 Registro enviado. Esperá la aprobación del administrador.');
+            alert('📩 Te hemos enviado un correo de confirmación. Revisá tu bandeja de entrada.');
         }
         
         cerrarModalRegistro();
@@ -546,49 +615,87 @@ async function handleRegistro(e) {
         mostrarLogin();
         
     } catch (error) {
-        console.error('Error en registro:', error);
+        console.error('❌ Error en registro:', error);
         alert('❌ Error al registrar: ' + error.message);
     }
 }
 
 // ============================================
-// LOGIN
+// LOGIN CON SUPABASE AUTH
 // ============================================
 async function handleLogin(e) {
     e.preventDefault();
-    const identifier = document.getElementById('loginUsername').value.trim();
+    const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
 
     try {
-        const { data, error } = await supabaseClient
-            .from('usuarios')
-            .select('*')
-            .or(`username.eq.${identifier},email.eq.${identifier}`)
-            .eq('password', password)
-            .eq('aprobado', true);
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
 
         if (error) throw error;
 
-        if (data && data.length > 0) {
-            currentUser = data[0];
+        if (data.user) {
+            // Verificar si el usuario está aprobado en la tabla
+            const { data: userData, error: userError } = await supabaseClient
+                .from('usuarios')
+                .select('*')
+                .eq('id', data.user.id)
+                .single();
+
+            if (userError || !userData) {
+                await supabaseClient.auth.signOut();
+                alert('❌ Tu cuenta no está registrada correctamente. Contactá al administrador.');
+                return;
+            }
+
+            if (!userData.aprobado) {
+                await supabaseClient.auth.signOut();
+                document.getElementById('loginError').textContent = '❌ Tu cuenta está pendiente de aprobación. Esperá la confirmación del administrador.';
+                document.getElementById('loginError').style.display = 'block';
+                return;
+            }
+
+            currentUser = userData;
             localStorage.setItem('aoma_session', JSON.stringify(currentUser));
             mostrarApp();
-        } else {
-            document.getElementById('loginError').textContent = '❌ Usuario o contraseña incorrectos, o tu cuenta no ha sido aprobada aún.';
-            document.getElementById('loginError').style.display = 'block';
         }
     } catch (error) {
         console.error('Error en login:', error);
-        document.getElementById('loginError').textContent = '❌ Error de conexión: ' + error.message;
+        document.getElementById('loginError').textContent = '❌ ' + (error.message || 'Error de conexión. Revisá tus credenciales.');
         document.getElementById('loginError').style.display = 'block';
     }
 }
 
 // ============================================
-// LOGOUT
+// RECUPERACIÓN DE CONTRASEÑA (Supabase Auth)
 // ============================================
-function logout() {
+async function handleRecuperacion(e) {
+    e.preventDefault();
+    const email = document.getElementById('recEmail').value.trim();
+
+    if (!email) { alert('Ingresá tu email.'); return; }
+
+    try {
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/reset-password.html'
+        });
+
+        if (error) throw error;
+        alert('📧 Te hemos enviado un correo para restablecer tu contraseña.');
+        cerrarModalRecuperacion();
+    } catch (error) {
+        alert('❌ Error: ' + error.message);
+    }
+}
+
+// ============================================
+// LOGOUT (cierra sesión de Auth y tabla)
+// ============================================
+async function logout() {
     if (confirm('¿Cerrar sesión?')) {
+        await supabaseClient.auth.signOut();
         localStorage.removeItem('aoma_session');
         currentUser = null;
         mostrarLogin();
@@ -621,7 +728,6 @@ function mostrarApp() {
     document.getElementById('userRole').textContent = roleText;
     document.getElementById('userAvatar').textContent = currentUser.nombre.split(' ').map(n => n[0]).join('').toUpperCase();
     
-    // Mostrar enlace de administración SOLO si rol es admin
     const adminLink = document.getElementById('adminPanelLink');
     if (adminLink) {
         adminLink.style.display = (currentUser.rol === 'admin' || currentUser.rol === 'administrador') ? 'block' : 'none';
@@ -664,8 +770,8 @@ async function actualizarListasUsuarios() {
                             <span style="font-size:0.8rem;color:var(--text-muted);">DNI: ${u.dni || 'N/A'} - ${u.empresa || ''}</span>
                         </div>
                         <div class="acciones">
-                            <button class="btn-aprobar" onclick="aprobarUsuario(${u.id})"><i class="fas fa-check"></i> Aprobar</button>
-                            <button class="btn-rechazar" onclick="rechazarUsuario(${u.id})"><i class="fas fa-times"></i> Rechazar</button>
+                            <button class="btn-aprobar" onclick="aprobarUsuario('${u.id}')"><i class="fas fa-check"></i> Aprobar</button>
+                            <button class="btn-rechazar" onclick="rechazarUsuario('${u.id}')"><i class="fas fa-times"></i> Rechazar</button>
                         </div>
                     </div>
                 `).join('');
@@ -685,7 +791,7 @@ async function actualizarListasUsuarios() {
                             <span style="font-size:0.8rem;color:var(--text-muted);">${u.empresa || ''}</span>
                         </div>
                         <div class="acciones">
-                            <button class="btn-eliminar" onclick="eliminarUsuarioDB(${u.id})"><i class="fas fa-trash"></i> Eliminar</button>
+                            <button class="btn-eliminar" onclick="eliminarUsuarioDB('${u.id}')"><i class="fas fa-trash"></i> Eliminar</button>
                         </div>
                     </div>
                 `).join('');
@@ -697,12 +803,18 @@ async function actualizarListasUsuarios() {
 }
 
 async function aprobarUsuario(id) {
+    console.log('📌 Aprobar usuario con ID:', id);
+    if (!id) {
+        alert('ID de usuario inválido.');
+        return;
+    }
     try {
         await actualizarUsuario(id, { aprobado: true, rol: 'delegado' });
         await actualizarListasUsuarios();
         alert('✅ Usuario aprobado como delegado.');
     } catch (e) {
-        alert('❌ Error: ' + e.message);
+        console.error('❌ Error en aprobarUsuario:', e);
+        alert('❌ Error al aprobar: ' + e.message);
     }
 }
 
@@ -718,62 +830,111 @@ async function rechazarUsuario(id) {
 }
 
 // ============================================
-// RECUPERACIÓN DE CONTRASEÑA
+// PERFIL Y EDICIÓN
 // ============================================
-async function handleRecuperacion(e) {
-    e.preventDefault();
-    const identifier = document.getElementById('recUser').value.trim();
-    const btn = document.getElementById('recBtn');
+function renderPerfil(container) {
+    if (!currentUser) return;
+    container.innerHTML = `
+        <div class="page-header">
+            <h1>👤 Mi Perfil</h1>
+            <p>Datos personales y de afiliación</p>
+        </div>
+        <div class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+                <h2 class="section-title" style="border:none;padding:0;margin:0;">Información personal</h2>
+                <button class="btn btn-secondary" onclick="mostrarEditarPerfil()" style="width:auto;padding:0.5rem 1.5rem;">
+                    <i class="fas fa-edit"></i> Editar perfil
+                </button>
+            </div>
+            <div class="perfil-grid">
+                <div class="perfil-item"><label>Usuario</label><div class="valor">${currentUser.username || '-'}</div></div>
+                <div class="perfil-item"><label>Email</label><div class="valor">${currentUser.email || '-'}</div></div>
+                <div class="perfil-item"><label>Nombre completo</label><div class="valor">${currentUser.nombre || '-'}</div></div>
+                <div class="perfil-item"><label>DNI</label><div class="valor">${currentUser.dni || '-'}</div></div>
+                <div class="perfil-item"><label>Teléfono</label><div class="valor">${currentUser.telefono || '-'}</div></div>
+                <div class="perfil-item"><label>Rol</label><div class="valor">${currentUser.rol || '-'}</div></div>
+                <div class="perfil-item"><label>Empresa</label><div class="valor">${currentUser.empresa || '-'}</div></div>
+                <div class="perfil-item"><label>Actividad</label><div class="valor">${currentUser.actividad || '-'}</div></div>
+                <div class="perfil-item"><label>Aprobado</label><div class="valor">${currentUser.aprobado ? '✅ Sí' : '❌ No'}</div></div>
+                <div class="perfil-item"><label>Fecha de registro</label><div class="valor">${currentUser.created_at ? new Date(currentUser.created_at).toLocaleDateString('es-AR') : '-'}</div></div>
+            </div>
+        </div>
+    `;
+}
+
+function mostrarEditarPerfil() {
+    const modal = document.getElementById('modalEditarPerfil');
+    if (!modal) return;
     
-    if (!identifier) { alert('Ingresá tu usuario o email.'); return; }
+    // Cargar datos actuales
+    document.getElementById('editNombre').value = currentUser.nombre || '';
+    document.getElementById('editDni').value = currentUser.dni || '';
+    document.getElementById('editTelefono').value = currentUser.telefono || '';
+    document.getElementById('editEmpresa').value = currentUser.empresa || 'veladero';
+    document.getElementById('editActividad').value = currentUser.actividad || 'mineria-extractiva';
+    document.getElementById('editPassword').value = '';
+    
+    modal.style.display = 'flex';
+}
+
+function cerrarEditarPerfil() {
+    document.getElementById('modalEditarPerfil').style.display = 'none';
+}
+
+async function handleEditarPerfil(e) {
+    e.preventDefault();
+    
+    const nombre = document.getElementById('editNombre').value.trim();
+    const dni = document.getElementById('editDni').value.trim();
+    const telefono = document.getElementById('editTelefono').value.trim();
+    const empresa = document.getElementById('editEmpresa').value;
+    const actividad = document.getElementById('editActividad').value;
+    const nuevaPassword = document.getElementById('editPassword').value.trim();
+
+    if (!nombre || !dni) {
+        alert('El nombre y DNI son obligatorios.');
+        return;
+    }
 
     try {
-        const { data } = await supabaseClient
-            .from('usuarios')
-            .select('*')
-            .or(`username.eq.${identifier},email.eq.${identifier}`)
-            .single();
-
-        if (!data) {
-            alert('No se encontró ningún usuario con esos datos.');
+        const updates = { nombre, dni, telefono, empresa, actividad };
+        
+        // Si se ingresó nueva contraseña, actualizar en Auth
+        if (nuevaPassword.length >= 6) {
+            const { error: authError } = await supabaseClient.auth.updateUser({
+                password: nuevaPassword
+            });
+            if (authError) throw authError;
+            updates.password = nuevaPassword;
+        } else if (nuevaPassword.length > 0 && nuevaPassword.length < 6) {
+            alert('La contraseña debe tener al menos 6 caracteres.');
             return;
         }
 
-        const preguntaContainer = document.getElementById('recPreguntaContainer');
-        const nuevaPassContainer = document.getElementById('recNuevaPassContainer');
-
-        if (btn.textContent === 'Buscar usuario') {
-            document.getElementById('recPreguntaLabel').textContent = data.pregunta_seguridad;
-            preguntaContainer.style.display = 'block';
-            btn.textContent = 'Verificar respuesta';
-            btn.dataset.userId = data.id;
-        } else if (btn.textContent === 'Verificar respuesta') {
-            const respuesta = document.getElementById('recRespuesta').value.trim();
-            if (respuesta.toLowerCase() !== data.respuesta_seguridad.toLowerCase()) {
-                alert('Respuesta incorrecta.');
-                return;
-            }
-            nuevaPassContainer.style.display = 'block';
-            btn.textContent = 'Cambiar contraseña';
-            document.getElementById('recRespuesta').setAttribute('readonly', true);
-        } else if (btn.textContent === 'Cambiar contraseña') {
-            const nuevaPass = document.getElementById('recNuevaPass').value;
-            if (!nuevaPass || nuevaPass.length < 6) {
-                alert('La nueva contraseña debe tener al menos 6 caracteres.');
-                return;
-            }
-            await actualizarUsuario(data.id, { password: nuevaPass });
-            alert('✅ Contraseña actualizada. Iniciá sesión.');
-            cerrarModalRecuperacion();
-            mostrarLogin();
-        }
-    } catch (e) {
-        alert('❌ Error: ' + e.message);
+        // Actualizar en la tabla usuarios
+        await actualizarUsuario(currentUser.id, updates);
+        
+        // Actualizar el objeto currentUser
+        currentUser = { ...currentUser, ...updates };
+        localStorage.setItem('aoma_session', JSON.stringify(currentUser));
+        
+        // Actualizar la vista del perfil
+        const container = document.getElementById('pageContent');
+        renderPerfil(container);
+        
+        // Actualizar nombre en el header
+        document.getElementById('userName').textContent = currentUser.nombre;
+        
+        alert('✅ Perfil actualizado correctamente.');
+        cerrarEditarPerfil();
+    } catch (error) {
+        console.error('Error al editar perfil:', error);
+        alert('❌ Error al actualizar: ' + error.message);
     }
 }
 
 // ============================================
-// NAVEGACIÓN Y RENDERIZADOS (igual que antes)
+// NAVEGACIÓN
 // ============================================
 function navigateTo(page) {
     currentPage = page;
@@ -782,6 +943,8 @@ function navigateTo(page) {
     
     if (page === 'inicio') {
         renderDashboard(content);
+    } else if (page === 'perfil') {
+        renderPerfil(content);
     } else if (page === 'beneficios') {
         renderBeneficios(content);
     } else if (page === 'cursos') {
@@ -797,6 +960,9 @@ function navigateTo(page) {
     }
 }
 
+// ============================================
+// RENDERIZADOS (dashboard, beneficios, cursos, etc.)
+// ============================================
 function renderDashboard(container) {
     container.innerHTML = `
         <div class="page-header">
@@ -992,27 +1158,38 @@ async function initSession() {
     if (session) {
         try {
             const user = JSON.parse(session);
-            const { data } = await supabaseClient
+            // Verificar si la sesión de auth sigue activa
+            const { data: { session: activeSession } } = await supabaseClient.auth.getSession();
+            if (!activeSession) {
+                localStorage.removeItem('aoma_session');
+                mostrarLogin();
+                return;
+            }
+            const { data: userData, error } = await supabaseClient
                 .from('usuarios')
                 .select('*')
                 .eq('id', user.id)
                 .eq('aprobado', true)
                 .single();
-            if (data) {
-                currentUser = data;
-                mostrarApp();
+            if (error || !userData) {
+                localStorage.removeItem('aoma_session');
+                mostrarLogin();
                 return;
             }
+            currentUser = userData;
+            mostrarApp();
         } catch (e) {
             console.log('Sesión inválida');
+            localStorage.removeItem('aoma_session');
+            mostrarLogin();
         }
-        localStorage.removeItem('aoma_session');
+    } else {
+        mostrarLogin();
     }
-    mostrarLogin();
 }
 
 // ============================================
-// EVENTOS - SEGUROS (verificar existencia)
+// EVENTOS - SEGUROS
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
@@ -1026,6 +1203,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const formRecuperacion = document.getElementById('formRecuperacion');
     if (formRecuperacion) formRecuperacion.addEventListener('submit', handleRecuperacion);
     else console.warn('⚠️ formRecuperacion no encontrado');
+
+    const formEditarPerfil = document.getElementById('formEditarPerfil');
+    if (formEditarPerfil) formEditarPerfil.addEventListener('submit', handleEditarPerfil);
+    else console.warn('⚠️ formEditarPerfil no encontrado');
 
     const chatForm = document.getElementById('chatForm');
     if (chatForm) {
@@ -1046,6 +1227,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     } else console.warn('⚠️ chatForm no encontrado');
 
+    // Verificar si hay parámetros de recuperación (para cambio de contraseña)
+    const hash = window.location.hash;
+    if (hash.includes('access_token') || hash.includes('type=recovery')) {
+        setTimeout(() => {
+            alert('🔑 Estás en el flujo de recuperación de contraseña. Seguí las instrucciones del correo.');
+        }, 1000);
+    }
+
     initSession();
 });
 
@@ -1063,12 +1252,7 @@ function cerrarModalRecuperacion() {
 }
 function mostrarRecuperacion() {
     document.getElementById('modalRecuperacion').style.display = 'flex';
-    document.getElementById('recPreguntaContainer').style.display = 'none';
-    document.getElementById('recNuevaPassContainer').style.display = 'none';
-    document.getElementById('recBtn').textContent = 'Buscar usuario';
-    document.getElementById('recUser').value = '';
-    document.getElementById('recRespuesta').value = '';
-    document.getElementById('recNuevaPass').value = '';
+    document.getElementById('recEmail').value = '';
 }
 function toggleTheme() {
     document.body.style.background = document.body.style.background === '#0f172a' ? '#f4f7fc' : '#0f172a';
