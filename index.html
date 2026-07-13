@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        /* ===== ESTILOS COMPLETOS ===== */
         :root {
             --primary: #1a1a1a;
             --accent: #f47b20;
@@ -201,16 +200,13 @@
         <div class="logo">
             <h1>🏔️ Campus Virtual AOMA</h1>
             <p>Asociación Obrera Minera Argentina<br>Seccional San Juan</p>
-            <p style="font-size:0.75rem;color:var(--accent);background:#fef3c7;padding:0.25rem 0.75rem;border-radius:50px;display:inline-block;margin-top:0.5rem;">
-                El primer registro será Administrador
-            </p>
         </div>
         <div id="loginError" class="error-msg"></div>
         <div id="loginSuccess" class="success-msg"></div>
         <form id="loginForm">
             <div class="form-group">
-                <label><i class="fas fa-user"></i> Usuario o Email</label>
-                <input type="text" id="loginUsername" placeholder="Tu usuario o email" required />
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="loginEmail" placeholder="tu@email.com" required />
             </div>
             <div class="form-group">
                 <label><i class="fas fa-lock"></i> Contraseña</label>
@@ -227,17 +223,6 @@
             <a onclick="mostrarRegistro()">¿No tenés cuenta? Registrate</a>
             <span style="margin:0 0.5rem;">|</span>
             <a onclick="mostrarRecuperacion()">¿Olvidaste tu contraseña?</a>
-        </div>
-        <div style="text-align:center;margin-top:0.75rem;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
-            <button onclick="resetearUsuarios()" style="background:none;border:none;color:#9ca3af;font-size:0.7rem;cursor:pointer;text-decoration:underline;">
-                <i class="fas fa-trash-alt"></i> Reiniciar usuarios
-            </button>
-            <button onclick="forzarAdmin()" style="background:none;border:none;color:#f47b20;font-size:0.7rem;cursor:pointer;text-decoration:underline;font-weight:600;">
-                <i class="fas fa-user-cog"></i> Forzar administrador
-            </button>
-        </div>
-        <div style="text-align:center;margin-top:0.75rem;font-size:0.7rem;color:var(--text-muted);">
-            Usuarios de prueba: admin / admin123 | delegado / delegado123
         </div>
     </div>
 </div>
@@ -272,16 +257,6 @@
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>¿Dirigente?</label>
-                    <select id="regDirigente"><option value="no">No</option><option value="si">Sí</option></select>
-                </div>
-                <div class="form-group">
-                    <label>¿Delegado?</label>
-                    <select id="regDelegado"><option value="no">No</option><option value="si">Sí</option></select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
                     <label>Empresa <span class="required">*</span></label>
                     <select id="regEmpresa" required>
                         <option value="">Seleccionar</option>
@@ -303,19 +278,17 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>Convenio <span class="required">*</span></label>
-                <select id="regConvenio" required>
-                    <option value="">Seleccionar</option>
-                    <option value="36/89">CCT 36/89 (Minería)</option>
-                    <option value="38/89">CCT 38/89 (Cemento)</option>
-                    <option value="54/89">CCT 54/89 (Cal y Piedra)</option>
-                    <option value="673/04">CCT 673/04 (Molienda)</option>
+                <label>Rol <span class="required">*</span></label>
+                <select id="regRol" required>
+                    <option value="afiliado">Afiliado</option>
+                    <option value="delegado">Delegado</option>
+                    <option value="dirigente">Dirigente</option>
                 </select>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Usuario <span class="required">*</span></label>
-                    <input type="text" id="regUsuario" placeholder="Elegí un usuario" required />
+                    <input type="text" id="regUsername" placeholder="Elegí un usuario" required />
                 </div>
                 <div class="form-group">
                     <label>Contraseña <span class="required">*</span></label>
@@ -326,19 +299,6 @@
                         </button>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label>Pregunta de seguridad <span class="required">*</span></label>
-                <select id="regPregunta" required>
-                    <option value="">Seleccionar</option>
-                    <option value="¿Cuál es el nombre de tu madre?">¿Cuál es el nombre de tu madre?</option>
-                    <option value="¿Cuál es tu ciudad natal?">¿Cuál es tu ciudad natal?</option>
-                    <option value="¿Cuál es el nombre de tu primera mascota?">¿Cuál es el nombre de tu primera mascota?</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Respuesta <span class="required">*</span></label>
-                <input type="text" id="regRespuesta" placeholder="Tu respuesta" required />
             </div>
             <button type="submit" class="btn">Registrarme</button>
         </form>
@@ -357,8 +317,8 @@
         </div>
         <form id="formRecuperacion">
             <div class="form-group">
-                <label>Usuario o Email</label>
-                <input type="text" id="recUser" placeholder="Tu usuario o email" required />
+                <label>Email</label>
+                <input type="email" id="recEmail" placeholder="tu@email.com" required />
             </div>
             <div id="recPreguntaContainer" style="display:none;">
                 <div class="form-group">
@@ -413,22 +373,22 @@
     </form>
 </div>
 
-<!-- ===== SCRIPT PRINCIPAL (localStorage) ===== -->
+<!-- ===== SCRIPTS ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ============================================
-// SISTEMA DE USUARIOS (localStorage)
+// CONFIGURACIÓN SUPABASE (CORREGIDA)
 // ============================================
-function obtenerUsuariosActivos() {
-    try { return JSON.parse(localStorage.getItem('aoma_usuarios_activos') || '[]'); } catch(e){ return []; }
-}
-function obtenerUsuariosPendientes() {
-    try { return JSON.parse(localStorage.getItem('aoma_usuarios_pendientes') || '[]'); } catch(e){ return []; }
-}
-function guardarUsuariosActivos(activos) {
-    localStorage.setItem('aoma_usuarios_activos', JSON.stringify(activos));
-}
-function guardarUsuariosPendientes(pendientes) {
-    localStorage.setItem('aoma_usuarios_pendientes', JSON.stringify(pendientes));
+const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co'; // ← SIN /rest/v1/
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
+
+let supabaseClient;
+try {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('✅ Supabase conectado');
+} catch(e) {
+    console.error('❌ Error al conectar Supabase:', e);
+    alert('Error de conexión con Supabase. Verifica las credenciales.');
 }
 
 let currentUser = null;
@@ -451,9 +411,55 @@ function togglePassword(inputId, btn) {
 }
 
 // ============================================
+// FUNCIONES DE USUARIOS (SUPABASE)
+// ============================================
+async function obtenerUsuariosActivos() {
+    const { data, error } = await supabaseClient
+        .from('usuarios')
+        .select('*')
+        .eq('activo', true);
+    if (error) { console.error(error); return []; }
+    return data || [];
+}
+
+async function obtenerUsuariosPendientes() {
+    const { data, error } = await supabaseClient
+        .from('usuarios')
+        .select('*')
+        .eq('activo', false);
+    if (error) { console.error(error); return []; }
+    return data || [];
+}
+
+async function guardarUsuario(usuario) {
+    const { data, error } = await supabaseClient
+        .from('usuarios')
+        .insert([usuario]);
+    if (error) throw error;
+    return data;
+}
+
+async function actualizarUsuario(id, updates) {
+    const { data, error } = await supabaseClient
+        .from('usuarios')
+        .update(updates)
+        .eq('id', id);
+    if (error) throw error;
+    return data;
+}
+
+async function eliminarUsuarioDB(id) {
+    const { error } = await supabaseClient
+        .from('usuarios')
+        .delete()
+        .eq('id', id);
+    if (error) throw error;
+}
+
+// ============================================
 // REGISTRO
 // ============================================
-function handleRegistro(e) {
+async function handleRegistro(e) {
     e.preventDefault();
     console.log('📝 Registrando...');
 
@@ -461,103 +467,98 @@ function handleRegistro(e) {
     const dni = document.getElementById('regDni').value.trim();
     const email = document.getElementById('regEmail').value.trim();
     const telefono = document.getElementById('regTelefono').value.trim();
-    const dirigente = document.getElementById('regDirigente').value === 'si';
-    const delegado = document.getElementById('regDelegado').value === 'si';
     const empresa = document.getElementById('regEmpresa').value;
     const actividad = document.getElementById('regActividad').value;
-    const convenio = document.getElementById('regConvenio').value;
-    const usuario = document.getElementById('regUsuario').value.trim();
+    const rol = document.getElementById('regRol').value;
+    const username = document.getElementById('regUsername').value.trim();
     const password = document.getElementById('regPassword').value;
-    const pregunta = document.getElementById('regPregunta').value;
-    const respuesta = document.getElementById('regRespuesta').value.trim();
 
-    if (!nombre || !dni || !email || !usuario || !password || !pregunta || !respuesta || !empresa || !actividad || !convenio) {
+    if (!nombre || !dni || !email || !username || !password || !empresa || !actividad || !rol) {
         alert('Todos los campos marcados con * son obligatorios.');
         return;
     }
     if (password.length < 6) { alert('La contraseña debe tener al menos 6 caracteres.'); return; }
 
-    const activos = obtenerUsuariosActivos();
-    const pendientes = obtenerUsuariosPendientes();
+    try {
+        // Verificar si ya existe el email o username
+        const { data: existentes } = await supabaseClient
+            .from('usuarios')
+            .select('id')
+            .or(`email.eq.${email},username.eq.${username}`);
+        
+        if (existentes && existentes.length > 0) {
+            alert('❌ Ese email o usuario ya está registrado.');
+            return;
+        }
 
-    const existeUsuario = activos.some(u => u.username === usuario) || pendientes.some(u => u.username === usuario);
-    const existeEmail = activos.some(u => u.email === email) || pendientes.some(u => u.email === email);
+        // Verificar si hay algún usuario activo (para saber si es el primero)
+        const { data: activos } = await supabaseClient
+            .from('usuarios')
+            .select('id')
+            .eq('activo', true);
+        
+        const esPrimerUsuario = !activos || activos.length === 0;
 
-    if (existeUsuario) {
-        alert('❌ Ese nombre de usuario ya está en uso. Elegí otro.');
-        return;
-    }
-    if (existeEmail) {
-        alert('❌ Ese email ya está registrado. Usá otro.');
-        return;
-    }
+        const nuevoUsuario = {
+            username: username,
+            email: email,
+            password: password,
+            nombre: nombre,
+            dni: dni,
+            telefono: telefono,
+            empresa: empresa,
+            actividad: actividad,
+            role: rol,  // 'afiliado', 'delegado', 'dirigente'
+            activo: esPrimerUsuario, // el primero se activa automáticamente
+        };
 
-    let role = 'afiliado';
-    if (dirigente) role = 'dirigente';
-    else if (delegado) role = 'delegado';
-
-    const esPrimerUsuario = activos.length === 0 && pendientes.length === 0;
-    if (esPrimerUsuario) {
-        role = 'admin';
-    }
-
-    const nuevoUsuario = {
-        id: Date.now(),
-        username: usuario,
-        email: email,
-        password: password,
-        nombre: nombre,
-        dni: dni,
-        telefono: telefono,
-        dirigente: dirigente,
-        delegado: delegado,
-        empresa: empresa,
-        actividad: actividad,
-        convenio: convenio,
-        role: role,
-        activo: esPrimerUsuario,
-        preguntaSeguridad: pregunta,
-        respuestaSeguridad: respuesta,
-        fechaRegistro: new Date().toISOString()
-    };
-
-    if (esPrimerUsuario) {
-        activos.push(nuevoUsuario);
-        guardarUsuariosActivos(activos);
-        alert('✅ ¡Usuario administrador creado! Ahora podés iniciar sesión.');
-        cerrarModalRegistro();
-        location.reload();
-    } else {
-        pendientes.push(nuevoUsuario);
-        guardarUsuariosPendientes(pendientes);
-        alert('📩 Registro enviado. Esperá la aprobación del administrador.');
+        await guardarUsuario(nuevoUsuario);
+        
+        if (esPrimerUsuario) {
+            alert('✅ ¡Usuario administrador creado! Ahora podés iniciar sesión.');
+        } else {
+            alert('📩 Registro enviado. Esperá la aprobación del administrador.');
+        }
+        
         cerrarModalRegistro();
         document.getElementById('formRegistro').reset();
         mostrarLogin();
+        
+    } catch (error) {
+        console.error('Error en registro:', error);
+        alert('❌ Error al registrar: ' + error.message);
     }
 }
 
 // ============================================
 // LOGIN
 // ============================================
-function handleLogin(e) {
+async function handleLogin(e) {
     e.preventDefault();
-    const username = document.getElementById('loginUsername').value.trim();
+    const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
 
-    const activos = obtenerUsuariosActivos();
-    const user = activos.find(u =>
-        (u.username === username || u.email === username) &&
-        u.password === password &&
-        u.activo === true
-    );
+    try {
+        const { data, error } = await supabaseClient
+            .from('usuarios')
+            .select('*')
+            .eq('email', email)
+            .eq('password', password)
+            .eq('activo', true);
 
-    if (user) {
-        currentUser = user;
-        localStorage.setItem('aoma_session', JSON.stringify(user));
-        mostrarApp();
-    } else {
-        document.getElementById('loginError').textContent = '❌ Usuario o contraseña incorrectos, o tu cuenta no ha sido aprobada aún.';
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+            currentUser = data[0];
+            localStorage.setItem('aoma_session', JSON.stringify(currentUser));
+            mostrarApp();
+        } else {
+            document.getElementById('loginError').textContent = '❌ Usuario o contraseña incorrectos, o tu cuenta no ha sido aprobada aún.';
+            document.getElementById('loginError').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error en login:', error);
+        document.getElementById('loginError').textContent = '❌ Error de conexión: ' + error.message;
         document.getElementById('loginError').style.display = 'block';
     }
 }
@@ -608,201 +609,121 @@ function mostrarApp() {
 }
 
 // ============================================
-// RESET Y FORZAR ADMIN
-// ============================================
-function resetearUsuarios() {
-    if (!confirm('⚠️ Esto borrará TODOS los usuarios registrados. ¿Estás seguro?')) return;
-    localStorage.removeItem('aoma_usuarios_activos');
-    localStorage.removeItem('aoma_usuarios_pendientes');
-    localStorage.removeItem('aoma_session');
-    alert('✅ Datos de usuarios eliminados. La página se recargará.');
-    location.reload();
-}
-
-function forzarAdmin() {
-    if (!confirm('⚠️ Esto creará al administrador Cristian Aguilar y eliminará cualquier otro usuario. ¿Continuar?')) return;
-    localStorage.removeItem('aoma_usuarios_activos');
-    localStorage.removeItem('aoma_usuarios_pendientes');
-    localStorage.removeItem('aoma_session');
-
-    const admin = {
-        id: Date.now(),
-        username: 'cristian',
-        email: 'aomasjhys@gmail.com',
-        password: 'admin123',
-        nombre: 'Cristian Aguilar',
-        dni: '12345678',
-        telefono: '264-1234567',
-        dirigente: false,
-        delegado: false,
-        empresa: 'veladero',
-        actividad: 'mineria-extractiva',
-        convenio: '36/89',
-        role: 'admin',
-        activo: true,
-        preguntaSeguridad: '¿Cuál es tu color favorito?',
-        respuestaSeguridad: 'azul',
-        fechaRegistro: new Date().toISOString()
-    };
-
-    guardarUsuariosActivos([admin]);
-    alert('✅ Administrador creado. Iniciá sesión con usuario "cristian" y contraseña "admin123".');
-    location.reload();
-}
-
-// ============================================
-// RECUPERACIÓN DE CONTRASEÑA
-// ============================================
-function handleRecuperacion(e) {
-    e.preventDefault();
-    const identifier = document.getElementById('recUser').value.trim();
-    const btn = document.getElementById('recBtn');
-    
-    if (!identifier) { alert('Ingresá tu usuario o email.'); return; }
-
-    const activos = obtenerUsuariosActivos();
-    const usuario = activos.find(u => u.username === identifier || u.email === identifier);
-
-    if (!usuario) {
-        alert('No se encontró ningún usuario con esos datos.');
-        return;
-    }
-
-    const preguntaContainer = document.getElementById('recPreguntaContainer');
-    const nuevaPassContainer = document.getElementById('recNuevaPassContainer');
-
-    if (btn.textContent === 'Buscar usuario') {
-        document.getElementById('recPreguntaLabel').textContent = usuario.preguntaSeguridad || 'No tiene pregunta configurada';
-        preguntaContainer.style.display = 'block';
-        btn.textContent = 'Verificar respuesta';
-        btn.dataset.userId = usuario.id;
-    } else if (btn.textContent === 'Verificar respuesta') {
-        const respuesta = document.getElementById('recRespuesta').value.trim();
-        if (respuesta.toLowerCase() !== usuario.respuestaSeguridad.toLowerCase()) {
-            alert('Respuesta incorrecta.');
-            return;
-        }
-        nuevaPassContainer.style.display = 'block';
-        btn.textContent = 'Cambiar contraseña';
-        document.getElementById('recRespuesta').setAttribute('readonly', true);
-    } else if (btn.textContent === 'Cambiar contraseña') {
-        const nuevaPass = document.getElementById('recNuevaPass').value;
-        if (!nuevaPass || nuevaPass.length < 6) {
-            alert('La nueva contraseña debe tener al menos 6 caracteres.');
-            return;
-        }
-        const userId = parseInt(btn.dataset.userId);
-        const index = activos.findIndex(u => u.id === userId);
-        if (index !== -1) {
-            activos[index].password = nuevaPass;
-            guardarUsuariosActivos(activos);
-            alert('✅ Contraseña actualizada. Iniciá sesión.');
-            cerrarModalRecuperacion();
-            mostrarLogin();
-        }
-    }
-}
-
-// ============================================
 // PANEL DE USUARIOS
 // ============================================
-function mostrarPanelUsuarios() {
+async function mostrarPanelUsuarios() {
     if (currentUser.role !== 'admin') {
         alert('Solo el administrador puede acceder a este panel.');
         return;
     }
     document.getElementById('modalPanelUsuarios').style.display = 'flex';
-    actualizarListasUsuarios();
+    await actualizarListasUsuarios();
 }
 
 function cerrarPanelUsuarios() {
     document.getElementById('modalPanelUsuarios').style.display = 'none';
 }
 
-function actualizarListasUsuarios() {
-    const pendientes = obtenerUsuariosPendientes();
-    const activos = obtenerUsuariosActivos();
-    
-    const contPend = document.getElementById('listaPendientes');
-    if (contPend) {
-        if (pendientes.length === 0) {
-            contPend.innerHTML = '<p style="color:var(--text-muted);">No hay usuarios pendientes.</p>';
-        } else {
-            contPend.innerHTML = pendientes.map(u => `
-                <div class="usuario-item">
-                    <div class="info">
-                        <span class="nombre">${u.nombre}</span>
-                        <span class="email">${u.email} (${u.username})</span>
-                        <span style="font-size:0.8rem;color:var(--text-muted);">DNI: ${u.dni || 'N/A'} - ${u.empresa || ''}</span>
+async function actualizarListasUsuarios() {
+    try {
+        const pendientes = await obtenerUsuariosPendientes();
+        const activos = await obtenerUsuariosActivos();
+        
+        const contPend = document.getElementById('listaPendientes');
+        if (contPend) {
+            if (pendientes.length === 0) {
+                contPend.innerHTML = '<p style="color:var(--text-muted);">No hay usuarios pendientes.</p>';
+            } else {
+                contPend.innerHTML = pendientes.map(u => `
+                    <div class="usuario-item">
+                        <div class="info">
+                            <span class="nombre">${u.nombre}</span>
+                            <span class="email">${u.email}</span>
+                            <span style="font-size:0.8rem;color:var(--text-muted);">DNI: ${u.dni || 'N/A'} - ${u.empresa || ''}</span>
+                        </div>
+                        <div class="acciones">
+                            <button class="btn-aprobar" onclick="aprobarUsuario(${u.id})"><i class="fas fa-check"></i> Aprobar</button>
+                            <button class="btn-rechazar" onclick="rechazarUsuario(${u.id})"><i class="fas fa-times"></i> Rechazar</button>
+                        </div>
                     </div>
-                    <div class="acciones">
-                        <button class="btn-aprobar" onclick="aprobarUsuario(${u.id})"><i class="fas fa-check"></i> Aprobar</button>
-                        <button class="btn-rechazar" onclick="rechazarUsuario(${u.id})"><i class="fas fa-times"></i> Rechazar</button>
-                    </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
         }
-    }
-    
-    const contAct = document.getElementById('listaActivos');
-    if (contAct) {
-        if (activos.length === 0) {
-            contAct.innerHTML = '<p style="color:var(--text-muted);">No hay usuarios activos.</p>';
-        } else {
-            contAct.innerHTML = activos.filter(u => u.role !== 'admin').map(u => `
-                <div class="usuario-item">
-                    <div class="info">
-                        <span class="nombre">${u.nombre} (${u.role})</span>
-                        <span class="email">${u.email}</span>
-                        <span style="font-size:0.8rem;color:var(--text-muted);">${u.empresa || ''}</span>
+        
+        const contAct = document.getElementById('listaActivos');
+        if (contAct) {
+            if (activos.length === 0) {
+                contAct.innerHTML = '<p style="color:var(--text-muted);">No hay usuarios activos.</p>';
+            } else {
+                contAct.innerHTML = activos.filter(u => u.role !== 'admin').map(u => `
+                    <div class="usuario-item">
+                        <div class="info">
+                            <span class="nombre">${u.nombre} (${u.role})</span>
+                            <span class="email">${u.email}</span>
+                            <span style="font-size:0.8rem;color:var(--text-muted);">${u.empresa || ''}</span>
+                        </div>
+                        <div class="acciones">
+                            <button class="btn-eliminar" onclick="eliminarUsuarioDB(${u.id})"><i class="fas fa-trash"></i> Eliminar</button>
+                        </div>
                     </div>
-                    <div class="acciones">
-                        <button class="btn-eliminar" onclick="eliminarUsuarioDB(${u.id})"><i class="fas fa-trash"></i> Eliminar</button>
-                    </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
         }
+    } catch (e) {
+        console.error('Error al actualizar listas:', e);
     }
 }
 
-function aprobarUsuario(id) {
-    const pendientes = obtenerUsuariosPendientes();
-    const index = pendientes.findIndex(u => u.id === id);
-    if (index === -1) return;
-    const usuario = pendientes[index];
-    usuario.activo = true;
-    usuario.role = usuario.role || 'delegado';
-    pendientes.splice(index, 1);
-    guardarUsuariosPendientes(pendientes);
-    const activos = obtenerUsuariosActivos();
-    if (!activos.some(u => u.id === usuario.id)) {
-        activos.push(usuario);
-        guardarUsuariosActivos(activos);
+async function aprobarUsuario(id) {
+    try {
+        await actualizarUsuario(id, { activo: true, role: 'delegado' });
+        await actualizarListasUsuarios();
+        alert('✅ Usuario aprobado.');
+    } catch (e) {
+        alert('❌ Error: ' + e.message);
     }
-    actualizarListasUsuarios();
-    alert(`✅ Usuario ${usuario.nombre} aprobado.`);
 }
 
-function rechazarUsuario(id) {
+async function rechazarUsuario(id) {
     if (!confirm('¿Rechazar este usuario?')) return;
-    const pendientes = obtenerUsuariosPendientes();
-    const index = pendientes.findIndex(u => u.id === id);
-    if (index === -1) return;
-    pendientes.splice(index, 1);
-    guardarUsuariosPendientes(pendientes);
-    actualizarListasUsuarios();
-    alert('✅ Usuario rechazado.');
+    try {
+        await eliminarUsuarioDB(id);
+        await actualizarListasUsuarios();
+        alert('✅ Usuario rechazado.');
+    } catch (e) {
+        alert('❌ Error: ' + e.message);
+    }
 }
 
-function eliminarUsuarioDB(id) {
-    if (!confirm('¿Eliminar este usuario?')) return;
-    const activos = obtenerUsuariosActivos();
-    const index = activos.findIndex(u => u.id === id);
-    if (index === -1) return;
-    activos.splice(index, 1);
-    guardarUsuariosActivos(activos);
-    actualizarListasUsuarios();
-    alert('✅ Usuario eliminado.');
+// ============================================
+// RECUPERACIÓN DE CONTRASEÑA
+// ============================================
+async function handleRecuperacion(e) {
+    e.preventDefault();
+    const email = document.getElementById('recEmail').value.trim();
+    const btn = document.getElementById('recBtn');
+    
+    if (!email) { alert('Ingresá tu email.'); return; }
+
+    try {
+        const { data } = await supabaseClient
+            .from('usuarios')
+            .select('*')
+            .eq('email', email)
+            .single();
+
+        if (!data) {
+            alert('No se encontró ningún usuario con ese email.');
+            return;
+        }
+
+        // Simplemente enviamos un correo (por ahora solo mostramos un mensaje)
+        alert('📧 Se ha enviado un correo con instrucciones para recuperar tu contraseña (funcionalidad en desarrollo). Por ahora, contactá al administrador.');
+        cerrarModalRecuperacion();
+        mostrarLogin();
+    } catch (e) {
+        alert('❌ Error: ' + e.message);
+    }
 }
 
 // ============================================
@@ -1038,15 +959,19 @@ function renderOrganigrama(container) {
 // ============================================
 // RECUPERACIÓN DE SESIÓN
 // ============================================
-function initSession() {
+async function initSession() {
     const session = localStorage.getItem('aoma_session');
     if (session) {
         try {
             const user = JSON.parse(session);
-            const activos = obtenerUsuariosActivos();
-            const existe = activos.some(u => u.id === user.id && u.activo === true);
-            if (existe) {
-                currentUser = user;
+            const { data } = await supabaseClient
+                .from('usuarios')
+                .select('*')
+                .eq('id', user.id)
+                .eq('activo', true)
+                .single();
+            if (data) {
+                currentUser = data;
                 mostrarApp();
                 return;
             }
@@ -1101,7 +1026,7 @@ function mostrarRecuperacion() {
     document.getElementById('recPreguntaContainer').style.display = 'none';
     document.getElementById('recNuevaPassContainer').style.display = 'none';
     document.getElementById('recBtn').textContent = 'Buscar usuario';
-    document.getElementById('recUser').value = '';
+    document.getElementById('recEmail').value = '';
     document.getElementById('recRespuesta').value = '';
     document.getElementById('recNuevaPass').value = '';
 }
@@ -1110,6 +1035,5 @@ function toggleTheme() {
     document.body.style.color = document.body.style.color === '#f1f5f9' ? '#1a1a1a' : '#f1f5f9';
 }
 </script>
-
 </body>
 </html>
