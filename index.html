@@ -43,8 +43,29 @@
 
     <link
         rel="stylesheet"
-        href="css/login.css?v=0.8.6"
+        href="css/login.css?v=0.8.7"
     >
+
+    <script>
+    (function () {
+        try {
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                    registrations.forEach(function (registration) { registration.unregister(); });
+                });
+            }
+            if (window.caches) {
+                caches.keys().then(function (keys) {
+                    keys.forEach(function (key) {
+                        if (key.indexOf("sigca") !== -1) caches.delete(key);
+                    });
+                });
+            }
+        } catch (error) {
+            console.warn("Limpieza de caché omitida", error);
+        }
+    })();
+    </script>
 </head>
 
 <body>
@@ -208,7 +229,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js?v=0.8.6"></script>
-    <script src="js/login.js?v=0.8.6"></script>
+    <script src="js/config.js?v=0.8.7"></script>
+    <script src="js/login.js?v=0.8.7"></script>
 </body>
 </html>
