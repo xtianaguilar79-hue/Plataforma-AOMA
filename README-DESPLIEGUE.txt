@@ -1,14 +1,9 @@
-SIGCA v0.7 - DESPLIEGUE
+SIGCA v0.8 · FUNDACIÓN
 
-1. Realice una copia de seguridad del repositorio actual.
-2. Descomprima SIGCA-v0.7.zip.
-3. Suba TODO el contenido interno a la raíz del repositorio de GitHub.
-4. Confirme que index.html esté directamente en la raíz.
-5. No ejecute SQL: esta versión no modifica Supabase.
-6. Espere el despliegue automático de Vercel.
-7. Pruebe login, registro, panel administrador, dashboard, perfil y biblioteca.
-8. Abra el CCT 37/89 y confirme que se visualiza igual que los demás convenios.
-9. Revise F12 > Console; no deben aparecer errores rojos.
-
-
-NOTA v0.7.1: Las carpetas supabase/ y los archivos CHANGELOG.md y docs/ no son necesarios para que Vercel ejecute el sitio, pero se recomienda subirlos a GitHub como documentación y respaldo técnico. No contienen claves privadas.
+1. Guardar una copia de la versión actualmente desplegada.
+2. Subir a GitHub TODO el contenido de esta carpeta, con index.html en la raíz.
+3. No ejecutar SQL nuevo: esta versión reutiliza la base y las funciones existentes.
+4. Esperar el despliegue de Vercel.
+5. En el teléfono, borrar la caché o abrir una pestaña privada durante la primera prueba.
+6. Probar: login, registro, administrador, Mi Escritorio, tema oscuro, modal de bienvenida, Centro de Conocimiento, curso piloto y perfil.
+7. Para volver a ver el saludo de bienvenida, borrar en el navegador la clave localStorage: sigca-welcome-hidden.

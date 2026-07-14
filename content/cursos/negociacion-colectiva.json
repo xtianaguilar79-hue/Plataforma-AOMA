@@ -1,0 +1,58 @@
+{
+  "id": "negociacion-colectiva-001",
+  "titulo": "Introducción a la Negociación Colectiva",
+  "nivel": "Inicial",
+  "duracion": "2 horas",
+  "modalidad": "Autogestionada",
+  "fuente": "Programa de Apoyo a la Formación Sindical, abril de 2023",
+  "modulos": [
+    {
+      "id": "m1",
+      "titulo": "Bienvenida y objetivos",
+      "minutos": 8,
+      "html": "<h2>Bienvenida al curso</h2><p>La negociación colectiva es una herramienta central para institucionalizar el conflicto laboral y construir acuerdos entre sujetos colectivos.</p><div class='lesson-callout'><strong>Objetivos</strong><ul><li>Comprender qué es la negociación colectiva.</li><li>Reconocer sus actores y fuentes normativas.</li><li>Identificar las etapas básicas del procedimiento.</li></ul></div>"
+    },
+    {
+      "id": "m2",
+      "titulo": "Conceptos fundamentales",
+      "minutos": 15,
+      "html": "<h2>¿Qué es la negociación colectiva?</h2><p>Es un proceso de diálogo entre empleadores y organizaciones de trabajadores para fijar condiciones de trabajo y empleo, regular sus relaciones o alcanzar ambos fines.</p><h3>Supuestos básicos</h3><ul><li>Legitimidad de las partes.</li><li>Interdependencia.</li><li>Existencia de intereses diferentes.</li><li>Expectativa de alcanzar un acuerdo.</li></ul>"
+    },
+    {
+      "id": "m3",
+      "titulo": "Actores e instrumentos",
+      "minutos": 18,
+      "html": "<h2>El sistema de relaciones laborales</h2><p>Participan las organizaciones sindicales, los empleadores, el Estado y los asesores técnicos. El sistema combina normas estatales con reglas creadas por los propios actores.</p><div class='actor-grid'><span>Sindicato</span><span>Empleador</span><span>Estado</span><span>Asesores</span></div>"
+    },
+    {
+      "id": "m4",
+      "titulo": "Relevancia para el sindicato",
+      "minutos": 12,
+      "html": "<h2>Una herramienta de acción sindical</h2><p>Negociar exige formación permanente, vínculo con las bases, estudios técnicos, unidad y estrategias capaces de reconocer intereses comunes y divergentes.</p>"
+    },
+    {
+      "id": "m5",
+      "titulo": "Formas y niveles",
+      "minutos": 15,
+      "html": "<h2>¿Cómo puede organizarse?</h2><p>La negociación puede ser puntual o permanente; por actividad, profesión, empresa, establecimiento o sección; y puede referirse a salarios, condiciones de trabajo, derechos sindicales o solución de conflictos.</p>"
+    },
+    {
+      "id": "m6",
+      "titulo": "Marco normativo",
+      "minutos": 20,
+      "html": "<h2>Fuentes principales</h2><ul><li>Constitución Nacional, artículo 14 bis.</li><li>Convenios OIT 98, 151 y 154.</li><li>Ley 14.250.</li><li>Ley 23.546.</li><li>Ley 23.551.</li><li>Ley 20.744.</li></ul><p>Los acuerdos colectivos son fuentes autónomas del derecho del trabajo y requieren controles de legalidad, formalidad y oportunidad para su homologación.</p>"
+    },
+    {
+      "id": "m7",
+      "titulo": "Paso a paso de la negociación",
+      "minutos": 25,
+      "html": "<h2>El procedimiento</h2><ol class='steps'><li>Inicio y notificación.</li><li>Requisitos y respuesta.</li><li>Comisión negociadora.</li><li>Ámbito personal y territorial.</li><li>Materias a negociar.</li><li>Deber de buena fe.</li><li>Desarrollo de las reuniones.</li><li>Mediación, conciliación o arbitraje.</li></ol>"
+    },
+    {
+      "id": "m8",
+      "titulo": "Caso práctico y cierre",
+      "minutos": 18,
+      "html": "<h2>Caso práctico</h2><p>Una empresa propone modificar un régimen de trabajo. El delegado recibe la inquietud de los trabajadores.</p><div class='lesson-callout'><strong>Preguntas para reflexionar</strong><ol><li>¿Qué información debería reunir?</li><li>¿Quién tiene legitimidad para negociar?</li><li>¿Qué marco normativo corresponde consultar?</li><li>¿Cómo se documenta el proceso?</li></ol></div><p>Al finalizar, revisá los módulos y marcá este contenido como completado.</p>"
+    }
+  ]
+}
