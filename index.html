@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="SIGCA · Gestión, capacitación y asistencia de AOMA Seccional San Juan"
+    >
+
+    <meta
+        name="theme-color"
+        content="#111111"
+    >
+
+    <title>Ingreso | AOMA San Juan</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/login.css?v=0.8.6"
+    >
+</head>
+
+<body>
+    <main class="auth-layout">
+        <section class="auth-visual" aria-label="Presentación institucional">
+            <div class="visual-overlay"></div>
+
+            <div class="visual-content">
+                <div class="institution-badge institution-badge-logo">
+                    <img src="assets/logo-aoma.png" alt="AOMA Seccional San Juan">
+                    <span>AOMA Seccional San Juan</span>
+                </div>
+
+                <div class="visual-copy">
+                    <p class="eyebrow">Formación sindical y profesional</p>
+
+                    <h1>
+                        Capacitación para quienes representan y defienden
+                        a los trabajadores mineros.
+                    </h1>
+
+                    <p>
+                        Accedé a cursos, legislación, convenios colectivos,
+                        materiales de consulta y certificaciones.
+                    </p>
+                </div>
+
+                <div class="visual-footer">
+                    Asociación Obrera Minera Argentina
+                </div>
+            </div>
+        </section>
+
+        <section class="auth-panel">
+            <div class="auth-card">
+                <header class="auth-header">
+                    <div class="brand brand-with-logo">
+                        <img
+                            src="assets/logo-aoma-horizontal.png"
+                            alt="AOMA Seccional San Juan"
+                            class="login-brand-logo"
+                        >
+                    </div>
+
+                    <div class="auth-heading">
+                        <p class="auth-kicker">SIGCA · Gestión, capacitación y asistencia</p>
+
+                        <h2>Ingresar</h2>
+
+                        <p>
+                            Utilizá el correo electrónico y la contraseña
+                            con los que realizaste tu registro.
+                        </p>
+                    </div>
+                </header>
+
+                <form id="loginForm" class="auth-form" novalidate>
+                    <div class="form-group">
+                        <label for="email">
+                            Correo electrónico
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i
+                                class="fa-regular fa-envelope input-icon"
+                                aria-hidden="true"
+                            ></i>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="nombre@correo.com"
+                                autocomplete="email"
+                                inputmode="email"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="password">
+                                Contraseña
+                            </label>
+
+                            <a
+                                href="recuperar-password.html"
+                                class="text-link"
+                            >
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
+
+                        <div class="input-wrapper">
+                            <i
+                                class="fa-solid fa-lock input-icon"
+                                aria-hidden="true"
+                            ></i>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Ingresá tu contraseña"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="password-toggle"
+                                aria-label="Mostrar contraseña"
+                                title="Mostrar contraseña"
+                            >
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        id="submitButton"
+                        class="primary-button"
+                    >
+                        <span id="submitButtonText">
+                            Ingresar
+                        </span>
+
+                        <span
+                            id="submitSpinner"
+                            class="spinner hidden"
+                            aria-hidden="true"
+                        ></span>
+                    </button>
+
+                    <div
+                        id="mensaje"
+                        class="form-message hidden"
+                        role="alert"
+                        aria-live="polite"
+                    ></div>
+                </form>
+
+                <footer class="auth-footer">
+                    <p>
+                        ¿Todavía no tenés una cuenta?
+                        <a href="registro.html" class="text-link strong">
+                            Solicitar registro
+                        </a>
+                    </p>
+
+                    <p class="approval-note">
+                        El acceso queda habilitado una vez que un administrador
+                        aprueba la solicitud.
+                    </p>
+                </footer>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js?v=0.8.6"></script>
+    <script src="js/login.js?v=0.8.6"></script>
+</body>
+</html>
