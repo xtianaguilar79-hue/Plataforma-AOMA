@@ -1,448 +1,662 @@
 <!DOCTYPE html>
-<html lang="es-AR">
+<html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campus Virtual AOMA</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Capacitación - Sindicato Minero</title>
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f4f7fc; color: #1a1a1a; }
-        .header { position:fixed; top:0; left:0; right:0; height:70px; background:white; display:flex; align-items:center; padding:0 2rem; border-bottom:1px solid #e5e7eb; z-index:100; }
-        .brand { display:flex; align-items:center; gap:0.75rem; cursor:pointer; font-weight:700; font-size:1.2rem; }
-        .brand span { color:#f47b20; }
-        .header-right { margin-left:auto; display:flex; align-items:center; gap:1rem; }
-        .user-menu { display:flex; align-items:center; gap:0.75rem; cursor:pointer; background:#f3f4f6; padding:0.25rem 0.75rem; border-radius:50px; position:relative; }
-        .user-avatar { width:36px; height:36px; border-radius:50%; background:#f47b20; color:white; display:flex; align-items:center; justify-content:center; font-weight:700; }
-        .user-info { line-height:1.2; }
-        .user-name { font-weight:600; font-size:0.9rem; }
-        .user-role { font-size:0.75rem; color:#6b7280; }
-        .dropdown { position:absolute; top:100%; right:0; background:white; border:1px solid #e5e7eb; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.08); min-width:200px; display:none; z-index:10; }
-        .user-menu:hover .dropdown { display:block; }
-        .dropdown a { display:block; padding:0.75rem 1rem; color:#1a1a1a; text-decoration:none; cursor:pointer; }
-        .dropdown a:hover { background:#f3f4f6; }
-        .main { margin-top:70px; padding:2rem; }
-        #loginOverlay { position:fixed; inset:0; background:linear-gradient(135deg,#1a1a1a 0%,#333 100%); display:flex; align-items:center; justify-content:center; padding:1rem; z-index:1000; }
-        .login-box { background:white; padding:2.5rem; border-radius:16px; width:100%; max-width:400px; }
-        .login-box .logo { text-align:center; margin-bottom:2rem; }
-        .login-box .logo h1 { font-size:1.5rem; }
-        .login-box .logo p { color:#6b7280; font-size:0.9rem; }
-        .form-group { margin-bottom:1.25rem; }
-        .form-group label { display:block; font-weight:600; font-size:0.875rem; margin-bottom:0.25rem; }
-        .form-group input { width:100%; padding:0.75rem 1rem; border:2px solid #e5e7eb; border-radius:8px; font-size:1rem; background:#f9fafb; }
-        .form-group input:focus { border-color:#f47b20; outline:none; }
-        .password-wrapper { position:relative; }
-        .password-wrapper input { padding-right:3rem; }
-        .password-toggle { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#6b7280; }
-        .btn { width:100%; padding:0.875rem; background:#f47b20; color:white; border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; }
-        .btn:hover { background:#d96b1a; }
-        .login-links { text-align:center; margin-top:1rem; font-size:0.875rem; }
-        .login-links a { color:#f47b20; font-weight:600; cursor:pointer; }
-        .error-msg { background:#fee2e2; color:#b91c1c; padding:0.75rem; border-radius:8px; margin-bottom:1rem; display:none; }
-        .success-msg { background:#d1fae5; color:#065f46; padding:0.75rem; border-radius:8px; margin-bottom:1rem; display:none; }
-        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; padding:1rem; z-index:2000; }
-        .modal-box { background:white; border-radius:16px; max-width:500px; width:100%; max-height:90vh; overflow-y:auto; padding:2rem; }
-        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
-        .modal-close { background:none; border:none; font-size:1.5rem; cursor:pointer; color:#6b7280; }
-        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1.5rem; margin-bottom:2rem; }
-        .stat-card { background:white; padding:1.5rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.08); border:1px solid #e5e7eb; }
-        .stat-value { font-size:2rem; font-weight:800; color:#f47b20; }
-        .stat-label { color:#6b7280; font-size:0.8rem; text-transform:uppercase; }
-        .section { background:white; padding:1.5rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.08); margin-bottom:2rem; border:1px solid #e5e7eb; }
-        .section-title { font-size:1.3rem; font-weight:700; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:3px solid #f47b20; display:inline-block; }
-        .profile-header { background:linear-gradient(135deg,#f47b20,#d96b1a); color:white; padding:2rem; border-radius:12px; margin-bottom:2rem; text-align:center; }
-        .profile-avatar { width:100px; height:100px; border-radius:50%; background:white; color:#f47b20; display:flex; align-items:center; justify-content:center; font-size:2.5rem; font-weight:700; margin:0 auto 1rem; }
-        .profile-info { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
-        .profile-field { background:#f9fafb; padding:1rem; border-radius:8px; }
-        .profile-field label { display:block; font-size:0.875rem; color:#6b7280; margin-bottom:0.25rem; }
-        .profile-field span { font-weight:600; font-size:1rem; }
-        @media (max-width:768px) { .header { padding:0 1rem; } .profile-info { grid-template-columns:1fr; } }
+        /* ===== CSS Global ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 20px;
+        }
+        .container {
+            background: white;
+            padding: 2rem 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 650px;
+        }
+        h1, h2 {
+            color: #1a3b5d;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        h2 {
+            font-size: 1.4rem;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: #2d3748;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49,130,206,0.2);
+        }
+        .btn {
+            background: #3182ce;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #2b6cb0;
+        }
+        .btn-secondary {
+            background: #718096;
+        }
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+        .btn-success {
+            background: #38a169;
+        }
+        .btn-success:hover {
+            background: #2f855a;
+        }
+        .btn-danger {
+            background: #e53e3e;
+        }
+        .btn-danger:hover {
+            background: #c53030;
+        }
+        .error {
+            color: #e53e3e;
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+        }
+        .success {
+            color: #38a169;
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+        }
+        .toggle-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .toggle-link a {
+            color: #3182ce;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .card {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #3182ce;
+        }
+        .user-item {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .user-item:last-child {
+            border-bottom: none;
+        }
+        .user-info {
+            flex: 1;
+            min-width: 200px;
+        }
+        .user-info strong {
+            display: block;
+            font-size: 1rem;
+        }
+        .user-info span {
+            display: inline-block;
+            font-size: 0.85rem;
+            color: #4a5568;
+            margin-right: 0.8rem;
+        }
+        .badge {
+            background: #edf2f7;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #2d3748;
+        }
+        .badge-pendiente {
+            background: #fefcbf;
+            color: #975a16;
+        }
+        .badge-aprobado {
+            background: #c6f6d5;
+            color: #276749;
+        }
+        .btn-small {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            width: auto;
+            margin-left: 0.5rem;
+        }
+        #logoutBtn {
+            margin-top: 1rem;
+        }
+        .pending-message {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #fefcbf;
+            border-radius: 8px;
+            color: #975a16;
+            text-align: center;
+        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 1.5rem;
+            }
+            .user-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-small {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="container" id="app">
+        <!-- ===== SECCIÓN: LOGIN / REGISTRO ===== -->
+        <div id="authSection">
+            <h1>Sindicato Minero</h1>
+            <h2 id="formTitle">Iniciar Sesión</h2>
 
-<header class="header" style="display:none;">
-    <div class="brand" onclick="navigate('inicio')"><span>AOMA</span> San Juan</div>
-    <div class="header-right">
-        <div class="user-menu" id="userMenu">
-            <div class="user-info">
-                <div class="user-name" id="userName">Usuario</div>
-                <div class="user-role" id="userRole">Delegado</div>
-            </div>
-            <div class="user-avatar" id="userAvatar">U</div>
-            <div class="dropdown">
-                <a onclick="navigate('perfil')"><i class="fas fa-user"></i> Mi Perfil</a>
-                <a id="adminLink" style="display:none;" onclick="navigate('admin')"><i class="fas fa-users-cog"></i> Panel Admin</a>
-                <a onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-            </div>
-        </div>
-    </div>
-</header>
-
-<main class="main" style="display:none;"><div id="pageContent"></div></main>
-
-<div id="loginOverlay">
-    <div class="login-box">
-        <div class="logo">
-            <h1>🏔️ Campus Virtual AOMA</h1>
-            <p>Asociación Obrera Minera Argentina<br>Seccional San Juan</p>
-        </div>
-        <div id="loginError" class="error-msg"></div>
-        <form id="loginForm">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="loginEmail" placeholder="tu@email.com" required />
-            </div>
-            <div class="form-group">
-                <label>Contraseña</label>
-                <div class="password-wrapper">
-                    <input type="password" id="loginPassword" placeholder="••••••••" required />
-                    <button type="button" class="password-toggle" onclick="togglePass('loginPassword', this)"><i class="fas fa-eye"></i></button>
+            <!-- Formulario de Login -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="tu@email.com" required>
                 </div>
+                <div class="form-group">
+                    <label for="loginPassword">Contraseña</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn">Ingresar</button>
+                <div class="toggle-link">
+                    ¿No tienes cuenta? <a id="showRegisterLink">Regístrate aquí</a>
+                </div>
+                <div id="loginMessage" class="error" style="margin-top:0.8rem;"></div>
+            </form>
+
+            <!-- Formulario de Registro -->
+            <form id="registerForm" class="hidden">
+                <div class="form-group">
+                    <label for="regNombre">Nombre Completo</label>
+                    <input type="text" id="regNombre" placeholder="Juan Pérez" required>
+                </div>
+                <div class="form-group">
+                    <label for="regDni">DNI</label>
+                    <input type="text" id="regDni" placeholder="12345678" required>
+                </div>
+                <div class="form-group">
+                    <label for="regTelefono">Teléfono</label>
+                    <input type="tel" id="regTelefono" placeholder="2644123456" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Contraseña</label>
+                    <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="regRol">Rol</label>
+                    <select id="regRol" required>
+                        <option value="">-- Selecciona --</option>
+                        <option value="dirigente">Dirigente</option>
+                        <option value="delegado">Delegado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="regEmpresa">Empresa</label>
+                    <select id="regEmpresa" required>
+                        <option value="">-- Selecciona --</option>
+                        <!-- Ejemplo de opciones, reemplazar con las reales -->
+                        <option value="Empresa A">Empresa A</option>
+                        <option value="Empresa B">Empresa B</option>
+                        <option value="Empresa C">Empresa C</option>
+                        <option value="Otra">Otra</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="regConvenio">Convenio Colectivo</label>
+                    <select id="regConvenio" required>
+                        <option value="">-- Selecciona --</option>
+                        <!-- Ejemplo de opciones, reemplazar con las reales -->
+                        <option value="Convenio 1">Convenio 1</option>
+                        <option value="Convenio 2">Convenio 2</option>
+                        <option value="Convenio 3">Convenio 3</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Registrarme</button>
+                <div class="toggle-link">
+                    ¿Ya tienes cuenta? <a id="showLoginLink">Inicia sesión</a>
+                </div>
+                <div id="registerMessage" class="error" style="margin-top:0.8rem;"></div>
+            </form>
+        </div>
+
+        <!-- ===== SECCIÓN: PANELES (ocultos hasta login) ===== -->
+        <div id="panelSection" class="hidden">
+            <h1>Sindicato Minero</h1>
+            <div id="userInfo" class="card">
+                <p><strong>Bienvenido, <span id="displayName"></span></strong></p>
+                <p>Rol: <span id="displayRol" class="badge"></span></p>
+                <p>Empresa: <span id="displayEmpresa"></span></p>
+                <p>Convenio: <span id="displayConvenio"></span></p>
+                <button id="logoutBtn" class="btn btn-secondary">Cerrar sesión</button>
             </div>
-            <button type="submit" class="btn">Ingresar al Campus</button>
-        </form>
-        <div class="login-links">
-            <a onclick="showModal('registro')">¿No tenés cuenta? Registrate</a>
-            <span style="margin:0 0.5rem;">|</span>
-            <a onclick="showModal('recuperacion')">¿Olvidaste tu contraseña?</a>
+
+            <!-- Mensaje de pendiente de aprobación -->
+            <div id="pendingApprovalMsg" class="pending-message hidden">
+                <strong>⏳ Tu cuenta está pendiente de aprobación.</strong><br>
+                Por favor, espera a que el administrador la active.
+            </div>
+
+            <!-- Panel de Administrador -->
+            <div id="adminPanel" class="hidden">
+                <h2>Panel de Administración</h2>
+                <p>Usuarios pendientes de aprobación:</p>
+                <div id="pendingUsersList"></div>
+                <div id="adminMessage" class="success"></div>
+            </div>
+
+            <!-- Panel de Dirigente / Delegado (por ahora igual) -->
+            <div id="userPanel" class="hidden">
+                <h2>Mi Espacio</h2>
+                <p>Aquí encontrarás tus capacitaciones y recursos. (Próximamente)</p>
+                <!-- Aquí luego se agregarán los módulos de capacitación -->
+            </div>
         </div>
     </div>
-</div>
 
-<div class="modal-overlay" id="modalRegistro">
-    <div class="modal-box">
-        <div class="modal-header"><h2>Registro</h2><button class="modal-close" onclick="hideModal('registro')">&times;</button></div>
-        <div id="regError" class="error-msg"></div>
-        <div id="regSuccess" class="success-msg"></div>
-        <form id="formRegistro">
-            <div class="form-group"><label>Nombre completo *</label><input type="text" id="regNombre" required /></div>
-            <div class="form-group"><label>Email *</label><input type="email" id="regEmail" required /></div>
-            <div class="form-group"><label>Teléfono</label><input type="tel" id="regTelefono" /></div>
-            <div class="form-group"><label>Contraseña * (mín. 6 caracteres)</label><input type="password" id="regPassword" minlength="6" required /></div>
-            <button type="submit" class="btn">Registrarme</button>
-        </form>
-    </div>
-</div>
+    <script>
+        // ============================================================
+        // CONFIGURACIÓN DE SUPABASE (YA CON TUS CREDENCIALES)
+        // ============================================================
+        const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-<div class="modal-overlay" id="modalRecuperacion">
-    <div class="modal-box" style="max-width:450px;">
-        <div class="modal-header"><h2>Recuperar Contraseña</h2><button class="modal-close" onclick="hideModal('recuperacion')">&times;</button></div>
-        <div id="recError" class="error-msg"></div>
-        <div id="recSuccess" class="success-msg"></div>
-        <form id="formRecuperacion">
-            <div class="form-group"><label>Email</label><input type="email" id="recEmail" required /></div>
-            <button type="submit" class="btn">Enviar enlace</button>
-        </form>
-    </div>
-</div>
+        // ============================================================
+        // REFERENCIAS A ELEMENTOS DEL DOM
+        // ============================================================
+        const authSection = document.getElementById('authSection');
+        const panelSection = document.getElementById('panelSection');
 
-<div class="modal-overlay" id="modalEditar">
-    <div class="modal-box">
-        <div class="modal-header"><h2>Editar Perfil</h2><button class="modal-close" onclick="hideModal('editar')">&times;</button></div>
-        <div id="editError" class="error-msg"></div>
-        <div id="editSuccess" class="success-msg"></div>
-        <form id="formEditar">
-            <div class="form-group"><label>Nombre</label><input type="text" id="editNombre" required /></div>
-            <div class="form-group"><label>Email</label><input type="email" id="editEmail" readonly style="background:#e5e7eb;" /></div>
-            <div class="form-group"><label>Teléfono</label><input type="tel" id="editTelefono" /></div>
-            <div class="form-group"><label>Nueva contraseña (dejar vacío si no cambia)</label><input type="password" id="editPassword" minlength="6" /></div>
-            <button type="submit" class="btn">Guardar</button>
-        </form>
-    </div>
-</div>
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const showRegisterLink = document.getElementById('showRegisterLink');
+        const showLoginLink = document.getElementById('showLoginLink');
+        const formTitle = document.getElementById('formTitle');
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-// ============================================
-// CONFIGURACIÓN
-// ============================================
-const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
+        const loginMessage = document.getElementById('loginMessage');
+        const registerMessage = document.getElementById('registerMessage');
 
-// Inicializar cliente
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const displayName = document.getElementById('displayName');
+        const displayRol = document.getElementById('displayRol');
+        const displayEmpresa = document.getElementById('displayEmpresa');
+        const displayConvenio = document.getElementById('displayConvenio');
+        const pendingApprovalMsg = document.getElementById('pendingApprovalMsg');
+        const adminPanel = document.getElementById('adminPanel');
+        const userPanel = document.getElementById('userPanel');
+        const pendingUsersList = document.getElementById('pendingUsersList');
+        const adminMessage = document.getElementById('adminMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
 
-let currentUser = null;
-let currentProfile = null;
-
-// ============================================
-// FUNCIONES AUXILIARES
-// ============================================
-function togglePass(inputId, btn) {
-    const input = document.getElementById(inputId);
-    const icon = btn.querySelector('i');
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.className = 'fas fa-eye-slash';
-    } else {
-        input.type = 'password';
-        icon.className = 'fas fa-eye';
-    }
-}
-
-function showModal(type) {
-    document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).style.display = 'flex';
-}
-
-function hideModal(type) {
-    document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).style.display = 'none';
-    const err = document.getElementById(type + 'Error');
-    const suc = document.getElementById(type + 'Success');
-    if (err) err.style.display = 'none';
-    if (suc) suc.style.display = 'none';
-}
-
-function showApp() {
-    document.getElementById('loginOverlay').style.display = 'none';
-    document.querySelector('.header').style.display = 'flex';
-    document.querySelector('.main').style.display = 'block';
-    
-    document.getElementById('userName').textContent = currentProfile.nombre;
-    document.getElementById('userRole').textContent = currentProfile.role === 'admin' ? 'Administrador' : 'Afiliado';
-    document.getElementById('userAvatar').textContent = currentProfile.nombre.charAt(0).toUpperCase();
-    document.getElementById('adminLink').style.display = currentProfile.role === 'admin' ? 'block' : 'none';
-    
-    navigate('inicio');
-}
-
-function showLogin() {
-    document.getElementById('loginOverlay').style.display = 'flex';
-    document.querySelector('.header').style.display = 'none';
-    document.querySelector('.main').style.display = 'none';
-}
-
-// ============================================
-// NAVEGACIÓN
-// ============================================
-function navigate(page) {
-    const content = document.getElementById('pageContent');
-    
-    if (page === 'inicio') {
-        content.innerHTML = `
-            <div style="margin-bottom:2rem;">
-                <h1>¡Bienvenido, ${currentProfile.nombre.split(' ')[0]}! 👋</h1>
-                <p>Panel de control del Campus Virtual AOMA</p>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-value">8</div><div class="stat-label">Convenios CCT</div></div>
-                <div class="stat-card"><div class="stat-value">2</div><div class="stat-label">Cursos</div></div>
-                <div class="stat-card"><div class="stat-value">5</div><div class="stat-label">Leyes</div></div>
-            </div>
-            <div class="section">
-                <h2 class="section-title">Accesos Rápidos</h2>
-                <p>Contenido próximamente...</p>
-            </div>
-        `;
-    } else if (page === 'perfil') {
-        content.innerHTML = `
-            <div class="profile-header">
-                <div class="profile-avatar">${currentProfile.nombre.charAt(0).toUpperCase()}</div>
-                <h2>${currentProfile.nombre}</h2>
-                <p>${currentProfile.role === 'admin' ? 'Administrador' : 'Afiliado'}</p>
-            </div>
-            <div class="section">
-                <h2 class="section-title">Información</h2>
-                <div class="profile-info">
-                    <div class="profile-field"><label>Nombre</label><span>${currentProfile.nombre}</span></div>
-                    <div class="profile-field"><label>Email</label><span>${currentUser.email}</span></div>
-                    <div class="profile-field"><label>Teléfono</label><span>${currentProfile.telefono || 'No especificado'}</span></div>
-                    <div class="profile-field"><label>Estado</label><span style="color:#10b981;font-weight:600;">Activo</span></div>
-                </div>
-                <button class="btn" style="margin-top:2rem;max-width:300px;" onclick="openEditModal()">
-                    <i class="fas fa-edit"></i> Editar Perfil
-                </button>
-            </div>
-        `;
-    } else if (page === 'admin') {
-        if (currentProfile.role !== 'admin') {
-            content.innerHTML = '<div style="text-align:center;padding:3rem;"><h2 style="color:#ef4444;">Acceso denegado</h2></div>';
-            return;
-        }
-        content.innerHTML = `
-            <div class="section">
-                <h2 class="section-title"><i class="fas fa-users-cog"></i> Panel de Administración</h2>
-                <p style="margin-bottom:1rem;color:#6b7280;">Gestión de usuarios próximamente...</p>
-            </div>
-        `;
-    }
-}
-
-// ============================================
-// LOGIN
-// ============================================
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
-    const errorDiv = document.getElementById('loginError');
-    errorDiv.style.display = 'none';
-
-    try {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-
-        const { data: perfil } = await sb
-            .from('perfiles')
-            .select('*')
-            .eq('id', data.user.id)
-            .maybeSingle();
-
-        if (!perfil || !perfil.activo) {
-            await sb.auth.signOut();
-            throw new Error('Cuenta no aprobada. Contactá al administrador.');
+        // ============================================================
+        // FUNCIONES AUXILIARES
+        // ============================================================
+        function showError(element, msg) {
+            element.textContent = msg;
+            element.classList.remove('success');
+            element.classList.add('error');
         }
 
-        currentUser = data.user;
-        currentProfile = perfil;
-        showApp();
-    } catch (error) {
-        errorDiv.textContent = '❌ ' + error.message;
-        errorDiv.style.display = 'block';
-    }
-});
+        function showSuccess(element, msg) {
+            element.textContent = msg;
+            element.classList.remove('error');
+            element.classList.add('success');
+        }
 
-// ============================================
-// REGISTRO
-// ============================================
-document.getElementById('formRegistro').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const nombre = document.getElementById('regNombre').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const telefono = document.getElementById('regTelefono').value.trim();
-    const password = document.getElementById('regPassword').value;
-    const errorDiv = document.getElementById('regError');
-    const successDiv = document.getElementById('regSuccess');
-    errorDiv.style.display = 'none';
-    successDiv.style.display = 'none';
+        function clearMessages() {
+            loginMessage.textContent = '';
+            registerMessage.textContent = '';
+            adminMessage.textContent = '';
+            loginMessage.classList.remove('error', 'success');
+            registerMessage.classList.remove('error', 'success');
+            adminMessage.classList.remove('error', 'success');
+        }
 
-    try {
-        const { data, error } = await sb.auth.signUp({
-            email,
-            password,
-            options: {
-                data: { nombre, telefono, role: 'afiliado' }
+        function showLoginForm() {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            formTitle.textContent = 'Iniciar Sesión';
+            clearMessages();
+        }
+
+        function showRegisterForm() {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            formTitle.textContent = 'Registro de Usuario';
+            clearMessages();
+        }
+
+        // ============================================================
+        // MANEJO DE SESIÓN
+        // ============================================================
+
+        async function logout() {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                console.error('Error al cerrar sesión:', error);
+                return;
+            }
+            panelSection.classList.add('hidden');
+            authSection.classList.remove('hidden');
+            showLoginForm();
+        }
+
+        async function checkSession() {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) {
+                console.error('Error al obtener sesión:', error);
+                return;
+            }
+            if (session) {
+                await loadUserProfile(session.user.id);
+            } else {
+                panelSection.classList.add('hidden');
+                authSection.classList.remove('hidden');
+                showLoginForm();
+            }
+        }
+
+        async function loadUserProfile(userId) {
+            try {
+                const { data: perfil, error } = await supabase
+                    .from('perfiles')
+                    .select('*')
+                    .eq('id', userId)
+                    .single();
+
+                if (error) {
+                    console.error('Error al obtener perfil:', error);
+                    await logout();
+                    return;
+                }
+
+                authSection.classList.add('hidden');
+                panelSection.classList.remove('hidden');
+
+                displayName.textContent = perfil.nombre_completo;
+                displayRol.textContent = perfil.rol;
+                displayEmpresa.textContent = perfil.empresa;
+                displayConvenio.textContent = perfil.convenio;
+
+                // Ocultar mensajes previos
+                pendingApprovalMsg.classList.add('hidden');
+                adminPanel.classList.add('hidden');
+                userPanel.classList.add('hidden');
+
+                // Verificar aprobación
+                const necesitaAprobacion = (perfil.rol === 'dirigente' || perfil.rol === 'delegado');
+                if (necesitaAprobacion && !perfil.aprobado) {
+                    pendingApprovalMsg.classList.remove('hidden');
+                    return;
+                }
+
+                // Si es admin
+                if (perfil.rol === 'admin') {
+                    adminPanel.classList.remove('hidden');
+                    await loadPendingUsers();
+                } else {
+                    // Dirigente o delegado aprobado
+                    userPanel.classList.remove('hidden');
+                }
+
+            } catch (err) {
+                console.error('Error inesperado:', err);
+            }
+        }
+
+        // ============================================================
+        // REGISTRO
+        // ============================================================
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessages();
+
+            const nombre = document.getElementById('regNombre').value.trim();
+            const dni = document.getElementById('regDni').value.trim();
+            const telefono = document.getElementById('regTelefono').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const rol = document.getElementById('regRol').value;
+            const empresa = document.getElementById('regEmpresa').value;
+            const convenio = document.getElementById('regConvenio').value;
+
+            if (!nombre || !dni || !telefono || !email || !password || !rol || !empresa || !convenio) {
+                showError(registerMessage, 'Todos los campos son obligatorios.');
+                return;
+            }
+            if (password.length < 6) {
+                showError(registerMessage, 'La contraseña debe tener al menos 6 caracteres.');
+                return;
+            }
+
+            try {
+                const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                    email,
+                    password,
+                });
+
+                if (signUpError) {
+                    showError(registerMessage, `Error al registrar: ${signUpError.message}`);
+                    return;
+                }
+
+                const userId = signUpData.user.id;
+
+                const { error: perfilError } = await supabase
+                    .from('perfiles')
+                    .insert([{
+                        id: userId,
+                        nombre_completo: nombre,
+                        dni: dni,
+                        telefono: telefono,
+                        email: email,
+                        rol: rol,
+                        empresa: empresa,
+                        convenio: convenio,
+                        aprobado: false,
+                    }]);
+
+                if (perfilError) {
+                    showError(registerMessage, `Error al guardar perfil: ${perfilError.message}. Intenta de nuevo.`);
+                    return;
+                }
+
+                showSuccess(registerMessage, '¡Registro exitoso! Ahora inicia sesión. Tu cuenta será aprobada por el administrador.');
+                registerForm.reset();
+                setTimeout(() => {
+                    showLoginForm();
+                }, 3000);
+
+            } catch (err) {
+                console.error('Error en registro:', err);
+                showError(registerMessage, 'Ocurrió un error inesperado. Intenta de nuevo.');
             }
         });
 
-        if (error) throw error;
+        // ============================================================
+        // LOGIN
+        // ============================================================
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessages();
 
-        successDiv.textContent = '✅ Registro exitoso. Tu cuenta está pendiente de aprobación.';
-        successDiv.style.display = 'block';
-        setTimeout(() => {
-            hideModal('registro');
-            document.getElementById('loginEmail').value = email;
-        }, 3000);
-    } catch (error) {
-        errorDiv.textContent = '❌ ' + error.message;
-        errorDiv.style.display = 'block';
-    }
-});
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
 
-// ============================================
-// RECUPERACIÓN
-// ============================================
-document.getElementById('formRecuperacion').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('recEmail').value.trim();
-    const errorDiv = document.getElementById('recError');
-    const successDiv = document.getElementById('recSuccess');
-    errorDiv.style.display = 'none';
-    successDiv.style.display = 'none';
+            if (!email || !password) {
+                showError(loginMessage, 'Email y contraseña son requeridos.');
+                return;
+            }
 
-    try {
-        await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
-        successDiv.textContent = '✅ Email enviado. Revisá tu bandeja.';
-        successDiv.style.display = 'block';
-        setTimeout(() => hideModal('recuperacion'), 2000);
-    } catch (error) {
-        errorDiv.textContent = '❌ ' + error.message;
-        errorDiv.style.display = 'block';
-    }
-});
+            try {
+                const { data: { user, session }, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
 
-// ============================================
-// EDITAR PERFIL
-// ============================================
-document.getElementById('formEditar').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const nombre = document.getElementById('editNombre').value.trim();
-    const telefono = document.getElementById('editTelefono').value.trim();
-    const newPassword = document.getElementById('editPassword').value;
-    const errorDiv = document.getElementById('editError');
-    const successDiv = document.getElementById('editSuccess');
-    errorDiv.style.display = 'none';
-    successDiv.style.display = 'none';
+                if (error) {
+                    showError(loginMessage, `Error al iniciar sesión: ${error.message}`);
+                    return;
+                }
 
-    try {
-        await sb.from('perfiles').update({ nombre, telefono }).eq('id', currentUser.id);
-        await sb.auth.updateUser({ data: { nombre, telefono }});
-        
-        if (newPassword && newPassword.length >= 6) {
-            await sb.auth.updateUser({ password: newPassword });
+                await loadUserProfile(user.id);
+
+            } catch (err) {
+                console.error('Error en login:', err);
+                showError(loginMessage, 'Error inesperado. Intenta de nuevo.');
+            }
+        });
+
+        // ============================================================
+        // ADMIN: CARGAR USUARIOS PENDIENTES
+        // ============================================================
+        async function loadPendingUsers() {
+            try {
+                const { data: pendientes, error } = await supabase
+                    .from('perfiles')
+                    .select('id, nombre_completo, dni, telefono, email, rol, empresa, convenio, aprobado')
+                    .in('rol', ['dirigente', 'delegado'])
+                    .eq('aprobado', false);
+
+                if (error) {
+                    console.error('Error al cargar pendientes:', error);
+                    showError(adminMessage, 'Error al cargar usuarios pendientes.');
+                    return;
+                }
+
+                if (pendientes.length === 0) {
+                    pendingUsersList.innerHTML = '<p>✅ No hay usuarios pendientes de aprobación.</p>';
+                    return;
+                }
+
+                let html = '';
+                for (const user of pendientes) {
+                    html += `
+                        <div class="user-item">
+                            <div class="user-info">
+                                <strong>${user.nombre_completo}</strong>
+                                <span>📧 ${user.email}</span>
+                                <span>DNI: ${user.dni}</span>
+                                <span>Tel: ${user.telefono}</span>
+                                <span>Empresa: ${user.empresa}</span>
+                                <span>Convenio: ${user.convenio}</span>
+                                <span class="badge badge-pendiente">Pendiente</span>
+                            </div>
+                            <button class="btn btn-success btn-small approve-btn" data-id="${user.id}">✔ Aprobar</button>
+                        </div>
+                    `;
+                }
+                pendingUsersList.innerHTML = html;
+
+                document.querySelectorAll('.approve-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const userId = e.target.getAttribute('data-id');
+                        await approveUser(userId);
+                    });
+                });
+
+            } catch (err) {
+                console.error('Error en loadPendingUsers:', err);
+            }
         }
 
-        currentProfile.nombre = nombre;
-        currentProfile.telefono = telefono;
-        
-        document.getElementById('userName').textContent = nombre;
-        document.getElementById('userAvatar').textContent = nombre.charAt(0).toUpperCase();
-        
-        successDiv.textContent = '✅ Perfil actualizado';
-        successDiv.style.display = 'block';
-        setTimeout(() => { hideModal('editar'); navigate('perfil'); }, 1500);
-    } catch (error) {
-        errorDiv.textContent = '❌ ' + error.message;
-        errorDiv.style.display = 'block';
-    }
-});
+        // ============================================================
+        // ADMIN: APROBAR USUARIO
+        // ============================================================
+        async function approveUser(userId) {
+            try {
+                const { error } = await supabase
+                    .from('perfiles')
+                    .update({ aprobado: true })
+                    .eq('id', userId);
 
-function openEditModal() {
-    document.getElementById('editNombre').value = currentProfile.nombre || '';
-    document.getElementById('editEmail').value = currentUser.email;
-    document.getElementById('editTelefono').value = currentProfile.telefono || '';
-    document.getElementById('editPassword').value = '';
-    document.getElementById('editError').style.display = 'none';
-    document.getElementById('editSuccess').style.display = 'none';
-    document.getElementById('modalEditar').style.display = 'flex';
-}
+                if (error) {
+                    showError(adminMessage, `Error al aprobar: ${error.message}`);
+                    return;
+                }
 
-// ============================================
-// LOGOUT
-// ============================================
-async function logout() {
-    if (!confirm('¿Cerrar sesión?')) return;
-    await sb.auth.signOut();
-    currentUser = null;
-    currentProfile = null;
-    showLogin();
-}
-
-// ============================================
-// INICIALIZACIÓN
-// ============================================
-async function init() {
-    const { data: { session } } = await sb.auth.getSession();
-    if (session) {
-        const { data: perfil } = await sb
-            .from('perfiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .maybeSingle();
-        
-        if (perfil && perfil.activo) {
-            currentUser = session.user;
-            currentProfile = perfil;
-            showApp();
-            return;
+                showSuccess(adminMessage, '✅ Usuario aprobado correctamente.');
+                await loadPendingUsers();
+            } catch (err) {
+                console.error('Error en approveUser:', err);
+                showError(adminMessage, 'Error inesperado.');
+            }
         }
-        await sb.auth.signOut();
-    }
-    showLogin();
-}
 
-init();
-</script>
+        // ============================================================
+        // EVENTOS DE NAVEGACIÓN
+        // ============================================================
+        showRegisterLink.addEventListener('click', showRegisterForm);
+        showLoginLink.addEventListener('click', showLoginForm);
+        logoutBtn.addEventListener('click', logout);
+
+        // ============================================================
+        // INICIALIZACIÓN
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', checkSession);
+    </script>
 </body>
 </html>
