@@ -165,21 +165,29 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ============================================
-// APLICACIÓN COMPLETA - SIN CONFLICTOS
-// ============================================
 const app = (function() {
-    // Configuración - UNA SOLA VEZ
     const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
     
-    // Cliente Supabase - window.supabaseClient para evitar conflictos
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    
+    let supabase;
     let currentUser = null;
     let currentProfile = null;
 
-    // Toggle password
+    function initSupabase() {
+        if (!window.supabase) {
+            console.error('❌ La librería de Supabase no se cargó');
+            return false;
+        }
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log('✅ Supabase inicializado');
+            return true;
+        } catch (error) {
+            console.error('❌ Error al inicializar Supabase:', error);
+            return false;
+        }
+    }
+
     function togglePass(inputId, btn) {
         const input = document.getElementById(inputId);
         const icon = btn.querySelector('i');
@@ -192,96 +200,170 @@ const app = (function() {
         }
     }
 
-    // Mostrar/ocultar modales
     function showModal(type) {
         document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).style.display = 'flex';
     }
+    
     function hideModal(type) {
         document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).style.display = 'none';
+        const errorDiv = document.getElementById(type + 'Error');
+        const successDiv = document.getElementById(type + 'Success');
+        if (errorDiv) errorDiv.style.display = 'none';
+        if (successDiv) successDiv.style.display = 'none';
     }
 
-    // Registro
-    document.getElementById('formRegistro').addEventListener('submit', async (e) => {
+    async function handleRegistro(e) {
         e.preventDefault();
         const nombre = document.getElementById('regNombre').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const telefono = document.getElementById('regTelefono').value.trim();
         const password = document.getElementById('regPassword').value;
+        const errorDiv = document.getElementById('regError');
+        const successDiv = document.getElementById('regSuccess');
+
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+
+        if (!nombre || !email || !password) {
+            errorDiv.textContent = '❌ Completá todos los campos obligatorios';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        if (password.length < 6) {
+            errorDiv.textContent = '❌ La contraseña debe tener al menos 6 caracteres';
+            errorDiv.style.display = 'block';
+            return;
+        }
 
         try {
-            const { data, error } = await supabase.auth.signUp({
-                email, password,
-                options: { data: { nombre, telefono, role: 'afiliado', activo: false }}
+            console.log(' Registrando:', email);
+            
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: { nombre: nombre, telefono: telefono, role: 'afiliado' }
+                }
             });
-            if (error) throw error;
 
-            await supabase.from('perfiles').upsert({
-                id: data.user.id, nombre, email, telefono, role: 'afiliado', activo: false
-            }, { onConflict: 'id' });
+            if (authError) {
+                console.error('Error auth:', authError);
+                if (authError.message.includes('User already registered')) {
+                    throw new Error('Este email ya está registrado. Iniciá sesión o recuperá tu contraseña.');
+                }
+                throw authError;
+            }
 
-            document.getElementById('regSuccess').textContent = '✅ Registro exitoso. Pendiente de aprobación.';
-            document.getElementById('regSuccess').style.display = 'block';
-            setTimeout(() => { hideModal('registro'); document.getElementById('loginEmail').value = email; }, 2000);
+            if (!authData.user) {
+                throw new Error('No se pudo crear el usuario');
+            }
+
+            console.log('✅ Usuario creado:', authData.user.id);
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const { data: perfil } = await supabase
+                .from('perfiles')
+                .select('*')
+                .eq('id', authData.user.id)
+                .maybeSingle();
+
+            if (!perfil) {
+                console.warn('⚠️ Creando perfil manualmente...');
+                await supabase.from('perfiles').insert({
+                    id: authData.user.id,
+                    nombre: nombre,
+                    email: email,
+                    telefono: telefono,
+                    role: 'afiliado',
+                    activo: false
+                });
+            }
+
+            successDiv.textContent = '✅ Registro exitoso. Pendiente de aprobación.';
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                hideModal('registro');
+                document.getElementById('loginEmail').value = email;
+            }, 3000);
+
         } catch (error) {
-            document.getElementById('regError').textContent = '❌ ' + error.message;
-            document.getElementById('regError').style.display = 'block';
+            console.error('❌ Error:', error);
+            errorDiv.textContent = '❌ ' + (error.message || 'Error al registrar');
+            errorDiv.style.display = 'block';
         }
-    });
+    }
 
-    // Login
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    async function handleLogin(e) {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value.trim();
         const password = document.getElementById('loginPassword').value;
+        const errorDiv = document.getElementById('loginError');
+        errorDiv.style.display = 'none';
 
         try {
             const { data, error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw error;
 
-            const { data: perfil } = await supabase.from('perfiles').select('*').eq('id', data.user.id).maybeSingle();
-            
+            const { data: perfil } = await supabase
+                .from('perfiles')
+                .select('*')
+                .eq('id', data.user.id)
+                .maybeSingle();
+
             if (!perfil || !perfil.activo) {
                 await supabase.auth.signOut();
-                throw new Error('Cuenta no aprobada por el administrador');
+                throw new Error('Cuenta no aprobada. Contactá al administrador.');
             }
 
             currentUser = data.user;
             currentProfile = perfil;
             localStorage.setItem('aoma_session', JSON.stringify({ user: currentUser, profile: currentProfile }));
             showApp();
-        } catch (error) {
-            document.getElementById('loginError').textContent = '❌ ' + error.message;
-            document.getElementById('loginError').style.display = 'block';
-        }
-    });
 
-    // Recuperación
-    document.getElementById('formRecuperacion').addEventListener('submit', async (e) => {
+        } catch (error) {
+            errorDiv.textContent = '❌ ' + error.message;
+            errorDiv.style.display = 'block';
+        }
+    }
+
+    async function handleRecuperacion(e) {
         e.preventDefault();
         const email = document.getElementById('recEmail').value.trim();
+        const errorDiv = document.getElementById('recError');
+        const successDiv = document.getElementById('recSuccess');
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+
         try {
-            await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
-            document.getElementById('recSuccess').textContent = '✅ Email enviado. Revisá tu bandeja.';
-            document.getElementById('recSuccess').style.display = 'block';
+            await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin
+            });
+            successDiv.textContent = '✅ Email enviado. Revisá tu bandeja.';
+            successDiv.style.display = 'block';
             setTimeout(() => hideModal('recuperacion'), 2000);
         } catch (error) {
-            document.getElementById('recError').textContent = '❌ ' + error.message;
-            document.getElementById('recError').style.display = 'block';
+            errorDiv.textContent = '❌ ' + error.message;
+            errorDiv.style.display = 'block';
         }
-    });
+    }
 
-    // Editar perfil
-    document.getElementById('formEditar').addEventListener('submit', async (e) => {
+    async function handleEditar(e) {
         e.preventDefault();
         const nombre = document.getElementById('editNombre').value.trim();
         const telefono = document.getElementById('editTelefono').value.trim();
         const newPassword = document.getElementById('editPassword').value;
+        const errorDiv = document.getElementById('editError');
+        const successDiv = document.getElementById('editSuccess');
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
 
         try {
             await supabase.from('perfiles').update({ nombre, telefono }).eq('id', currentUser.id);
             await supabase.auth.updateUser({ data: { nombre, telefono }});
             
-            if (newPassword) await supabase.auth.updateUser({ password: newPassword });
+            if (newPassword && newPassword.length >= 6) {
+                await supabase.auth.updateUser({ password: newPassword });
+            }
 
             currentProfile.nombre = nombre;
             currentProfile.telefono = telefono;
@@ -290,16 +372,15 @@ const app = (function() {
             document.getElementById('userName').textContent = nombre;
             document.getElementById('userAvatar').textContent = nombre.charAt(0).toUpperCase();
             
-            document.getElementById('editSuccess').textContent = '✅ Perfil actualizado';
-            document.getElementById('editSuccess').style.display = 'block';
+            successDiv.textContent = '✅ Perfil actualizado';
+            successDiv.style.display = 'block';
             setTimeout(() => { hideModal('editar'); navigate('perfil'); }, 1500);
         } catch (error) {
-            document.getElementById('editError').textContent = '❌ ' + error.message;
-            document.getElementById('editError').style.display = 'block';
+            errorDiv.textContent = '❌ ' + error.message;
+            errorDiv.style.display = 'block';
         }
-    });
+    }
 
-    // Mostrar app
     function showApp() {
         document.getElementById('loginOverlay').style.display = 'none';
         document.querySelector('.header').style.display = 'flex';
@@ -314,7 +395,6 @@ const app = (function() {
         navigate('inicio');
     }
 
-    // Mostrar login
     function showLogin() {
         document.getElementById('loginOverlay').style.display = 'flex';
         document.querySelector('.header').style.display = 'none';
@@ -322,13 +402,67 @@ const app = (function() {
         document.getElementById('userMenu').style.display = 'none';
     }
 
-    // Navegación
+    async function loadUsers() {
+        const { data: usuarios, error } = await supabase.from('perfiles').select('*').order('created_at', { ascending: false });
+        if (error) {
+            console.error('Error cargando usuarios:', error);
+            return;
+        }
+        const tbody = document.getElementById('usersTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        
+        if (usuarios.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;">No hay usuarios</td></tr>';
+            return;
+        }
+
+        usuarios.forEach(user => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${user.nombre || 'Sin nombre'}</td>
+                <td>${user.email}</td>
+                <td>${user.telefono || '-'}</td>
+                <td><span class="status-badge ${user.activo ? 'status-active' : 'status-pending'}">${user.activo ? 'Activo' : 'Pendiente'}</span></td>
+                <td>
+                    ${!user.activo ? `<button class="btn-small btn-approve" onclick="app.approveUser('${user.id}')">Aprobar</button>` : ''}
+                    <button class="btn-small btn-delete" onclick="app.deleteUser('${user.id}')">Eliminar</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    async function approveUser(userId) {
+        if (!confirm('¿Aprobar usuario?')) return;
+        await supabase.from('perfiles').update({ activo: true }).eq('id', userId);
+        alert('✅ Usuario aprobado');
+        loadUsers();
+    }
+
+    async function deleteUser(userId) {
+        if (!confirm('¿Desactivar usuario?')) return;
+        await supabase.from('perfiles').update({ activo: false, nombre: 'Eliminado' }).eq('id', userId);
+        alert('✅ Usuario desactivado');
+        loadUsers();
+    }
+
+    function openEditModal() {
+        document.getElementById('editNombre').value = currentProfile.nombre || '';
+        document.getElementById('editEmail').value = currentUser.email;
+        document.getElementById('editTelefono').value = currentProfile.telefono || '';
+        document.getElementById('editPassword').value = '';
+        document.getElementById('editError').style.display = 'none';
+        document.getElementById('editSuccess').style.display = 'none';
+        document.getElementById('modalEditar').style.display = 'flex';
+    }
+
     function navigate(page) {
         const content = document.getElementById('pageContent');
         
         if (page === 'inicio') {
             content.innerHTML = `
-                <div style="margin-bottom:2rem;"><h1>¡Bienvenido, ${currentProfile.nombre.split(' ')[0]}! </h1><p>Panel de control</p></div>
+                <div style="margin-bottom:2rem;"><h1>¡Bienvenido, ${currentProfile.nombre.split(' ')[0]}! 👋</h1><p>Panel de control del Campus Virtual AOMA</p></div>
                 <div class="stats-grid">
                     <div class="stat-card"><div class="stat-value">8</div><div class="stat-label">Convenios CCT</div></div>
                     <div class="stat-card"><div class="stat-value">2</div><div class="stat-label">Cursos</div></div>
@@ -351,7 +485,7 @@ const app = (function() {
                         <div class="profile-field"><label>Teléfono</label><span>${currentProfile.telefono || 'No especificado'}</span></div>
                         <div class="profile-field"><label>Estado</label><span class="status-badge status-active">Activo</span></div>
                     </div>
-                    <button class="btn" style="margin-top:2rem;max-width:300px;" onclick="app.openEditModal()">Editar Perfil</button>
+                    <button class="btn" style="margin-top:2rem;max-width:300px;" onclick="app.openEditModal()"><i class="fas fa-edit"></i> Editar Perfil</button>
                 </div>
             `;
         } else if (page === 'admin') {
@@ -361,7 +495,8 @@ const app = (function() {
             }
             content.innerHTML = `
                 <div class="section">
-                    <h2 class="section-title">Panel de Administración</h2>
+                    <h2 class="section-title"><i class="fas fa-users-cog"></i> Panel de Administración</h2>
+                    <p style="margin-bottom:1rem;color:#6b7280;">Gestioná los registros de usuarios.</p>
                     <table class="users-table">
                         <thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Estado</th><th>Acciones</th></tr></thead>
                         <tbody id="usersTableBody"><tr><td colspan="5" style="text-align:center;">Cargando...</td></tr></tbody>
@@ -372,54 +507,6 @@ const app = (function() {
         }
     }
 
-    // Cargar usuarios (admin)
-    async function loadUsers() {
-        const { data: usuarios } = await supabase.from('perfiles').select('*').order('created_at', { ascending: false });
-        const tbody = document.getElementById('usersTableBody');
-        tbody.innerHTML = '';
-        
-        usuarios.forEach(user => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${user.nombre || 'Sin nombre'}</td>
-                <td>${user.email}</td>
-                <td>${user.telefono || '-'}</td>
-                <td><span class="status-badge ${user.activo ? 'status-active' : 'status-pending'}">${user.activo ? 'Activo' : 'Pendiente'}</span></td>
-                <td>
-                    ${!user.activo ? `<button class="btn-small btn-approve" onclick="app.approveUser('${user.id}')">Aprobar</button>` : ''}
-                    <button class="btn-small btn-delete" onclick="app.deleteUser('${user.id}')">Eliminar</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    // Aprobar usuario
-    async function approveUser(userId) {
-        if (!confirm('¿Aprobar usuario?')) return;
-        await supabase.from('perfiles').update({ activo: true }).eq('id', userId);
-        alert('✅ Usuario aprobado');
-        loadUsers();
-    }
-
-    // Eliminar usuario
-    async function deleteUser(userId) {
-        if (!confirm('¿Eliminar usuario?')) return;
-        await supabase.from('perfiles').update({ activo: false, nombre: 'Eliminado' }).eq('id', userId);
-        alert('✅ Usuario desactivado');
-        loadUsers();
-    }
-
-    // Abrir modal edición
-    function openEditModal() {
-        document.getElementById('editNombre').value = currentProfile.nombre || '';
-        document.getElementById('editEmail').value = currentUser.email;
-        document.getElementById('editTelefono').value = currentProfile.telefono || '';
-        document.getElementById('editPassword').value = '';
-        document.getElementById('modalEditar').style.display = 'flex';
-    }
-
-    // Logout
     async function logout() {
         if (!confirm('¿Cerrar sesión?')) return;
         await supabase.auth.signOut();
@@ -429,8 +516,12 @@ const app = (function() {
         showLogin();
     }
 
-    // Inicialización
     async function init() {
+        if (!initSupabase()) {
+            alert('Error de conexión. Recargá la página.');
+            return;
+        }
+
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
             const { data: perfil } = await supabase.from('perfiles').select('*').eq('id', session.user.id).maybeSingle();
@@ -445,7 +536,14 @@ const app = (function() {
         showLogin();
     }
 
-    // API pública
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('formRegistro').addEventListener('submit', handleRegistro);
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        document.getElementById('formRecuperacion').addEventListener('submit', handleRecuperacion);
+        document.getElementById('formEditar').addEventListener('submit', handleEditar);
+        init();
+    });
+
     return {
         togglePass,
         showModal,
@@ -454,13 +552,9 @@ const app = (function() {
         approveUser,
         deleteUser,
         openEditModal,
-        logout,
-        init
+        logout
     };
 })();
-
-// Iniciar app
-document.addEventListener('DOMContentLoaded', () => app.init());
 </script>
 </body>
 </html>
