@@ -1,9 +1,18 @@
-SIGCA v0.8 · FUNDACIÓN
+SIGCA v0.8.1 · CONTENIDO PROFESIONAL
 
-1. Guardar una copia de la versión actualmente desplegada.
-2. Subir a GitHub TODO el contenido de esta carpeta, con index.html en la raíz.
-3. No ejecutar SQL nuevo: esta versión reutiliza la base y las funciones existentes.
-4. Esperar el despliegue de Vercel.
-5. En el teléfono, borrar la caché o abrir una pestaña privada durante la primera prueba.
-6. Probar: login, registro, administrador, Mi Escritorio, tema oscuro, modal de bienvenida, Centro de Conocimiento, curso piloto y perfil.
-7. Para volver a ver el saludo de bienvenida, borrar en el navegador la clave localStorage: sigca-welcome-hidden.
+1. Guardar una copia de la versión publicada.
+2. Subir a GitHub todo el contenido interno de esta carpeta.
+3. index.html debe quedar en la raíz del repositorio.
+4. No ejecutar SQL nuevo.
+5. Esperar el despliegue de Vercel.
+6. Abrir en ventana privada o limpiar caché por el service worker de la versión anterior.
+
+PRUEBAS PRIORITARIAS
+- Logo visible en login y registro.
+- Login, registro y administrador sin cambios.
+- Abrir Capacitación > Introducción a la Negociación Colectiva.
+- Recorrer los ocho módulos.
+- Resolver preguntas interactivas.
+- Guardar una reflexión.
+- Abrir el PDF original.
+- Probar modo claro, oscuro y teléfono móvil.

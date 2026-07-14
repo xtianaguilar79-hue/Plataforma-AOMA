@@ -10,7 +10,7 @@
 
     <meta
         name="description"
-        content="SIGCA · Plataforma de capacitación de AOMA Seccional San Juan"
+        content="SIGCA · Gestión, capacitación y asistencia de AOMA Seccional San Juan"
     >
 
     <meta
@@ -43,7 +43,7 @@
 
     <link
         rel="stylesheet"
-        href="css/login.css"
+        href="css/login.css?v=0.8.3"
     >
 </head>
 
@@ -53,11 +53,8 @@
             <div class="visual-overlay"></div>
 
             <div class="visual-content">
-                <div class="institution-badge">
-                    <span class="institution-mark">
-                        <i class="fa-solid fa-helmet-safety"></i>
-                    </span>
-
+                <div class="institution-badge institution-badge-logo">
+                    <img src="assets/logo-aoma.png" alt="AOMA Seccional San Juan">
                     <span>AOMA Seccional San Juan</span>
                 </div>
 
@@ -84,19 +81,20 @@
         <section class="auth-panel">
             <div class="auth-card">
                 <header class="auth-header">
-                    <div class="brand">
-                        <div class="brand-symbol" aria-hidden="true">
-                            <i class="fa-solid fa-mountain"></i>
-                        </div>
-
-                        <div>
-                            <p class="brand-name">AOMA</p>
-                            <p class="brand-subtitle">Seccional San Juan</p>
+                    <div class="login-brand-panel" aria-label="Identidad institucional AOMA">
+                        <img
+                            src="assets/logo-aoma-horizontal.png?v=0.8.3"
+                            alt="Asociación Obrera Minera Argentina"
+                            class="login-brand-logo"
+                        >
+                        <div class="login-product-name">
+                            <strong>SIGCA</strong>
+                            <span>AOMA Seccional San Juan</span>
                         </div>
                     </div>
 
                     <div class="auth-heading">
-                        <p class="auth-kicker">SIGCA · Plataforma de capacitación</p>
+                        <p class="auth-kicker">SIGCA · Gestión, capacitación y asistencia</p>
 
                         <h2>Ingresar</h2>
 
@@ -214,7 +212,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/login.js"></script>
+    <script src="js/config.js?v=0.8.3"></script>
+    <script src="js/login.js?v=0.8.3"></script>
 </body>
 </html>
