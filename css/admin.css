@@ -1001,3 +1001,8 @@ select {
         grid-column: auto;
     }
 }
+
+/* SIGCA v0.7.1 - cierre del menú móvil */
+.sidebar-close { display:none; position:absolute; top:14px; right:14px; width:38px; height:38px; border:1px solid rgba(255,255,255,.16); border-radius:9px; background:rgba(255,255,255,.08); color:#fff; z-index:2; }
+.sidebar-backdrop { position:fixed; inset:0; z-index:2400; border:0; background:rgba(0,0,0,.55); backdrop-filter:blur(2px); }
+@media (max-width:860px) { body.sidebar-open{overflow:hidden;} .sidebar-close{display:grid;place-items:center;} .sidebar{padding-top:64px;} }

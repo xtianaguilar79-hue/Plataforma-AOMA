@@ -3,6 +3,8 @@
 const logoutButton = document.getElementById("logoutButton");
 const menuButton = document.getElementById("menuButton");
 const sidebar = document.getElementById("sidebar");
+const closeSidebarButton = document.getElementById("closeSidebarButton");
+const sidebarBackdrop = document.getElementById("sidebarBackdrop");
 
 const adminName = document.getElementById("adminName");
 const adminAvatar = document.getElementById("adminAvatar");
@@ -56,6 +58,8 @@ function assertRequiredElements() {
     const required = {
         logoutButton,
         menuButton,
+        closeSidebarButton,
+        sidebarBackdrop,
         sidebar,
         adminName,
         adminAvatar,
@@ -125,6 +129,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function configurarEventos() {
     logoutButton.addEventListener("click", cerrarSesion);
     menuButton.addEventListener("click", alternarMenu);
+    closeSidebarButton.addEventListener("click", cerrarMenu);
+    sidebarBackdrop.addEventListener("click", cerrarMenu);
 
     document.querySelectorAll("[data-view]").forEach(button => {
         button.addEventListener("click", () => mostrarVista(button.dataset.view));
@@ -593,7 +599,7 @@ function mostrarVista(vista) {
     document.querySelectorAll("[data-view]").forEach(button => {
         button.classList.toggle("active", button.dataset.view === vista);
     });
-    sidebar.classList.remove("open");
+    cerrarMenu();
 }
 
 async function cerrarSesion() {
@@ -602,7 +608,18 @@ async function cerrarSesion() {
 }
 
 function alternarMenu() {
-    sidebar.classList.toggle("open");
+    const abrir = !sidebar.classList.contains("open");
+    sidebar.classList.toggle("open", abrir);
+    sidebarBackdrop.classList.toggle("hidden", !abrir);
+    menuButton.setAttribute("aria-expanded", String(abrir));
+    document.body.classList.toggle("sidebar-open", abrir);
+}
+
+function cerrarMenu() {
+    sidebar.classList.remove("open");
+    sidebarBackdrop.classList.add("hidden");
+    menuButton.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("sidebar-open");
 }
 
 function mostrarCarga(mostrar) {

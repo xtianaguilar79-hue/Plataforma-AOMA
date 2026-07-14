@@ -15,6 +15,7 @@
 <body>
 <div class="app-shell">
   <aside class="sidebar" id="sidebar">
+    <button id="closeSidebarButton" class="sidebar-close" type="button" aria-label="Cerrar menú"><i class="fa-solid fa-xmark"></i></button>
     <div class="brand">
       <div class="brand-logo"><img src="assets/logo-aoma.png" alt="Logo AOMA San Juan"></div>
       <div><strong>AOMA</strong><span>Seccional San Juan</span></div>
@@ -35,6 +36,7 @@
 
     <button id="logoutButton" class="logout-button" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i>Cerrar sesión</button>
   </aside>
+  <button id="sidebarBackdrop" class="sidebar-backdrop hidden" type="button" aria-label="Cerrar menú"></button>
 
   <main class="main-content">
     <header class="topbar">
@@ -64,9 +66,9 @@
       </article>
 
       <div class="summary-grid">
-        <article class="summary-card"><div class="summary-icon orange"><i class="fa-solid fa-scale-balanced"></i></div><div><span>Leyes disponibles</span><strong id="lawsCount">5</strong><small>Consulta integral</small></div></article>
-        <article class="summary-card"><div class="summary-icon graphite"><i class="fa-solid fa-file-contract"></i></div><div><span>Convenios disponibles</span><strong id="agreementsCount">7</strong><small>Por actividad y empresa</small></div></article>
-        <article class="summary-card"><div class="summary-icon green"><i class="fa-solid fa-graduation-cap"></i></div><div><span>Cursos activos</span><strong>0</strong><small>Próxima etapa</small></div></article>
+        <button class="summary-card summary-action" type="button" data-library-shortcut="ley" aria-label="Abrir leyes disponibles"><div class="summary-icon orange"><i class="fa-solid fa-scale-balanced"></i></div><div><span>Leyes disponibles</span><strong id="lawsCount">5</strong><small>Consulta integral</small></div><i class="fa-solid fa-arrow-right summary-arrow"></i></button>
+        <button class="summary-card summary-action" type="button" data-library-shortcut="convenio" aria-label="Abrir convenios disponibles"><div class="summary-icon graphite"><i class="fa-solid fa-file-contract"></i></div><div><span>Convenios disponibles</span><strong id="agreementsCount">7</strong><small>Por actividad y empresa</small></div><i class="fa-solid fa-arrow-right summary-arrow"></i></button>
+        <button class="summary-card summary-action" type="button" data-coming-soon="capacitaciones" aria-label="Ver estado de capacitaciones"><div class="summary-icon green"><i class="fa-solid fa-graduation-cap"></i></div><div><span>Cursos activos</span><strong>0</strong><small>Próxima etapa</small></div><i class="fa-solid fa-clock summary-arrow"></i></button>
       </div>
 
       <section class="content-panel">
@@ -148,7 +150,7 @@
       <div><p id="documentNumber" class="eyebrow">Documento</p><h2 id="documentTitle">Título</h2><span id="documentCategory"></span></div>
       <div class="document-actions"><a id="documentPdfLink" class="secondary-button hidden" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i>Abrir PDF</a><button id="closeDocumentButton" class="icon-button" type="button" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></div>
     </header>
-    <div class="document-search"><i class="fa-solid fa-magnifying-glass"></i><input id="documentSearch" type="search" placeholder="Buscar dentro del documento..."><span id="documentMatchCount"></span></div>
+    <div class="document-search"><i class="fa-solid fa-magnifying-glass"></i><input id="documentSearch" type="search" placeholder="Buscar dentro del documento..."><div id="documentSearchNavigation" class="document-search-navigation hidden"><button id="previousMatchButton" type="button" aria-label="Coincidencia anterior"><i class="fa-solid fa-chevron-up"></i></button><span id="documentMatchCount"></span><button id="nextMatchButton" type="button" aria-label="Coincidencia siguiente"><i class="fa-solid fa-chevron-down"></i></button></div></div>
     <article id="documentContent" class="document-content"></article>
   </div>
 </div>

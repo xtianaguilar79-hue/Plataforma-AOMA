@@ -6,6 +6,8 @@ const $$ = selector => document.querySelectorAll(selector);
 const logoutButton = $("#logoutButton");
 const menuButton = $("#menuButton");
 const sidebar = $("#sidebar");
+const closeSidebarButton = $("#closeSidebarButton");
+const sidebarBackdrop = $("#sidebarBackdrop");
 const pageTitle = $("#pageTitle");
 const pageMessage = $("#pageMessage");
 const loadingState = $("#loadingState");
@@ -59,6 +61,9 @@ const documentPdfLink = $("#documentPdfLink");
 const closeDocumentButton = $("#closeDocumentButton");
 const documentSearch = $("#documentSearch");
 const documentMatchCount = $("#documentMatchCount");
+const documentSearchNavigation = $("#documentSearchNavigation");
+const previousMatchButton = $("#previousMatchButton");
+const nextMatchButton = $("#nextMatchButton");
 
 let currentUser = null;
 let currentProfile = null;
@@ -66,21 +71,29 @@ let currentLibraryFilter = "todos";
 let currentDocument = null;
 let currentDocumentOriginalHtml = "";
 let AOMA_BIBLIOTECA = [];
+let documentMatches = [];
+let currentDocumentMatchIndex = -1;
 
 window.addEventListener("DOMContentLoaded", iniciarDashboard);
 logoutButton?.addEventListener("click", cerrarSesion);
-menuButton?.addEventListener("click", () => sidebar?.classList.toggle("open"));
+menuButton?.addEventListener("click", alternarSidebar);
+closeSidebarButton?.addEventListener("click", cerrarSidebar);
+sidebarBackdrop?.addEventListener("click", cerrarSidebar);
 profileShortcut?.addEventListener("click", () => mostrarSeccion("perfil"));
 profileForm?.addEventListener("submit", guardarPerfil);
 passwordForm?.addEventListener("submit", cambiarPassword);
 
 navButtons.forEach(button => button.addEventListener("click", () => mostrarSeccion(button.dataset.section)));
 $$('[data-go]').forEach(button => button.addEventListener("click", () => mostrarSeccion(button.dataset.go)));
+$$('[data-library-shortcut]').forEach(button => button.addEventListener("click", () => abrirBibliotecaFiltrada(button.dataset.libraryShortcut)));
+$$('[data-coming-soon]').forEach(button => button.addEventListener("click", () => mostrarMensaje("El módulo de capacitaciones se incorporará en la próxima etapa.", "warning")));
 filterButtons.forEach(button => button.addEventListener("click", () => cambiarFiltroBiblioteca(button.dataset.libraryFilter)));
 librarySearch?.addEventListener("input", renderizarBiblioteca);
 closeDocumentButton?.addEventListener("click", cerrarDocumento);
 documentModal?.addEventListener("click", event => { if (event.target === documentModal) cerrarDocumento(); });
 documentSearch?.addEventListener("input", buscarDentroDocumento);
+previousMatchButton?.addEventListener("click", () => navegarCoincidencia(-1));
+nextMatchButton?.addEventListener("click", () => navegarCoincidencia(1));
 document.addEventListener("keydown", event => { if (event.key === "Escape") cerrarDocumento(); });
 
 async function iniciarDashboard() {
@@ -153,8 +166,29 @@ function mostrarSeccion(nombreSeccion) {
   navButtons.forEach(button => button.classList.toggle("active", button.dataset.section === nombreSeccion));
   const titulos = { inicio: "Mi espacio", biblioteca: "Biblioteca", perfil: "Mi perfil" };
   pageTitle.textContent = titulos[nombreSeccion] || "Mi espacio";
-  sidebar.classList.remove("open");
+  cerrarSidebar();
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function abrirBibliotecaFiltrada(tipo) {
+  mostrarSeccion("biblioteca");
+  cambiarFiltroBiblioteca(tipo);
+  librarySearch?.focus();
+}
+
+function alternarSidebar() {
+  const abrir = !sidebar?.classList.contains("open");
+  sidebar?.classList.toggle("open", abrir);
+  sidebarBackdrop?.classList.toggle("hidden", !abrir);
+  menuButton?.setAttribute("aria-expanded", String(abrir));
+  document.body.classList.toggle("sidebar-open", abrir);
+}
+
+function cerrarSidebar() {
+  sidebar?.classList.remove("open");
+  sidebarBackdrop?.classList.add("hidden");
+  menuButton?.setAttribute("aria-expanded", "false");
+  document.body.classList.remove("sidebar-open");
 }
 
 async function prepararBiblioteca() {
@@ -230,7 +264,7 @@ async function abrirDocumento(item) {
   documentTitle.textContent = item.titulo;
   documentCategory.textContent = item.categoria;
   documentSearch.value = "";
-  documentMatchCount.textContent = "";
+  reiniciarNavegacionCoincidencias();
   documentPdfLink.classList.add("hidden");
   currentDocumentOriginalHtml = `<div class="pdf-placeholder"><i class="fa-solid fa-spinner fa-spin"></i><h3>Cargando documento...</h3></div>`;
   documentContent.innerHTML = currentDocumentOriginalHtml;
@@ -261,27 +295,51 @@ function cerrarDocumento() {
 function buscarDentroDocumento() {
   const termino = documentSearch.value.trim();
   documentContent.innerHTML = currentDocumentOriginalHtml;
-  documentMatchCount.textContent = "";
+  reiniciarNavegacionCoincidencias();
   if (termino.length < 2 || !currentDocumentOriginalHtml) return;
 
   const walker = document.createTreeWalker(documentContent, NodeFilter.SHOW_TEXT);
   const nodes = [];
   while (walker.nextNode()) nodes.push(walker.currentNode);
-  let coincidencias = 0;
   const regex = new RegExp(`(${escaparRegex(termino)})`, "gi");
 
   nodes.forEach(node => {
     if (!regex.test(node.nodeValue)) return;
     regex.lastIndex = 0;
     const span = document.createElement("span");
-    span.innerHTML = escaparHtml(node.nodeValue).replace(regex, match => {
-      coincidencias += 1;
-      return `<mark>${match}</mark>`;
-    });
+    span.innerHTML = escaparHtml(node.nodeValue).replace(regex, match => `<mark class="document-match">${match}</mark>`);
     node.parentNode.replaceChild(span, node);
   });
-  documentMatchCount.textContent = `${coincidencias} coincidencia${coincidencias === 1 ? "" : "s"}`;
-  documentContent.querySelector("mark")?.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  documentMatches = Array.from(documentContent.querySelectorAll("mark.document-match"));
+  if (!documentMatches.length) {
+    documentMatchCount.textContent = "0 coincidencias";
+    documentSearchNavigation.classList.remove("hidden");
+    return;
+  }
+
+  currentDocumentMatchIndex = 0;
+  documentSearchNavigation.classList.remove("hidden");
+  actualizarCoincidenciaActiva();
+}
+
+function navegarCoincidencia(direccion) {
+  if (!documentMatches.length) return;
+  currentDocumentMatchIndex = (currentDocumentMatchIndex + direccion + documentMatches.length) % documentMatches.length;
+  actualizarCoincidenciaActiva();
+}
+
+function actualizarCoincidenciaActiva() {
+  documentMatches.forEach((match, index) => match.classList.toggle("current", index === currentDocumentMatchIndex));
+  documentMatchCount.textContent = `${currentDocumentMatchIndex + 1} de ${documentMatches.length}`;
+  documentMatches[currentDocumentMatchIndex]?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function reiniciarNavegacionCoincidencias() {
+  documentMatches = [];
+  currentDocumentMatchIndex = -1;
+  if (documentMatchCount) documentMatchCount.textContent = "";
+  documentSearchNavigation?.classList.add("hidden");
 }
 
 async function guardarPerfil(event) {

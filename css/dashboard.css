@@ -966,3 +966,95 @@ body.modal-open { overflow: hidden; }
     .document-search span { display: none; }
     .document-content { padding: 22px 18px 40px; }
 }
+
+
+/* SIGCA v0.7.1 - mejoras móviles y navegación de búsqueda */
+.sidebar-close {
+  display: none;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 9px;
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  z-index: 2;
+}
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  border: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(2px);
+}
+.summary-action {
+  position: relative;
+  width: 100%;
+  border: 1px solid var(--gray-100);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+.summary-action:hover, .summary-action:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(244,123,32,.35);
+  box-shadow: 0 18px 42px rgba(17,24,39,.12);
+  outline: none;
+}
+.summary-arrow {
+  margin-left: auto;
+  color: var(--gray-400);
+}
+.document-search-navigation {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding-left: 8px;
+}
+.document-search-navigation button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--gray-200);
+  border-radius: 7px;
+  background: var(--white);
+  color: var(--gray-700);
+}
+.document-search-navigation button:hover {
+  border-color: var(--orange);
+  color: var(--orange-dark);
+}
+.document-search-navigation span {
+  min-width: 58px;
+  color: var(--gray-500);
+  font-size: .75rem;
+  font-weight: 700;
+  text-align: center;
+}
+.document-content mark.document-match {
+  padding: 1px 2px;
+  border-radius: 3px;
+  background: #ffe08a;
+  color: inherit;
+}
+.document-content mark.document-match.current {
+  background: var(--orange);
+  color: #fff;
+  box-shadow: 0 0 0 3px rgba(244,123,32,.22);
+}
+@media (max-width: 860px) {
+  body.sidebar-open { overflow: hidden; }
+  .sidebar-close { display: grid; place-items: center; }
+  .sidebar { z-index: 1000; padding-top: 64px; }
+}
+@media (max-width: 650px) {
+  .document-search { flex-wrap: wrap; }
+  .document-search input { min-width: 0; flex: 1 1 180px; }
+  .document-search-navigation { width: 100%; justify-content: flex-end; padding-left: 0; }
+}
