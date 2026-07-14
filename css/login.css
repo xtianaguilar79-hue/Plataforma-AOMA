@@ -548,4 +548,17 @@ a {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
     }
+.brand-logo-container {
+    padding: 0;
+    overflow: hidden;
+    background: var(--white);
+}
+
+.brand-logo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    object-fit: contain;
+}
 }
