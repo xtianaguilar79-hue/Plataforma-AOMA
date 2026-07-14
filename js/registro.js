@@ -21,7 +21,7 @@ async function iniciar() {
 
 async function cargarEmpresas() {
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
 
         .from("empresas")
 
@@ -63,7 +63,7 @@ async function cargarEmpresas() {
 
 async function cargarConvenios() {
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
 
         .from("convenios")
 
@@ -165,7 +165,7 @@ async function registrarUsuario(e) {
 
     mensaje.innerHTML = "Registrando usuario...";
 
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabaseClient.auth.signUp({
 
         email,
 
@@ -179,7 +179,7 @@ async function registrarUsuario(e) {
 
     }
 
-    const { error: perfilError } = await supabase
+    const { error: perfilError } = await supabaseClient
 
         .from("usuarios")
 
