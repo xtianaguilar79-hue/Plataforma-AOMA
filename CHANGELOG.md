@@ -1,16 +1,20 @@
-# CHANGELOG
+# SIGCA · Changelog
 
-## SIGCA v0.8 · Fundación
+## v0.8.1 · Contenido profesional
 
-- Rediseño integral de la experiencia principal.
-- Nuevo menú definitivo: Mi Escritorio, Institucional, Centro de Conocimiento, Capacitación, Gestión Sindical y Mi Perfil.
-- Tema claro, oscuro y automático.
-- Conversión inicial a PWA mediante `manifest.webmanifest` y `sw.js`.
-- Modal institucional de bienvenida firmado por Iván Marcelo Malla.
-- Módulo Institucional con misión, visión, valores, historia y organigramas 2026–2030.
-- Curso piloto “Introducción a la Negociación Colectiva” con ocho módulos y progreso local.
-- Buscador global mediante `Ctrl + K`.
-- Centro de Conocimiento conservado y rediseñado.
-- Perfil renovado con selector de apariencia.
-- Base visual para Gestión Sindical.
-- Se mantienen autenticación, registro, recuperación, administración y políticas Supabase existentes.
+### Corregido
+- Se integra el logo institucional real en la pantalla de ingreso.
+- Se conserva el logo en registro, recuperación, panel y área privada.
+
+### Curso piloto reconstruido
+- Desarrollo completo en ocho módulos, basado en el manual del Programa de Apoyo a la Formación Sindical.
+- Objetivos, competencias, conceptos jurídicos, actores, niveles, procedimiento y rol sindical.
+- Casos aplicados al trabajo minero.
+- Preguntas interactivas con devolución inmediata.
+- Reflexiones personales guardadas en el dispositivo.
+- Timeline del procedimiento de negociación.
+- Material original descargable en PDF.
+- Diseño responsive y compatible con modo oscuro.
+
+### Sin cambios
+- Autenticación, registro, recuperación de contraseña, administración, usuarios y políticas de Supabase.
