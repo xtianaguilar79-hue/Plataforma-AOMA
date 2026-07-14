@@ -53,11 +53,22 @@
 @media(max-width:860px){.concept-strip{grid-template-columns:1fr 1fr}.three-phase{grid-template-columns:1fr}.course-modules{max-height:175px}.lesson-content{padding-top:28px}}
 @media(max-width:620px){.learning-grid,.actor-cards,.classification-grid,.numbered-cards,.comparison-table,.mandatory-grid>ol{grid-template-columns:1fr}.concept-strip{grid-template-columns:1fr}.knowledge-check{display:grid}.knowledge-option{width:100%}.reflection-status{display:block;margin:8px 0 0}.lesson-nav{display:grid;grid-template-columns:1fr 1fr}.lesson-nav #completeLesson{grid-column:1/-1;grid-row:1}.lesson-lead{font-size:.94rem}}
 
-
-/* SIGCA v0.8.3 · Sidebar móvil desplazable */
+/* SIGCA v0.8.4 · Menú móvil estable y desplazable */
 @media(max-width:860px){
-  .sidebar{height:100dvh;max-height:100dvh;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(22px + env(safe-area-inset-bottom));}
-  .sidebar-nav{flex:0 0 auto;}
-  .sidebar-footer{margin-top:28px;flex:0 0 auto;padding-bottom:8px;}
-  .logout-button{margin-bottom:env(safe-area-inset-bottom);}
+  .sidebar{
+    height:100vh;
+    height:100dvh;
+    max-height:100dvh;
+    overflow-y:auto;
+    overflow-x:hidden;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom));
+  }
+  .sidebar-nav{flex:0 0 auto}
+  .sidebar-footer{
+    margin-top:24px;
+    flex:0 0 auto;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
 }

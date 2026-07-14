@@ -1,10 +1,9 @@
-# SIGCA v0.8.3
+# SIGCA v0.8.4
 
-- Restaurada y reforzada la identidad visual de AOMA en la pantalla de ingreso.
-- Incorporado bloque institucional SIGCA/AOMA visible también en teléfonos.
-- Corregido el desplazamiento vertical del menú lateral móvil.
-- El botón Cerrar sesión queda accesible desplazando el sidebar.
-- Actualizado el versionado de recursos para evitar caché antigua.
+- Hotfix reconstruido desde v0.8.2, versión móvil confirmada.
+- Logo AOMA restaurado sin modificar la lógica del login.
+- Sidebar móvil desplazable hasta Cerrar sesión.
+- Sin cambios de JavaScript, Supabase ni contenido.
 
 # SIGCA v0.8.2 - Corrección móvil
 
