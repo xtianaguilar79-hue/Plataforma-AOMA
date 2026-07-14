@@ -561,4 +561,216 @@ a {
     padding: 5px;
     object-fit: contain;
 }
+/* =====================================================
+   CORRECCIÓN DEFINITIVA DEL LOGO Y VISTA MÓVIL
+   ===================================================== */
+
+/* Contenedor fijo del logo institucional */
+.brand .brand-symbol.brand-logo-container {
+    width: 46px;
+    min-width: 46px;
+    max-width: 46px;
+
+    height: 46px;
+    min-height: 46px;
+    max-height: 46px;
+
+    flex: 0 0 46px;
+
+    padding: 4px;
+    overflow: hidden;
+
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+
+    background: #ffffff;
+}
+
+/* Impide que la imagen salga de su contenedor */
+.brand .brand-logo {
+    position: static !important;
+
+    display: block !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    height: 100% !important;
+    max-height: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    object-fit: contain !important;
+    object-position: center !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    background: transparent !important;
+
+    transform: none !important;
+}
+
+/* El encabezado siempre debe quedar por encima */
+.auth-header,
+.auth-form,
+.auth-footer {
+    position: relative;
+    z-index: 2;
+}
+
+/* La tarjeta conserva un fondo sólido y legible */
+.auth-card {
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+/* =====================================================
+   OPTIMIZACIÓN PARA CELULARES
+   ===================================================== */
+
+@media (max-width: 980px) {
+    /* En celulares se oculta la portada lateral */
+    .auth-visual {
+        display: none !important;
+    }
+
+    .auth-layout {
+        display: block;
+        min-height: 100vh;
+        background:
+            radial-gradient(
+                circle at top right,
+                rgba(244, 123, 32, 0.1),
+                transparent 35%
+            ),
+            #f6f7f9;
+    }
+
+    .auth-panel {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+
+        min-height: 100vh;
+        padding: 22px 14px;
+
+        background: transparent;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 500px;
+
+        margin: 0;
+        padding: 28px 22px;
+
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+
+        background: #ffffff;
+
+        box-shadow:
+            0 16px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .brand {
+        position: relative;
+        z-index: 3;
+
+        display: flex;
+        align-items: center;
+
+        width: 100%;
+    }
+
+    .brand-name {
+        color: #111111;
+    }
+
+    .brand-subtitle {
+        color: #68717c;
+    }
+
+    .auth-heading {
+        margin-top: 30px;
+    }
+
+    .auth-kicker {
+        color: #d96b1a;
+    }
+
+    .auth-heading h2 {
+        color: #111111;
+    }
+
+    .auth-heading > p:last-child {
+        color: #68717c;
+    }
+
+    .form-group label {
+        color: #343a42;
+    }
+
+    .input-wrapper input {
+        color: #17191c;
+        background: #ffffff;
+    }
+
+    .auth-footer {
+        color: #68717c;
+    }
+}
+
+@media (max-width: 540px) {
+    .auth-panel {
+        padding: 14px 10px 28px;
+    }
+
+    .auth-card {
+        padding: 24px 18px;
+        border-radius: 15px;
+    }
+
+    .brand .brand-symbol.brand-logo-container {
+        width: 42px;
+        min-width: 42px;
+        max-width: 42px;
+
+        height: 42px;
+        min-height: 42px;
+        max-height: 42px;
+
+        flex-basis: 42px;
+    }
+
+    .auth-heading {
+        margin-top: 26px;
+    }
+
+    .auth-heading h2 {
+        font-size: 1.65rem;
+        line-height: 1.15;
+    }
+
+    .auth-heading > p:last-child {
+        font-size: 0.88rem;
+        line-height: 1.6;
+    }
+
+    .input-wrapper input {
+        height: 50px;
+        font-size: 16px;
+    }
+
+    .primary-button {
+        min-height: 50px;
+    }
+
+    .auth-footer {
+        margin-top: 25px;
+        padding-top: 20px;
+    }
 }
