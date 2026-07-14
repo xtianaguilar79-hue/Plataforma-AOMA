@@ -26,10 +26,3 @@
 
 ### Sin cambios
 - Autenticación, registro, recuperación de contraseña, administración, usuarios y políticas de Supabase.
-
-## v0.8.5 Mobile Clean
-- Eliminación completa y temporal de PWA y Service Worker.
-- Cabeceras no-cache para HTML, CSS y JavaScript en Vercel.
-- Limpieza automática de registros y cachés antiguos del Service Worker.
-- Sidebar móvil con área central desplazable y cierre de sesión siempre accesible.
-- Conservación del logo institucional, curso ampliado y módulos funcionales.

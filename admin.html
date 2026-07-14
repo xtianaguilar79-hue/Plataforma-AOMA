@@ -2,23 +2,6 @@
 <html lang="es-AR">
 <head>
     <meta charset="UTF-8">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <script>
-  (function(){
-    if (!('serviceWorker' in navigator)) return;
-    navigator.serviceWorker.getRegistrations().then(function(regs){
-      return Promise.all(regs.map(function(reg){ return reg.unregister(); }));
-    }).then(function(){
-      if (!window.caches) return;
-      return caches.keys().then(function(keys){
-        return Promise.all(keys.map(function(key){ return caches.delete(key); }));
-      });
-    }).catch(function(err){ console.warn('Limpieza PWA:', err); });
-  })();
-  </script>
-
 
     <meta
         name="viewport"
@@ -60,7 +43,7 @@
 
     <link
         rel="stylesheet"
-        href="css/admin.css?v=0.8.5"
+        href="css/admin.css?v=0.8.6"
     >
 </head>
 
@@ -599,7 +582,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js?v=0.8.5"></script>
-    <script src="js/admin.js?v=0.8.5"></script>
+    <script src="js/config.js?v=0.8.6"></script>
+    <script src="js/admin.js?v=0.8.6"></script>
 </body>
 </html>
