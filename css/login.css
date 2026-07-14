@@ -779,13 +779,3 @@ a {
 .brand-with-logo{display:block}
 .login-brand-logo{display:block;width:min(100%,340px);height:auto;max-height:90px;object-fit:contain;object-position:left center}
 @media(max-width:540px){.login-brand-logo{width:min(100%,290px);margin-inline:auto;object-position:center}.brand-with-logo{text-align:center}}
-
-/* SIGCA v0.8.4 · Identidad institucional estable */
-.login-logo-block{width:100%;margin-bottom:20px;text-align:left}
-.login-logo-block .login-brand-logo{display:block;width:min(100%,340px);height:auto;max-height:96px;object-fit:contain;object-position:left center}
-.login-system-name{margin:10px 0 0;color:var(--gray-500,#68717c);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-@media(max-width:540px){
-  .login-logo-block{text-align:center}
-  .login-logo-block .login-brand-logo{width:min(100%,300px);margin-inline:auto;object-position:center}
-  .login-system-name{font-size:.68rem;line-height:1.45}
-}

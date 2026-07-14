@@ -1,10 +1,3 @@
-# SIGCA v0.8.4
-
-- Hotfix reconstruido desde v0.8.2, versión móvil confirmada.
-- Logo AOMA restaurado sin modificar la lógica del login.
-- Sidebar móvil desplazable hasta Cerrar sesión.
-- Sin cambios de JavaScript, Supabase ni contenido.
-
 # SIGCA v0.8.2 - Corrección móvil
 
 - Se corrige pantalla blanca en dispositivos móviles.
@@ -33,3 +26,10 @@
 
 ### Sin cambios
 - Autenticación, registro, recuperación de contraseña, administración, usuarios y políticas de Supabase.
+
+## v0.8.5 Mobile Clean
+- Eliminación completa y temporal de PWA y Service Worker.
+- Cabeceras no-cache para HTML, CSS y JavaScript en Vercel.
+- Limpieza automática de registros y cachés antiguos del Service Worker.
+- Sidebar móvil con área central desplazable y cierre de sesión siempre accesible.
+- Conservación del logo institucional, curso ampliado y módulos funcionales.
