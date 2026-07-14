@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SIGCA · Plataforma de capacitación y conocimiento de AOMA Seccional San Juan">
+  <meta name="theme-color" content="#111111">
+  <title>Mi espacio | AOMA San Juan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo"><img src="assets/logo-aoma.png" alt="Logo AOMA San Juan"></div>
+      <div><strong>AOMA</strong><span>Seccional San Juan</span></div>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Navegación principal">
+      <button class="nav-item active" type="button" data-section="inicio"><i class="fa-solid fa-house"></i>Inicio</button>
+      <button class="nav-item" type="button" data-section="biblioteca"><i class="fa-solid fa-book-open"></i>Biblioteca</button>
+      <button class="nav-item" type="button" data-section="perfil"><i class="fa-solid fa-user"></i>Mi perfil</button>
+      <button class="nav-item" type="button" disabled><i class="fa-solid fa-graduation-cap"></i>Mis cursos<span class="soon">Próximo</span></button>
+      <button class="nav-item" type="button" disabled><i class="fa-solid fa-certificate"></i>Certificados<span class="soon">Próximo</span></button>
+    </nav>
+
+    <div class="sidebar-support">
+      <img src="assets/chat-avatar.png" alt="Asistente virtual AOMA">
+      <div><strong>Asistente AOMA</strong><span>Preparado para una próxima versión</span></div>
+    </div>
+
+    <button id="logoutButton" class="logout-button" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i>Cerrar sesión</button>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <button id="menuButton" class="menu-button" type="button" aria-label="Abrir menú"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-title"><p class="eyebrow">Plataforma de formación y conocimiento</p><h1 id="pageTitle">Mi espacio</h1></div>
+      <button id="profileShortcut" class="user-summary" type="button">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <div><strong id="userName">Usuario</strong><span id="userRole">Perfil</span></div>
+      </button>
+    </header>
+
+    <div id="pageMessage" class="page-message hidden" role="alert" aria-live="polite"></div>
+    <div id="loadingState" class="loading-state"><span class="spinner"></span>Cargando tu información...</div>
+
+    <section id="inicioSection" class="page-section hidden">
+      <article class="hero-card">
+        <div class="hero-copy">
+          <p class="eyebrow light">Bienvenido a AOMA</p>
+          <h2 id="welcomeTitle">Tu espacio de formación</h2>
+          <p>Accedé a legislación laboral, convenios colectivos, materiales y futuras capacitaciones desde una sola plataforma institucional.</p>
+          <div class="hero-actions">
+            <button class="hero-primary" type="button" data-go="biblioteca"><i class="fa-solid fa-book-open-reader"></i>Explorar biblioteca</button>
+            <button class="hero-secondary" type="button" data-go="perfil"><i class="fa-solid fa-user-pen"></i>Revisar mi perfil</button>
+          </div>
+        </div>
+        <div class="hero-mark"><img src="assets/logo-aoma.png" alt="AOMA"></div>
+      </article>
+
+      <div class="summary-grid">
+        <article class="summary-card"><div class="summary-icon orange"><i class="fa-solid fa-scale-balanced"></i></div><div><span>Leyes disponibles</span><strong id="lawsCount">5</strong><small>Consulta integral</small></div></article>
+        <article class="summary-card"><div class="summary-icon graphite"><i class="fa-solid fa-file-contract"></i></div><div><span>Convenios disponibles</span><strong id="agreementsCount">7</strong><small>Por actividad y empresa</small></div></article>
+        <article class="summary-card"><div class="summary-icon green"><i class="fa-solid fa-graduation-cap"></i></div><div><span>Cursos activos</span><strong>0</strong><small>Próxima etapa</small></div></article>
+      </div>
+
+      <section class="content-panel">
+        <div class="section-heading"><div><p class="eyebrow">Información laboral</p><h2>Tu vinculación con AOMA</h2></div></div>
+        <div class="information-grid">
+          <article class="information-item"><span>Rol</span><strong id="dashboardRole">—</strong></article>
+          <article class="information-item"><span>Empresa</span><strong id="dashboardCompany">—</strong></article>
+          <article class="information-item"><span>Convenio colectivo</span><strong id="dashboardAgreement">—</strong></article>
+          <article class="information-item"><span>Estado de la cuenta</span><strong class="status-approved">Aprobada</strong></article>
+        </div>
+      </section>
+
+      <section class="content-panel">
+        <div class="section-heading split"><div><p class="eyebrow">Accesos rápidos</p><h2>Documentos destacados</h2></div><button class="text-button" type="button" data-go="biblioteca">Ver biblioteca completa <i class="fa-solid fa-arrow-right"></i></button></div>
+        <div id="featuredDocuments" class="featured-grid"></div>
+      </section>
+    </section>
+
+    <section id="bibliotecaSection" class="page-section hidden">
+      <div class="library-header">
+        <div><p class="eyebrow">Biblioteca inteligente</p><h2>Normativa y convenios</h2><p>Buscá por ley, número, tema, empresa o palabra clave. Los documentos se consultan sin abandonar la plataforma.</p></div>
+        <div class="library-stats"><span><strong id="libraryTotal">12</strong> documentos</span><span><strong>2</strong> categorías principales</span></div>
+      </div>
+
+      <div class="library-toolbar">
+        <div class="library-search"><i class="fa-solid fa-magnifying-glass"></i><input id="librarySearch" type="search" placeholder="Buscar por ley, convenio, artículo, empresa o tema..." autocomplete="off"></div>
+        <div class="filter-pills" role="group" aria-label="Filtros de biblioteca">
+          <button class="filter-pill active" type="button" data-library-filter="todos">Todos</button>
+          <button class="filter-pill" type="button" data-library-filter="ley">Leyes</button>
+          <button class="filter-pill" type="button" data-library-filter="convenio">Convenios</button>
+        </div>
+      </div>
+
+      <div id="libraryResultsInfo" class="results-info"></div>
+      <div id="libraryGrid" class="library-grid"></div>
+      <div id="libraryEmpty" class="empty-state hidden"><i class="fa-solid fa-magnifying-glass"></i><h3>No encontramos resultados</h3><p>Probá con otra palabra o cambiá el filtro.</p></div>
+    </section>
+
+    <section id="perfilSection" class="page-section hidden">
+      <div class="profile-layout">
+        <aside class="profile-card">
+          <div class="profile-logo"><img src="assets/logo-aoma.png" alt="AOMA"></div>
+          <div class="profile-avatar" id="profileAvatar">U</div>
+          <h2 id="profileName">Usuario</h2><p id="profileRole">Perfil</p>
+          <div class="profile-badges"><span id="profileCompany">Sin empresa</span><span id="profileAgreement">Sin convenio</span></div>
+          <div class="profile-note"><i class="fa-solid fa-shield-halved"></i><span>Los datos laborales solo pueden ser modificados por un administrador.</span></div>
+        </aside>
+
+        <section class="content-panel profile-panel">
+          <div class="section-heading"><div><p class="eyebrow">Datos personales</p><h2>Mi perfil</h2><p>Actualizá tus datos de contacto y la seguridad de tu cuenta.</p></div></div>
+          <form id="profileForm" class="profile-form">
+            <div class="form-grid">
+              <div class="form-group"><label for="nombre">Nombre</label><input id="nombre" type="text" readonly></div>
+              <div class="form-group"><label for="apellido">Apellido</label><input id="apellido" type="text" readonly></div>
+              <div class="form-group"><label for="dni">DNI</label><input id="dni" type="text" readonly></div>
+              <div class="form-group"><label for="telefono">Teléfono</label><input id="telefono" type="tel" autocomplete="tel" placeholder="Ej.: 264 555 0000"></div>
+              <div class="form-group full-width"><label for="email">Correo electrónico</label><input id="email" type="email" autocomplete="email" required><small>El cambio de correo puede requerir confirmación desde el enlace enviado por Supabase.</small></div>
+            </div>
+            <div class="form-actions"><button id="saveProfileButton" class="primary-button" type="submit"><i class="fa-solid fa-floppy-disk"></i>Guardar cambios</button></div>
+          </form>
+          <div class="divider"></div>
+          <form id="passwordForm" class="password-form">
+            <div class="section-heading compact"><div><p class="eyebrow">Seguridad</p><h2>Cambiar contraseña</h2></div></div>
+            <div class="form-grid">
+              <div class="form-group"><label for="newPassword">Nueva contraseña</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8"></div>
+              <div class="form-group"><label for="confirmPassword">Confirmar contraseña</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8"></div>
+            </div>
+            <div class="form-actions"><button id="savePasswordButton" class="secondary-button" type="submit"><i class="fa-solid fa-key"></i>Actualizar contraseña</button></div>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="documentModal" class="document-modal hidden" role="dialog" aria-modal="true" aria-labelledby="documentTitle">
+  <div class="document-shell">
+    <header class="document-header">
+      <div><p id="documentNumber" class="eyebrow">Documento</p><h2 id="documentTitle">Título</h2><span id="documentCategory"></span></div>
+      <div class="document-actions"><a id="documentPdfLink" class="secondary-button hidden" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i>Abrir PDF</a><button id="closeDocumentButton" class="icon-button" type="button" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></div>
+    </header>
+    <div class="document-search"><i class="fa-solid fa-magnifying-glass"></i><input id="documentSearch" type="search" placeholder="Buscar dentro del documento..."><span id="documentMatchCount"></span></div>
+    <article id="documentContent" class="document-content"></article>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>
