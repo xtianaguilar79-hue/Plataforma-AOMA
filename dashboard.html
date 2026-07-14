@@ -150,7 +150,28 @@
       <div><p id="documentNumber" class="eyebrow">Documento</p><h2 id="documentTitle">Título</h2><span id="documentCategory"></span></div>
       <div class="document-actions"><a id="documentPdfLink" class="secondary-button hidden" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i>Abrir PDF</a><button id="closeDocumentButton" class="icon-button" type="button" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></div>
     </header>
-    <div class="document-search"><i class="fa-solid fa-magnifying-glass"></i><input id="documentSearch" type="search" placeholder="Buscar dentro del documento..."><div id="documentSearchNavigation" class="document-search-navigation hidden"><button id="previousMatchButton" type="button" aria-label="Coincidencia anterior"><i class="fa-solid fa-chevron-up"></i></button><span id="documentMatchCount"></span><button id="nextMatchButton" type="button" aria-label="Coincidencia siguiente"><i class="fa-solid fa-chevron-down"></i></button></div></div>
+    <div id="documentSearchBar" class="document-search">
+      <form id="documentSearchForm" class="document-search-form" role="search">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <input id="documentSearch" type="search" placeholder="Buscar dentro del documento..." autocomplete="off">
+        <button id="executeDocumentSearchButton" class="document-search-submit" type="submit" aria-label="Buscar">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+      <div id="documentSearchNavigation" class="document-search-navigation hidden">
+        <button id="editDocumentSearchButton" class="document-search-edit" type="button" aria-label="Cambiar búsqueda" title="Cambiar búsqueda">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <span id="documentSearchTerm" class="document-search-term"></span>
+        <span id="documentMatchCount"></span>
+        <button id="previousMatchButton" type="button" aria-label="Coincidencia anterior" title="Anterior">
+          <i class="fa-solid fa-chevron-up"></i>
+        </button>
+        <button id="nextMatchButton" type="button" aria-label="Coincidencia siguiente" title="Siguiente">
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
+    </div>
     <article id="documentContent" class="document-content"></article>
   </div>
 </div>

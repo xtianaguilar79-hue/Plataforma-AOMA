@@ -1,3 +1,10 @@
+# SIGCA v0.7.2
+
+- Buscador documental compacto después de ejecutar una búsqueda.
+- El campo de búsqueda se oculta y queda una barra mínima con término, contador y navegación.
+- Botón de lupa para modificar la búsqueda sin cerrar el documento.
+- Mayor espacio vertical para lectura en teléfonos móviles.
+
 # SIGCA v0.7.1
 
 ## Correcciones

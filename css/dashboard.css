@@ -1058,3 +1058,92 @@ body.modal-open { overflow: hidden; }
   .document-search input { min-width: 0; flex: 1 1 180px; }
   .document-search-navigation { width: 100%; justify-content: flex-end; padding-left: 0; }
 }
+
+
+/* SIGCA v0.7.2 - buscador documental compacto */
+.document-search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.document-search-form > i {
+  position: absolute;
+  left: 15px;
+  color: var(--gray-400);
+  pointer-events: none;
+}
+.document-search-form input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 48px 0 42px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  outline: none;
+}
+.document-search-form input:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 4px var(--orange-soft);
+}
+.document-search-submit {
+  position: absolute;
+  right: 5px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--orange);
+  color: #fff;
+}
+.document-search.is-compact {
+  justify-content: flex-end;
+  min-height: 48px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.document-search.is-compact .document-search-navigation {
+  width: auto;
+  margin-left: 0;
+  padding: 4px;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(17,24,39,.06);
+}
+.document-search-term {
+  max-width: 180px;
+  min-width: 0 !important;
+  padding: 0 7px;
+  overflow: hidden;
+  color: var(--gray-700) !important;
+  font-size: .78rem !important;
+  font-weight: 800 !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left !important;
+}
+.document-search-edit {
+  color: var(--orange-dark) !important;
+}
+@media (max-width: 760px) {
+  .document-search {
+    padding: 8px 12px;
+  }
+  .document-search.is-compact {
+    min-height: 46px;
+    padding: 6px 12px;
+  }
+  .document-search.is-compact .document-search-navigation {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .document-search-term {
+    flex: 1;
+    max-width: none;
+  }
+  .document-search-navigation span {
+    display: inline-block;
+  }
+}

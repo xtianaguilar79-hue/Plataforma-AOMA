@@ -59,11 +59,15 @@ const documentCategory = $("#documentCategory");
 const documentContent = $("#documentContent");
 const documentPdfLink = $("#documentPdfLink");
 const closeDocumentButton = $("#closeDocumentButton");
+const documentSearchBar = $("#documentSearchBar");
+const documentSearchForm = $("#documentSearchForm");
 const documentSearch = $("#documentSearch");
+const documentSearchTerm = $("#documentSearchTerm");
 const documentMatchCount = $("#documentMatchCount");
 const documentSearchNavigation = $("#documentSearchNavigation");
 const previousMatchButton = $("#previousMatchButton");
 const nextMatchButton = $("#nextMatchButton");
+const editDocumentSearchButton = $("#editDocumentSearchButton");
 
 let currentUser = null;
 let currentProfile = null;
@@ -91,7 +95,8 @@ filterButtons.forEach(button => button.addEventListener("click", () => cambiarFi
 librarySearch?.addEventListener("input", renderizarBiblioteca);
 closeDocumentButton?.addEventListener("click", cerrarDocumento);
 documentModal?.addEventListener("click", event => { if (event.target === documentModal) cerrarDocumento(); });
-documentSearch?.addEventListener("input", buscarDentroDocumento);
+documentSearchForm?.addEventListener("submit", buscarDentroDocumento);
+editDocumentSearchButton?.addEventListener("click", editarBusquedaDocumento);
 previousMatchButton?.addEventListener("click", () => navegarCoincidencia(-1));
 nextMatchButton?.addEventListener("click", () => navegarCoincidencia(1));
 document.addEventListener("keydown", event => { if (event.key === "Escape") cerrarDocumento(); });
@@ -292,7 +297,8 @@ function cerrarDocumento() {
   currentDocument = null;
 }
 
-function buscarDentroDocumento() {
+function buscarDentroDocumento(event) {
+  event?.preventDefault();
   const termino = documentSearch.value.trim();
   documentContent.innerHTML = currentDocumentOriginalHtml;
   reiniciarNavegacionCoincidencias();
@@ -314,13 +320,31 @@ function buscarDentroDocumento() {
   documentMatches = Array.from(documentContent.querySelectorAll("mark.document-match"));
   if (!documentMatches.length) {
     documentMatchCount.textContent = "0 coincidencias";
-    documentSearchNavigation.classList.remove("hidden");
+    documentSearchTerm.textContent = termino;
+    activarModoBusquedaCompacto();
     return;
   }
 
   currentDocumentMatchIndex = 0;
-  documentSearchNavigation.classList.remove("hidden");
+  documentSearchTerm.textContent = termino;
+  activarModoBusquedaCompacto();
   actualizarCoincidenciaActiva();
+}
+
+function activarModoBusquedaCompacto() {
+  documentSearchBar?.classList.add("is-compact");
+  documentSearchForm?.classList.add("hidden");
+  documentSearchNavigation?.classList.remove("hidden");
+}
+
+function editarBusquedaDocumento() {
+  documentSearchBar?.classList.remove("is-compact");
+  documentSearchNavigation?.classList.add("hidden");
+  documentSearchForm?.classList.remove("hidden");
+  window.setTimeout(() => {
+    documentSearch?.focus();
+    documentSearch?.select();
+  }, 0);
 }
 
 function navegarCoincidencia(direccion) {
@@ -340,6 +364,9 @@ function reiniciarNavegacionCoincidencias() {
   currentDocumentMatchIndex = -1;
   if (documentMatchCount) documentMatchCount.textContent = "";
   documentSearchNavigation?.classList.add("hidden");
+  documentSearchForm?.classList.remove("hidden");
+  documentSearchBar?.classList.remove("is-compact");
+  if (documentSearchTerm) documentSearchTerm.textContent = "";
 }
 
 async function guardarPerfil(event) {
