@@ -3,21 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Capacitación - Sindicato Minero</title>
+    <title>Plataforma Sindicato Minero</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* === CSS (igual que antes) === */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 20px; }
-        .container { background: white; padding: 2rem 2.5rem; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 600px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 20px;
+        }
+        .container {
+            background: white;
+            padding: 2rem 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+        }
         h1, h2 { color: #1a3b5d; margin-bottom: 1.5rem; text-align: center; }
         h1 { font-size: 1.8rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
-        h2 { font-size: 1.4rem; }
         .form-group { margin-bottom: 1.2rem; }
         label { display: block; font-weight: 600; margin-bottom: 0.3rem; color: #2d3748; }
-        input, select { width: 100%; padding: 0.7rem 1rem; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
-        input:focus, select:focus { outline: none; border-color: #3182ce; box-shadow: 0 0 0 3px rgba(49,130,206,0.2); }
-        .btn { background: #3182ce; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s; }
+        input, select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .btn {
+            background: #3182ce;
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
         .btn:hover { background: #2b6cb0; }
         .btn-secondary { background: #718096; }
         .btn-secondary:hover { background: #4a5568; }
@@ -28,29 +57,59 @@
         .toggle-link { text-align: center; margin-top: 1rem; }
         .toggle-link a { color: #3182ce; cursor: pointer; text-decoration: underline; }
         .hidden { display: none !important; }
-        .card { background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #3182ce; }
-        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0; }
+        .card {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #3182ce;
+        }
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
         .user-item:last-child { border-bottom: none; }
         .user-info { flex: 1; }
-        .user-info strong { display: block; }
-        .badge { background: #edf2f7; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.8rem; color: #2d3748; }
+        .badge {
+            background: #edf2f7;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #2d3748;
+        }
         .badge-pendiente { background: #fefcbf; color: #975a16; }
-        .badge-aprobado { background: #c6f6d5; color: #276749; }
         .btn-small { padding: 0.3rem 0.8rem; font-size: 0.8rem; width: auto; }
         #logoutBtn { background: #e53e3e; margin-top: 1rem; }
         #logoutBtn:hover { background: #c53030; }
-        @media (max-width: 500px) { .container { padding: 1.5rem; } }
-        .pendiente-msg { margin-top: 1rem; padding: 0.8rem; background: #fefcbf; border-radius: 8px; color: #975a16; border: 1px solid #f6e05e; }
+        .pendiente-msg {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: #fefcbf;
+            border-radius: 8px;
+            color: #975a16;
+            border: 1px solid #f6e05e;
+        }
+        .debug {
+            background: #edf2f7;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
     </style>
 </head>
 <body>
 <div class="container" id="app">
-    <!-- SECCIÓN LOGIN / REGISTRO -->
     <div id="authSection">
         <h1>Sindicato Minero</h1>
         <h2 id="formTitle">Iniciar Sesión</h2>
 
-        <!-- Login -->
         <form id="loginForm">
             <div class="form-group">
                 <label for="loginEmail">Email</label>
@@ -67,7 +126,6 @@
             <div id="loginMessage" class="error" style="margin-top:0.8rem;"></div>
         </form>
 
-        <!-- Registro -->
         <form id="registerForm" class="hidden">
             <div class="form-group">
                 <label for="regNombre">Nombre Completo</label>
@@ -122,10 +180,10 @@
                 ¿Ya tienes cuenta? <a id="showLoginLink">Inicia sesión</a>
             </div>
             <div id="registerMessage" class="error" style="margin-top:0.8rem;"></div>
+            <div id="debugInfo" class="debug hidden"></div>
         </form>
     </div>
 
-    <!-- SECCIÓN PANELES -->
     <div id="panelSection" class="hidden">
         <h1>Sindicato Minero</h1>
         <div id="userInfo" class="card">
@@ -135,19 +193,16 @@
             <p>Convenio: <span id="displayConvenio"></span></p>
             <button id="logoutBtn" class="btn btn-secondary">Cerrar sesión</button>
         </div>
-
         <div id="adminPanel" class="hidden">
             <h2>Panel de Administración</h2>
             <p>Usuarios pendientes de aprobación:</p>
             <div id="pendingUsersList"></div>
             <div id="adminMessage" class="success"></div>
         </div>
-
         <div id="userPanel" class="hidden">
             <h2>Mi Espacio</h2>
-            <p>Aquí encontrarás tus capacitaciones y recursos. (Próximamente)</p>
+            <p>Aquí encontrarás tus capacitaciones. (Próximamente)</p>
         </div>
-
         <div id="pendienteMsg" class="pendiente-msg hidden">
             <strong>⏳ Tu cuenta está pendiente de aprobación.</strong><br>
             Por favor, espera a que el administrador la active.
@@ -157,18 +212,15 @@
 
 <script>
     // ============================================================
-    // CONFIGURACIÓN SUPABASE (¡CORREGIDA!)
+    // CONFIGURACIÓN NUEVO PROYECTO (¡VERIFICADO!)
     // ============================================================
-    const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co';   // <--- URL CORRECTA
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
+    const SUPABASE_URL = 'https://ozoncpohknvrvxedydzo.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96b25jcG9oa252cnZ4ZWR5ZHpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5ODczOTYsImV4cCI6MjA5OTU2MzM5Nn0.qCjIbWG7QCRJtEuBEwTeraKVzh8Ka8mF79FhNrl1z9g';
 
-    // Creamos el cliente con nombre único
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    console.log('🚀 Conectando a Supabase:', SUPABASE_URL);
-
     // ============================================================
-    // REFERENCIAS DOM
+    // DOM REFS
     // ============================================================
     const authSection = document.getElementById('authSection');
     const panelSection = document.getElementById('panelSection');
@@ -179,6 +231,7 @@
     const formTitle = document.getElementById('formTitle');
     const loginMessage = document.getElementById('loginMessage');
     const registerMessage = document.getElementById('registerMessage');
+    const debugInfo = document.getElementById('debugInfo');
     const displayName = document.getElementById('displayName');
     const displayRol = document.getElementById('displayRol');
     const displayEmpresa = document.getElementById('displayEmpresa');
@@ -191,20 +244,18 @@
     const pendienteMsg = document.getElementById('pendienteMsg');
 
     // ============================================================
-    // FUNCIONES AUXILIARES
+    // FUNCIONES
     // ============================================================
-    function showError(element, msg) {
-        element.textContent = msg;
-        element.classList.remove('success');
-        element.classList.add('error');
+    function showError(el, msg) {
+        el.textContent = msg;
+        el.classList.remove('success');
+        el.classList.add('error');
     }
-
-    function showSuccess(element, msg) {
-        element.textContent = msg;
-        element.classList.remove('error');
-        element.classList.add('success');
+    function showSuccess(el, msg) {
+        el.textContent = msg;
+        el.classList.remove('error');
+        el.classList.add('success');
     }
-
     function clearMessages() {
         loginMessage.textContent = '';
         registerMessage.textContent = '';
@@ -212,15 +263,15 @@
         loginMessage.classList.remove('error', 'success');
         registerMessage.classList.remove('error', 'success');
         adminMessage.classList.remove('error', 'success');
+        debugInfo.classList.add('hidden');
+        debugInfo.textContent = '';
     }
-
     function showLoginForm() {
         loginForm.classList.remove('hidden');
         registerForm.classList.add('hidden');
         formTitle.textContent = 'Iniciar Sesión';
         clearMessages();
     }
-
     function showRegisterForm() {
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
@@ -229,19 +280,17 @@
     }
 
     // ============================================================
-    // MANEJO DE SESIÓN
+    // SESIÓN
     // ============================================================
     async function logout() {
-        const { error } = await supabaseClient.auth.signOut();
-        if (error) console.error('Error logout:', error);
+        await supabaseClient.auth.signOut();
         panelSection.classList.add('hidden');
         authSection.classList.remove('hidden');
         showLoginForm();
     }
 
     async function checkSession() {
-        const { data: { session }, error } = await supabaseClient.auth.getSession();
-        if (error) { console.error('Error sesión:', error); return; }
+        const { data: { session } } = await supabaseClient.auth.getSession();
         if (session) {
             await loadUserProfile(session.user.id);
         } else {
@@ -252,53 +301,47 @@
     }
 
     async function loadUserProfile(userId) {
-        try {
-            const { data: perfil, error } = await supabaseClient
-                .from('perfiles')
-                .select('*')
-                .eq('id', userId)
-                .single();
+        const { data: perfil, error } = await supabaseClient
+            .from('perfiles')
+            .select('*')
+            .eq('id', userId)
+            .single();
 
-            if (error) {
-                console.error('Error al obtener perfil:', error);
-                await logout();
-                return;
-            }
+        if (error || !perfil) {
+            console.error('Perfil no encontrado:', error);
+            await logout();
+            return;
+        }
 
-            authSection.classList.add('hidden');
-            panelSection.classList.remove('hidden');
+        authSection.classList.add('hidden');
+        panelSection.classList.remove('hidden');
 
-            displayName.textContent = perfil.nombre_completo;
-            displayRol.textContent = perfil.rol;
-            displayEmpresa.textContent = perfil.empresa;
-            displayConvenio.textContent = perfil.convenio;
+        displayName.textContent = perfil.nombre_completo;
+        displayRol.textContent = perfil.rol;
+        displayEmpresa.textContent = perfil.empresa;
+        displayConvenio.textContent = perfil.convenio;
 
-            pendienteMsg.classList.add('hidden');
+        pendienteMsg.classList.add('hidden');
 
-            const necesitaAprobacion = (perfil.rol === 'dirigente' || perfil.rol === 'delegado');
-            if (necesitaAprobacion && !perfil.aprobado) {
-                pendienteMsg.classList.remove('hidden');
-                adminPanel.classList.add('hidden');
-                userPanel.classList.add('hidden');
-                return;
-            }
+        if ((perfil.rol === 'dirigente' || perfil.rol === 'delegado') && !perfil.aprobado) {
+            pendienteMsg.classList.remove('hidden');
+            adminPanel.classList.add('hidden');
+            userPanel.classList.add('hidden');
+            return;
+        }
 
-            if (perfil.rol === 'admin') {
-                adminPanel.classList.remove('hidden');
-                userPanel.classList.add('hidden');
-                await loadPendingUsers();
-            } else {
-                adminPanel.classList.add('hidden');
-                userPanel.classList.remove('hidden');
-            }
-
-        } catch (err) {
-            console.error('Error en loadUserProfile:', err);
+        if (perfil.rol === 'admin') {
+            adminPanel.classList.remove('hidden');
+            userPanel.classList.add('hidden');
+            await loadPendingUsers();
+        } else {
+            adminPanel.classList.add('hidden');
+            userPanel.classList.remove('hidden');
         }
     }
 
     // ============================================================
-    // REGISTRO (con logs detallados)
+    // REGISTRO
     // ============================================================
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -323,65 +366,63 @@
         }
 
         try {
-            console.log('📝 Intentando registrar usuario:', email);
+            // Mostrar debug
+            debugInfo.classList.remove('hidden');
+            debugInfo.textContent = `Intentando registrar: ${email}\nURL: ${SUPABASE_URL}`;
 
-            // 1. Crear usuario en auth
+            // 1. Crear usuario
             const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
                 email,
                 password,
             });
 
+            debugInfo.textContent += `\nRespuesta signUp: ${JSON.stringify(signUpData, null, 2)}`;
+
             if (signUpError) {
-                console.error('❌ Error en signUp:', signUpError);
-                showError(registerMessage, `Error al registrar: ${signUpError.message}`);
+                console.error('Error en signUp:', signUpError);
+                debugInfo.textContent += `\nError: ${JSON.stringify(signUpError, null, 2)}`;
+                showError(registerMessage, `Error: ${signUpError.message}`);
                 return;
             }
 
             if (!signUpData.user) {
-                console.error('❌ No se recibió usuario:', signUpData);
-                showError(registerMessage, 'Error inesperado: no se pudo crear el usuario.');
+                showError(registerMessage, 'No se pudo crear el usuario.');
                 return;
             }
 
             const userId = signUpData.user.id;
-            console.log('✅ Usuario creado con ID:', userId);
 
             // 2. Insertar perfil
-            const perfil = {
-                id: userId,
-                nombre_completo: nombre,
-                dni: dni,
-                telefono: telefono,
-                email: email,
-                rol: rol,
-                empresa: empresa,
-                convenio: convenio,
-                aprobado: false,
-            };
-            console.log('📦 Insertando perfil:', perfil);
-
-            const { data: insertData, error: perfilError } = await supabaseClient
+            const { error: perfilError } = await supabaseClient
                 .from('perfiles')
-                .insert([perfil])
-                .select();
+                .insert([{
+                    id: userId,
+                    nombre_completo: nombre,
+                    dni: dni,
+                    telefono: telefono,
+                    email: email,
+                    rol: rol,
+                    empresa: empresa,
+                    convenio: convenio,
+                    aprobado: false,
+                }]);
 
             if (perfilError) {
-                console.error('❌ Error al insertar perfil:', perfilError);
-                showError(registerMessage, `Error al guardar perfil: ${perfilError.message}. Intenta de nuevo.`);
+                console.error('Error al insertar perfil:', perfilError);
+                debugInfo.textContent += `\nError perfil: ${JSON.stringify(perfilError, null, 2)}`;
+                showError(registerMessage, `Error al guardar perfil: ${perfilError.message}`);
                 return;
             }
 
-            console.log('✅ Perfil insertado correctamente:', insertData);
-
-            showSuccess(registerMessage, '¡Registro exitoso! Ahora inicia sesión. Tu cuenta será aprobada por el administrador.');
+            debugInfo.textContent += `\n✅ Perfil insertado correctamente`;
+            showSuccess(registerMessage, '¡Registro exitoso! Ahora inicia sesión. Tu cuenta será aprobada.');
             registerForm.reset();
-            setTimeout(() => {
-                showLoginForm();
-            }, 3000);
+            setTimeout(showLoginForm, 3000);
 
         } catch (err) {
-            console.error('💥 Excepción en registro:', err);
-            showError(registerMessage, 'Ocurrió un error inesperado. Revisa la consola para más detalles.');
+            console.error('Excepción:', err);
+            debugInfo.textContent += `\nExcepción: ${err.message}`;
+            showError(registerMessage, `Error inesperado: ${err.message}`);
         }
     });
 
@@ -401,26 +442,25 @@
         }
 
         try {
-            const { data: { user, session }, error } = await supabaseClient.auth.signInWithPassword({
+            const { data: { user }, error } = await supabaseClient.auth.signInWithPassword({
                 email,
                 password
             });
 
             if (error) {
-                showError(loginMessage, `Error al iniciar sesión: ${error.message}`);
+                showError(loginMessage, `Error: ${error.message}`);
                 return;
             }
 
             await loadUserProfile(user.id);
-
         } catch (err) {
             console.error('Error en login:', err);
-            showError(loginMessage, 'Error inesperado. Intenta de nuevo.');
+            showError(loginMessage, `Error: ${err.message}`);
         }
     });
 
     // ============================================================
-    // ADMIN: CARGAR PENDIENTES
+    // ADMIN
     // ============================================================
     async function loadPendingUsers() {
         try {
@@ -431,77 +471,58 @@
                 .eq('aprobado', false);
 
             if (error) {
-                console.error('Error al cargar pendientes:', error);
-                showError(adminMessage, 'Error al cargar usuarios pendientes.');
+                showError(adminMessage, 'Error al cargar pendientes.');
                 return;
             }
 
             if (pendientes.length === 0) {
-                pendingUsersList.innerHTML = '<p>No hay usuarios pendientes de aprobación.</p>';
+                pendingUsersList.innerHTML = '<p>No hay usuarios pendientes.</p>';
                 return;
             }
 
             let html = '';
-            for (const user of pendientes) {
+            pendientes.forEach(user => {
                 html += `
                     <div class="user-item">
                         <div class="user-info">
                             <strong>${user.nombre_completo}</strong>
-                            <span>Email: ${user.email} | DNI: ${user.dni} | Tel: ${user.telefono}</span>
+                            <span>Email: ${user.email} | DNI: ${user.dni}</span>
                             <span>Empresa: ${user.empresa} | Convenio: ${user.convenio}</span>
                             <span class="badge badge-pendiente">Pendiente</span>
                         </div>
                         <button class="btn btn-success btn-small" data-id="${user.id}">Aprobar</button>
                     </div>
                 `;
-            }
+            });
             pendingUsersList.innerHTML = html;
 
             document.querySelectorAll('[data-id]').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
-                    const userId = e.target.getAttribute('data-id');
-                    await approveUser(userId);
+                    const userId = e.target.dataset.id;
+                    const { error } = await supabaseClient
+                        .from('perfiles')
+                        .update({ aprobado: true })
+                        .eq('id', userId);
+                    if (error) {
+                        showError(adminMessage, 'Error al aprobar.');
+                    } else {
+                        showSuccess(adminMessage, 'Usuario aprobado.');
+                        await loadPendingUsers();
+                    }
                 });
             });
-
         } catch (err) {
-            console.error('Error en loadPendingUsers:', err);
+            console.error(err);
         }
     }
 
     // ============================================================
-    // ADMIN: APROBAR USUARIO
-    // ============================================================
-    async function approveUser(userId) {
-        try {
-            const { error } = await supabaseClient
-                .from('perfiles')
-                .update({ aprobado: true })
-                .eq('id', userId);
-
-            if (error) {
-                showError(adminMessage, `Error al aprobar: ${error.message}`);
-                return;
-            }
-
-            showSuccess(adminMessage, 'Usuario aprobado correctamente.');
-            await loadPendingUsers();
-        } catch (err) {
-            console.error('Error en approveUser:', err);
-            showError(adminMessage, 'Error inesperado.');
-        }
-    }
-
-    // ============================================================
-    // NAVEGACIÓN ENTRE LOGIN Y REGISTRO
+    // EVENTOS
     // ============================================================
     showRegisterLink.addEventListener('click', showRegisterForm);
     showLoginLink.addEventListener('click', showLoginForm);
     logoutBtn.addEventListener('click', logout);
 
-    // ============================================================
-    // INICIALIZAR
-    // ============================================================
     document.addEventListener('DOMContentLoaded', checkSession);
 </script>
 </body>
