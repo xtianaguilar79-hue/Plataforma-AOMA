@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campus Virtual AOMA | Definitivo</title>
+    <title>Campus Virtual AOMA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family: 'Inter', sans-serif; background: #f4f7fc; color: #1a1a1a; }
-        .hidden { display: none !important; }
         .header { position:fixed; top:0; left:0; right:0; height:70px; background:white; display:flex; align-items:center; padding:0 2rem; border-bottom:1px solid #e5e7eb; z-index:100; }
         .brand { display:flex; align-items:center; gap:0.75rem; cursor:pointer; font-weight:700; font-size:1.2rem; }
         .brand span { color:#f47b20; }
@@ -31,15 +30,13 @@
         .login-box .logo p { color:#6b7280; font-size:0.9rem; }
         .form-group { margin-bottom:1.25rem; }
         .form-group label { display:block; font-weight:600; font-size:0.875rem; margin-bottom:0.25rem; }
-        .form-group input, .form-group select, .form-group textarea { width:100%; padding:0.75rem 1rem; border:2px solid #e5e7eb; border-radius:8px; font-size:1rem; background:#f9fafb; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:#f47b20; outline:none; }
+        .form-group input { width:100%; padding:0.75rem 1rem; border:2px solid #e5e7eb; border-radius:8px; font-size:1rem; background:#f9fafb; }
+        .form-group input:focus { border-color:#f47b20; outline:none; }
         .password-wrapper { position:relative; }
         .password-wrapper input { padding-right:3rem; }
         .password-toggle { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#6b7280; }
         .btn { width:100%; padding:0.875rem; background:#f47b20; color:white; border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; }
         .btn:hover { background:#d96b1a; }
-        .btn-secondary { background:#6b7280; }
-        .btn-secondary:hover { background:#4b5563; }
         .login-links { text-align:center; margin-top:1rem; font-size:0.875rem; }
         .login-links a { color:#f47b20; font-weight:600; cursor:pointer; }
         .error-msg { background:#fee2e2; color:#b91c1c; padding:0.75rem; border-radius:8px; margin-bottom:1rem; display:none; }
@@ -50,63 +47,33 @@
         .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
         .modal-close { background:none; border:none; font-size:1.5rem; cursor:pointer; color:#6b7280; }
         .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1.5rem; margin-bottom:2rem; }
-        .stat-card { background:white; padding:1.5rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.08); border:1px solid #e5e7eb; cursor:pointer; }
-        .stat-value { font-size:2rem; font-weight:800; }
+        .stat-card { background:white; padding:1.5rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.08); border:1px solid #e5e7eb; }
+        .stat-value { font-size:2rem; font-weight:800; color:#f47b20; }
         .stat-label { color:#6b7280; font-size:0.8rem; text-transform:uppercase; }
-        .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:1.5rem; }
-        .card { background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.08); border:1px solid #e5e7eb; cursor:pointer; transition: transform 0.2s; }
-        .card:hover { transform: translateY(-3px); }
-        .card-header { height:120px; background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:3rem; color:white; position:relative; }
-        .card-badge { position:absolute; top:1rem; left:1rem; background:#f47b20; padding:0.25rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:700; }
-        .card-body { padding:1.25rem; }
-        .card-title { font-weight:700; font-size:1.1rem; margin-bottom:0.25rem; }
-        .card-description { color:#6b7280; font-size:0.9rem; }
         .section { background:white; padding:1.5rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.08); margin-bottom:2rem; border:1px solid #e5e7eb; }
         .section-title { font-size:1.3rem; font-weight:700; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:3px solid #f47b20; display:inline-block; }
-        
-        /* Tabla de usuarios */
         .users-table { width:100%; border-collapse:collapse; margin-top:1rem; }
         .users-table th, .users-table td { padding:1rem; text-align:left; border-bottom:1px solid #e5e7eb; }
         .users-table th { background:#f9fafb; font-weight:600; }
-        .users-table tr:hover { background:#f9fafb; }
         .status-badge { padding:0.25rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:600; }
         .status-active { background:#d1fae5; color:#065f46; }
         .status-pending { background:#fef3c7; color:#92400e; }
-        .status-inactive { background:#fee2e2; color:#b91c1c; }
-        .btn-small { padding:0.5rem 1rem; font-size:0.875rem; border-radius:6px; border:none; cursor:pointer; margin-right: 0.5rem; margin-bottom: 0.5rem;}
+        .btn-small { padding:0.5rem 1rem; font-size:0.875rem; border-radius:6px; border:none; cursor:pointer; margin-right:0.5rem; }
         .btn-approve { background:#10b981; color:white; }
-        .btn-approve:hover { background:#059669; }
-        .btn-reject { background:#ef4444; color:white; }
-        .btn-reject:hover { background:#dc2626; }
-        
-        /* Perfil de usuario */
+        .btn-delete { background:#ef4444; color:white; }
         .profile-header { background:linear-gradient(135deg,#f47b20,#d96b1a); color:white; padding:2rem; border-radius:12px; margin-bottom:2rem; text-align:center; }
         .profile-avatar { width:100px; height:100px; border-radius:50%; background:white; color:#f47b20; display:flex; align-items:center; justify-content:center; font-size:2.5rem; font-weight:700; margin:0 auto 1rem; }
         .profile-info { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
         .profile-field { background:#f9fafb; padding:1rem; border-radius:8px; }
         .profile-field label { display:block; font-size:0.875rem; color:#6b7280; margin-bottom:0.25rem; }
         .profile-field span { font-weight:600; font-size:1rem; }
-        
-        @media (max-width:768px) { 
-            .header { padding:0 1rem; } 
-            .stats-grid { grid-template-columns:1fr 1fr; } 
-            .profile-info { grid-template-columns:1fr; }
-            .users-table { font-size:0.875rem; display: block; overflow-x: auto; }
-            .users-table th, .users-table td { padding:0.75rem 0.5rem; white-space: nowrap; }
-        }
-        @media (max-width:480px) { 
-            .stats-grid { grid-template-columns:1fr; } 
-            .login-box { padding:1.5rem; } 
-        }
+        @media (max-width:768px) { .header { padding:0 1rem; } .profile-info { grid-template-columns:1fr; } }
     </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header">
-    <div class="brand" onclick="navigateTo('inicio')">
-        <span>AOMA</span> San Juan
-    </div>
+    <div class="brand" onclick="app.navigate('inicio')"><span>AOMA</span> San Juan</div>
     <div class="header-right">
         <div class="user-menu" id="userMenu" style="display:none;">
             <div class="user-info">
@@ -115,20 +82,16 @@
             </div>
             <div class="user-avatar" id="userAvatar">U</div>
             <div class="dropdown">
-                <a onclick="navigateTo('perfil')"><i class="fas fa-user"></i> Mi Perfil</a>
-                <a href="#" id="adminPanelLink" style="display:none;" onclick="navigateTo('admin')"><i class="fas fa-users-cog"></i> Panel Admin</a>
-                <a href="#" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                <a onclick="app.navigate('perfil')"><i class="fas fa-user"></i> Mi Perfil</a>
+                <a id="adminLink" style="display:none;" onclick="app.navigate('admin')"><i class="fas fa-users-cog"></i> Panel Admin</a>
+                <a onclick="app.logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
             </div>
         </div>
     </div>
 </header>
 
-<!-- MAIN -->
-<main class="main" id="mainContent">
-    <div id="pageContent"></div>
-</main>
+<main class="main" id="mainContent"><div id="pageContent"></div></main>
 
-<!-- LOGIN OVERLAY -->
 <div id="loginOverlay">
     <div class="login-box">
         <div class="logo">
@@ -136,688 +99,368 @@
             <p>Asociación Obrera Minera Argentina<br>Seccional San Juan</p>
         </div>
         <div id="loginError" class="error-msg"></div>
-        <div id="loginSuccess" class="success-msg"></div>
         <form id="loginForm">
             <div class="form-group">
-                <label><i class="fas fa-envelope"></i> Email</label>
+                <label>Email</label>
                 <input type="email" id="loginEmail" placeholder="tu@email.com" required />
             </div>
             <div class="form-group">
-                <label><i class="fas fa-lock"></i> Contraseña</label>
+                <label>Contraseña</label>
                 <div class="password-wrapper">
                     <input type="password" id="loginPassword" placeholder="••••••••" required />
-                    <button type="button" class="password-toggle" onclick="togglePassword('loginPassword', this)">
-                        <i class="fas fa-eye"></i>
-                    </button>
+                    <button type="button" class="password-toggle" onclick="app.togglePass('loginPassword', this)"><i class="fas fa-eye"></i></button>
                 </div>
             </div>
             <button type="submit" class="btn">Ingresar al Campus</button>
         </form>
         <div class="login-links">
-            <a onclick="mostrarRegistro()">¿No tenés cuenta? Registrate</a>
+            <a onclick="app.showModal('registro')">¿No tenés cuenta? Registrate</a>
             <span style="margin:0 0.5rem;">|</span>
-            <a onclick="mostrarRecuperacion()">¿Olvidaste tu contraseña?</a>
+            <a onclick="app.showModal('recuperacion')">¿Olvidaste tu contraseña?</a>
         </div>
     </div>
 </div>
 
-<!-- MODAL REGISTRO -->
 <div class="modal-overlay" id="modalRegistro">
     <div class="modal-box">
-        <div class="modal-header">
-            <h2><i class="fas fa-user-plus"></i> Registro</h2>
-            <button class="modal-close" onclick="cerrarModalRegistro()">&times;</button>
-        </div>
+        <div class="modal-header"><h2>Registro</h2><button class="modal-close" onclick="app.hideModal('registro')">&times;</button></div>
         <div id="regError" class="error-msg"></div>
         <div id="regSuccess" class="success-msg"></div>
         <form id="formRegistro">
-            <div class="form-group">
-                <label>Nombre completo <span style="color:red;">*</span></label>
-                <input type="text" id="regNombre" placeholder="Ej: Juan Pérez" required />
-            </div>
-            <div class="form-group">
-                <label>Email <span style="color:red;">*</span></label>
-                <input type="email" id="regEmail" placeholder="ejemplo@correo.com" required />
-            </div>
-            <div class="form-group">
-                <label>Teléfono</label>
-                <input type="tel" id="regTelefono" placeholder="Ej: 2641234567" />
-            </div>
-            <div class="form-group">
-                <label>Contraseña <span style="color:red;">*</span></label>
-                <div class="password-wrapper">
-                    <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" required minlength="6" />
-                    <button type="button" class="password-toggle" onclick="togglePassword('regPassword', this)">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </div>
-            </div>
+            <div class="form-group"><label>Nombre completo *</label><input type="text" id="regNombre" required /></div>
+            <div class="form-group"><label>Email *</label><input type="email" id="regEmail" required /></div>
+            <div class="form-group"><label>Teléfono</label><input type="tel" id="regTelefono" /></div>
+            <div class="form-group"><label>Contraseña * (mín. 6 caracteres)</label><input type="password" id="regPassword" minlength="6" required /></div>
             <button type="submit" class="btn">Registrarme</button>
         </form>
-        <p style="margin-top:1rem;text-align:center;font-size:0.875rem;">
-            ¿Ya tenés cuenta? <a onclick="cerrarModalRegistro();" style="color:#f47b20;cursor:pointer;font-weight:600;">Iniciá sesión</a>
-        </p>
     </div>
 </div>
 
-<!-- MODAL RECUPERACIÓN -->
 <div class="modal-overlay" id="modalRecuperacion">
     <div class="modal-box" style="max-width:450px;">
-        <div class="modal-header">
-            <h2><i class="fas fa-key"></i> Recuperar Contraseña</h2>
-            <button class="modal-close" onclick="cerrarModalRecuperacion()">&times;</button>
-        </div>
+        <div class="modal-header"><h2>Recuperar Contraseña</h2><button class="modal-close" onclick="app.hideModal('recuperacion')">&times;</button></div>
         <div id="recError" class="error-msg"></div>
         <div id="recSuccess" class="success-msg"></div>
         <form id="formRecuperacion">
-            <div class="form-group">
-                <label>Email registrado</label>
-                <input type="email" id="recEmail" placeholder="tu@email.com" required />
-            </div>
-            <button type="submit" class="btn">Enviar enlace de recuperación</button>
+            <div class="form-group"><label>Email</label><input type="email" id="recEmail" required /></div>
+            <button type="submit" class="btn">Enviar enlace</button>
         </form>
-        <p style="margin-top:1rem;text-align:center;font-size:0.875rem;">
-            <a onclick="cerrarModalRecuperacion();" style="color:#f47b20;cursor:pointer;font-weight:600;">Volver al inicio</a>
-        </p>
     </div>
 </div>
 
-<!-- MODAL EDITAR PERFIL -->
-<div class="modal-overlay" id="modalEditarPerfil">
+<div class="modal-overlay" id="modalEditar">
     <div class="modal-box">
-        <div class="modal-header">
-            <h2><i class="fas fa-user-edit"></i> Editar Perfil</h2>
-            <button class="modal-close" onclick="cerrarModalEditarPerfil()">&times;</button>
-        </div>
+        <div class="modal-header"><h2>Editar Perfil</h2><button class="modal-close" onclick="app.hideModal('editar')">&times;</button></div>
         <div id="editError" class="error-msg"></div>
         <div id="editSuccess" class="success-msg"></div>
-        <form id="formEditarPerfil">
-            <div class="form-group">
-                <label>Nombre completo</label>
-                <input type="text" id="editNombre" required />
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="editEmail" readonly style="background:#e5e7eb; cursor: not-allowed;" />
-            </div>
-            <div class="form-group">
-                <label>Teléfono</label>
-                <input type="tel" id="editTelefono" />
-            </div>
-            <div class="form-group">
-                <label>Nueva contraseña (dejar en blanco para no cambiar)</label>
-                <div class="password-wrapper">
-                    <input type="password" id="editPassword" placeholder="Mínimo 6 caracteres" minlength="6" />
-                    <button type="button" class="password-toggle" onclick="togglePassword('editPassword', this)">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </div>
-            </div>
-            <button type="submit" class="btn">Guardar cambios</button>
+        <form id="formEditar">
+            <div class="form-group"><label>Nombre</label><input type="text" id="editNombre" required /></div>
+            <div class="form-group"><label>Email</label><input type="email" id="editEmail" readonly style="background:#e5e7eb;" /></div>
+            <div class="form-group"><label>Teléfono</label><input type="tel" id="editTelefono" /></div>
+            <div class="form-group"><label>Nueva contraseña (dejar vacío si no cambia)</label><input type="password" id="editPassword" minlength="6" /></div>
+            <button type="submit" class="btn">Guardar</button>
         </form>
     </div>
 </div>
 
-<!-- SCRIPT DE SUPABASE (UNA SOLA VEZ) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ============================================
-// CONFIGURACIÓN SUPABASE (UNA SOLA DECLARACIÓN)
+// APLICACIÓN COMPLETA - SIN CONFLICTOS
 // ============================================
-const supabaseUrl = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const app = (function() {
+    // Configuración - UNA SOLA VEZ
+    const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
+    
+    // Cliente Supabase - window.supabaseClient para evitar conflictos
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    let currentUser = null;
+    let currentProfile = null;
 
-let currentUser = null;
-let currentUserMetadata = null;
-
-// ============================================
-// TOGGLE PASSWORD
-// ============================================
-function togglePassword(inputId, btn) {
-    const input = document.getElementById(inputId);
-    if (!input) return;
-    const icon = btn.querySelector('i');
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.className = 'fas fa-eye-slash';
-    } else {
-        input.type = 'password';
-        icon.className = 'fas fa-eye';
-    }
-}
-
-// ============================================
-// REGISTRO DE USUARIOS
-// ============================================
-document.getElementById('formRegistro').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const nombre = document.getElementById('regNombre').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const telefono = document.getElementById('regTelefono').value.trim();
-    const password = document.getElementById('regPassword').value;
-
-    document.getElementById('regError').style.display = 'none';
-    document.getElementById('regSuccess').style.display = 'none';
-
-    if (!nombre || !email || !password) {
-        document.getElementById('regError').textContent = 'Todos los campos obligatorios deben ser completados.';
-        document.getElementById('regError').style.display = 'block';
-        return;
-    }
-    if (password.length < 6) {
-        document.getElementById('regError').textContent = 'La contraseña debe tener al menos 6 caracteres.';
-        document.getElementById('regError').style.display = 'block';
-        return;
+    // Toggle password
+    function togglePass(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'fas fa-eye-slash';
+        } else {
+            input.type = 'password';
+            icon.className = 'fas fa-eye';
+        }
     }
 
-    try {
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: { 
-                    nombre: nombre, 
-                    telefono: telefono,
-                    role: 'afiliado',
-                    activo: false
-                }
-            }
-        });
+    // Mostrar/ocultar modales
+    function showModal(type) {
+        document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).style.display = 'flex';
+    }
+    function hideModal(type) {
+        document.getElementById('modal' + type.charAt(0).toUpperCase() + type.slice(1)).style.display = 'none';
+    }
 
-        if (error) throw error;
+    // Registro
+    document.getElementById('formRegistro').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nombre = document.getElementById('regNombre').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const telefono = document.getElementById('regTelefono').value.trim();
+        const password = document.getElementById('regPassword').value;
 
-        // Upsert asegura que si el trigger ya lo creó, no falle por duplicado
-        const { error: perfilError } = await supabase
-            .from('perfiles')
-            .upsert({
-                id: data.user.id,
-                nombre: nombre,
-                email: email,
-                telefono: telefono,
-                role: 'afiliado',
-                activo: false
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email, password,
+                options: { data: { nombre, telefono, role: 'afiliado', activo: false }}
+            });
+            if (error) throw error;
+
+            await supabase.from('perfiles').upsert({
+                id: data.user.id, nombre, email, telefono, role: 'afiliado', activo: false
             }, { onConflict: 'id' });
 
-        if (perfilError) throw perfilError;
+            document.getElementById('regSuccess').textContent = '✅ Registro exitoso. Pendiente de aprobación.';
+            document.getElementById('regSuccess').style.display = 'block';
+            setTimeout(() => { hideModal('registro'); document.getElementById('loginEmail').value = email; }, 2000);
+        } catch (error) {
+            document.getElementById('regError').textContent = '❌ ' + error.message;
+            document.getElementById('regError').style.display = 'block';
+        }
+    });
 
-        document.getElementById('regSuccess').textContent = '✅ Registro exitoso. Tu cuenta está pendiente de aprobación por el administrador.';
-        document.getElementById('regSuccess').style.display = 'block';
-        
-        setTimeout(() => {
-            cerrarModalRegistro();
-            document.getElementById('loginEmail').value = email;
-        }, 3000);
+    // Login
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
 
-    } catch (error) {
-        document.getElementById('regError').textContent = '❌ ' + error.message;
-        document.getElementById('regError').style.display = 'block';
-    }
-});
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
 
-// ============================================
-// LOGIN
-// ============================================
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
-
-    document.getElementById('loginError').style.display = 'none';
-    document.getElementById('loginSuccess').style.display = 'none';
-
-    try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password
-        });
-
-        if (error) throw error;
-
-        const { data: perfil, error: perfilError } = await supabase
-            .from('perfiles')
-            .select('*')
-            .eq('id', data.user.id)
-            .maybeSingle();
-
-        if (perfilError) throw perfilError;
-
-        if (!perfil) {
-            const { error: insertError } = await supabase
-                .from('perfiles')
-                .insert([{
-                    id: data.user.id,
-                    nombre: data.user.user_metadata?.nombre || data.user.email,
-                    email: data.user.email,
-                    telefono: data.user.user_metadata?.telefono || '',
-                    role: data.user.user_metadata?.role || 'afiliado',
-                    activo: true
-                }]);
-            if (insertError) throw insertError;
+            const { data: perfil } = await supabase.from('perfiles').select('*').eq('id', data.user.id).maybeSingle();
             
-            const { data: newPerfil } = await supabase
-                .from('perfiles')
-                .select('*')
-                .eq('id', data.user.id)
-                .single();
-            if (!newPerfil) throw new Error('No se pudo crear el perfil');
-            
-            currentUser = data.user;
-            currentUserMetadata = newPerfil;
-        } else {
-            if (!perfil.activo) {
+            if (!perfil || !perfil.activo) {
                 await supabase.auth.signOut();
-                document.getElementById('loginError').textContent = '❌ Tu cuenta aún no ha sido aprobada por el administrador.';
-                document.getElementById('loginError').style.display = 'block';
+                throw new Error('Cuenta no aprobada por el administrador');
+            }
+
+            currentUser = data.user;
+            currentProfile = perfil;
+            localStorage.setItem('aoma_session', JSON.stringify({ user: currentUser, profile: currentProfile }));
+            showApp();
+        } catch (error) {
+            document.getElementById('loginError').textContent = '❌ ' + error.message;
+            document.getElementById('loginError').style.display = 'block';
+        }
+    });
+
+    // Recuperación
+    document.getElementById('formRecuperacion').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('recEmail').value.trim();
+        try {
+            await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+            document.getElementById('recSuccess').textContent = '✅ Email enviado. Revisá tu bandeja.';
+            document.getElementById('recSuccess').style.display = 'block';
+            setTimeout(() => hideModal('recuperacion'), 2000);
+        } catch (error) {
+            document.getElementById('recError').textContent = '❌ ' + error.message;
+            document.getElementById('recError').style.display = 'block';
+        }
+    });
+
+    // Editar perfil
+    document.getElementById('formEditar').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nombre = document.getElementById('editNombre').value.trim();
+        const telefono = document.getElementById('editTelefono').value.trim();
+        const newPassword = document.getElementById('editPassword').value;
+
+        try {
+            await supabase.from('perfiles').update({ nombre, telefono }).eq('id', currentUser.id);
+            await supabase.auth.updateUser({ data: { nombre, telefono }});
+            
+            if (newPassword) await supabase.auth.updateUser({ password: newPassword });
+
+            currentProfile.nombre = nombre;
+            currentProfile.telefono = telefono;
+            localStorage.setItem('aoma_session', JSON.stringify({ user: currentUser, profile: currentProfile }));
+            
+            document.getElementById('userName').textContent = nombre;
+            document.getElementById('userAvatar').textContent = nombre.charAt(0).toUpperCase();
+            
+            document.getElementById('editSuccess').textContent = '✅ Perfil actualizado';
+            document.getElementById('editSuccess').style.display = 'block';
+            setTimeout(() => { hideModal('editar'); navigate('perfil'); }, 1500);
+        } catch (error) {
+            document.getElementById('editError').textContent = '❌ ' + error.message;
+            document.getElementById('editError').style.display = 'block';
+        }
+    });
+
+    // Mostrar app
+    function showApp() {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.querySelector('.header').style.display = 'flex';
+        document.querySelector('.main').style.display = 'block';
+        document.getElementById('userMenu').style.display = 'flex';
+        
+        document.getElementById('userName').textContent = currentProfile.nombre;
+        document.getElementById('userRole').textContent = currentProfile.role === 'admin' ? 'Administrador' : 'Afiliado';
+        document.getElementById('userAvatar').textContent = currentProfile.nombre.charAt(0).toUpperCase();
+        document.getElementById('adminLink').style.display = currentProfile.role === 'admin' ? 'block' : 'none';
+        
+        navigate('inicio');
+    }
+
+    // Mostrar login
+    function showLogin() {
+        document.getElementById('loginOverlay').style.display = 'flex';
+        document.querySelector('.header').style.display = 'none';
+        document.querySelector('.main').style.display = 'none';
+        document.getElementById('userMenu').style.display = 'none';
+    }
+
+    // Navegación
+    function navigate(page) {
+        const content = document.getElementById('pageContent');
+        
+        if (page === 'inicio') {
+            content.innerHTML = `
+                <div style="margin-bottom:2rem;"><h1>¡Bienvenido, ${currentProfile.nombre.split(' ')[0]}! </h1><p>Panel de control</p></div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-value">8</div><div class="stat-label">Convenios CCT</div></div>
+                    <div class="stat-card"><div class="stat-value">2</div><div class="stat-label">Cursos</div></div>
+                    <div class="stat-card"><div class="stat-value">5</div><div class="stat-label">Leyes</div></div>
+                </div>
+                <div class="section"><h2 class="section-title">Accesos Rápidos</h2><p>Contenido próximamente...</p></div>
+            `;
+        } else if (page === 'perfil') {
+            content.innerHTML = `
+                <div class="profile-header">
+                    <div class="profile-avatar">${currentProfile.nombre.charAt(0).toUpperCase()}</div>
+                    <h2>${currentProfile.nombre}</h2>
+                    <p>${currentProfile.role === 'admin' ? 'Administrador' : 'Afiliado'}</p>
+                </div>
+                <div class="section">
+                    <h2 class="section-title">Información</h2>
+                    <div class="profile-info">
+                        <div class="profile-field"><label>Nombre</label><span>${currentProfile.nombre}</span></div>
+                        <div class="profile-field"><label>Email</label><span>${currentUser.email}</span></div>
+                        <div class="profile-field"><label>Teléfono</label><span>${currentProfile.telefono || 'No especificado'}</span></div>
+                        <div class="profile-field"><label>Estado</label><span class="status-badge status-active">Activo</span></div>
+                    </div>
+                    <button class="btn" style="margin-top:2rem;max-width:300px;" onclick="app.openEditModal()">Editar Perfil</button>
+                </div>
+            `;
+        } else if (page === 'admin') {
+            if (currentProfile.role !== 'admin') {
+                content.innerHTML = '<div style="text-align:center;padding:3rem;"><h2 style="color:#ef4444;">Acceso denegado</h2></div>';
                 return;
             }
-            currentUser = data.user;
-            currentUserMetadata = perfil;
+            content.innerHTML = `
+                <div class="section">
+                    <h2 class="section-title">Panel de Administración</h2>
+                    <table class="users-table">
+                        <thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <tbody id="usersTableBody"><tr><td colspan="5" style="text-align:center;">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            `;
+            loadUsers();
         }
-
-        localStorage.setItem('aoma_session', JSON.stringify({ user: currentUser, profile: currentUserMetadata }));
-        mostrarApp();
-
-    } catch (error) {
-        document.getElementById('loginError').textContent = '❌ ' + error.message;
-        document.getElementById('loginError').style.display = 'block';
     }
-});
 
-// ============================================
-// RECUPERACIÓN DE CONTRASEÑA
-// ============================================
-document.getElementById('formRecuperacion').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('recEmail').value.trim();
-
-    document.getElementById('recError').style.display = 'none';
-    document.getElementById('recSuccess').style.display = 'none';
-
-    try {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.origin
-        });
-
-        if (error) throw error;
-
-        document.getElementById('recSuccess').textContent = '✅ Te enviamos un email con el enlace para restablecer tu contraseña. Revisá tu bandeja de entrada y spam.';
-        document.getElementById('recSuccess').style.display = 'block';
-        
-        setTimeout(() => {
-            cerrarModalRecuperacion();
-        }, 3000);
-    } catch (error) {
-        document.getElementById('recError').textContent = '❌ ' + error.message;
-        document.getElementById('recError').style.display = 'block';
-    }
-});
-
-// ============================================
-// ACTUALIZAR PERFIL
-// ============================================
-document.getElementById('formEditarPerfil').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const nombre = document.getElementById('editNombre').value.trim();
-    const telefono = document.getElementById('editTelefono').value.trim();
-    const newPassword = document.getElementById('editPassword').value;
-
-    document.getElementById('editError').style.display = 'none';
-    document.getElementById('editSuccess').style.display = 'none';
-
-    try {
-        const { error: perfilError } = await supabase
-            .from('perfiles')
-            .update({ nombre: nombre, telefono: telefono })
-            .eq('id', currentUser.id);
-
-        if (perfilError) throw perfilError;
-
-        const { error: metadataError } = await supabase.auth.updateUser({
-            data: { nombre: nombre, telefono: telefono }
-        });
-
-        if (metadataError) throw metadataError;
-
-        if (newPassword && newPassword.length >= 6) {
-            const { error: passError } = await supabase.auth.updateUser({
-                password: newPassword
-            });
-            if (passError) throw passError;
-        }
-
-        currentUserMetadata.nombre = nombre;
-        currentUserMetadata.telefono = telefono;
-        localStorage.setItem('aoma_session', JSON.stringify({ user: currentUser, profile: currentUserMetadata }));
-        
-        document.getElementById('userName').textContent = nombre;
-        document.getElementById('userAvatar').textContent = nombre.charAt(0).toUpperCase();
-
-        document.getElementById('editSuccess').textContent = '✅ Perfil actualizado correctamente';
-        document.getElementById('editSuccess').style.display = 'block';
-        
-        setTimeout(() => {
-            cerrarModalEditarPerfil();
-            navigateTo('perfil');
-        }, 1500);
-
-    } catch (error) {
-        document.getElementById('editError').textContent = '❌ ' + error.message;
-        document.getElementById('editError').style.display = 'block';
-    }
-});
-
-// ============================================
-// PANEL DE ADMINISTRACIÓN
-// ============================================
-async function cargarUsuariosPendientes() {
-    try {
-        const { data: usuarios, error } = await supabase
-            .from('perfiles')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-        if (error) throw error;
-
+    // Cargar usuarios (admin)
+    async function loadUsers() {
+        const { data: usuarios } = await supabase.from('perfiles').select('*').order('created_at', { ascending: false });
         const tbody = document.getElementById('usersTableBody');
-        if (!tbody) return;
-
         tbody.innerHTML = '';
-
-        if (usuarios.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:#6b7280;">No hay usuarios registrados</td></tr>';
-            return;
-        }
-
+        
         usuarios.forEach(user => {
             const tr = document.createElement('tr');
-            const statusClass = user.activo ? 'status-active' : 'status-pending';
-            const statusText = user.activo ? 'Activo' : 'Pendiente';
-            
             tr.innerHTML = `
                 <td>${user.nombre || 'Sin nombre'}</td>
                 <td>${user.email}</td>
                 <td>${user.telefono || '-'}</td>
-                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td><span class="status-badge ${user.activo ? 'status-active' : 'status-pending'}">${user.activo ? 'Activo' : 'Pendiente'}</span></td>
                 <td>
-                    ${!user.activo ? `
-                        <button class="btn-small btn-approve" onclick="aprobarUsuario('${user.id}')">
-                            <i class="fas fa-check"></i> Aprobar
-                        </button>
-                        <button class="btn-small btn-reject" onclick="eliminarUsuario('${user.id}')">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
-                    ` : `
-                        <button class="btn-small btn-reject" onclick="eliminarUsuario('${user.id}')">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
-                    `}
+                    ${!user.activo ? `<button class="btn-small btn-approve" onclick="app.approveUser('${user.id}')">Aprobar</button>` : ''}
+                    <button class="btn-small btn-delete" onclick="app.deleteUser('${user.id}')">Eliminar</button>
                 </td>
             `;
             tbody.appendChild(tr);
         });
-
-    } catch (error) {
-        console.error('Error cargando usuarios:', error);
     }
-}
 
-async function aprobarUsuario(userId) {
-    if (!confirm('¿Aprobar este usuario? Podrá acceder al sistema.')) return;
-
-    try {
-        const { error } = await supabase
-            .from('perfiles')
-            .update({ activo: true })
-            .eq('id', userId);
-
-        if (error) throw error;
-
-        alert('✅ Usuario aprobado correctamente');
-        cargarUsuariosPendientes();
-    } catch (error) {
-        alert('❌ Error: ' + error.message);
+    // Aprobar usuario
+    async function approveUser(userId) {
+        if (!confirm('¿Aprobar usuario?')) return;
+        await supabase.from('perfiles').update({ activo: true }).eq('id', userId);
+        alert('✅ Usuario aprobado');
+        loadUsers();
     }
-}
 
-async function eliminarUsuario(userId) {
-    if (!confirm('¿Desactivar y eliminar este usuario? Esta acción no se puede deshacer desde la plataforma.')) return;
-
-    try {
-        // Desactivamos el perfil para que no pueda entrar
-        const { error: perfilError } = await supabase
-            .from('perfiles')
-            .update({ activo: false, nombre: 'Usuario Eliminado' })
-            .eq('id', userId);
-
-        if (perfilError) throw perfilError;
-
-        alert('✅ Usuario desactivado correctamente.\n\nNota: Para eliminarlo completamente de la base de datos de autenticación, debes hacerlo manualmente desde el panel "Authentication" en Supabase.');
-        cargarUsuariosPendientes();
-    } catch (error) {
-        alert('❌ Error: ' + error.message);
+    // Eliminar usuario
+    async function deleteUser(userId) {
+        if (!confirm('¿Eliminar usuario?')) return;
+        await supabase.from('perfiles').update({ activo: false, nombre: 'Eliminado' }).eq('id', userId);
+        alert('✅ Usuario desactivado');
+        loadUsers();
     }
-}
 
-// ============================================
-// CERRAR SESIÓN
-// ============================================
-async function cerrarSesion() {
-    if (!confirm('¿Cerrar sesión?')) return;
-    await supabase.auth.signOut();
-    localStorage.removeItem('aoma_session');
-    currentUser = null;
-    currentUserMetadata = null;
-    mostrarLogin();
-}
-
-// ============================================
-// MOSTRAR LOGIN / APP
-// ============================================
-function mostrarLogin() {
-    document.getElementById('loginOverlay').style.display = 'flex';
-    document.querySelector('.header').style.display = 'none';
-    document.querySelector('.main').style.display = 'none';
-    document.getElementById('userMenu').style.display = 'none';
-}
-
-function mostrarApp() {
-    document.getElementById('loginOverlay').style.display = 'none';
-    document.querySelector('.header').style.display = 'flex';
-    document.querySelector('.main').style.display = 'block';
-    document.getElementById('userMenu').style.display = 'flex';
-
-    if (!currentUserMetadata) return;
-
-    document.getElementById('userName').textContent = currentUserMetadata.nombre || currentUser.email;
-    const roleText = currentUserMetadata.role === 'admin' ? 'Administrador' :
-                     currentUserMetadata.role === 'dirigente' ? 'Dirigente' : 'Delegado';
-    document.getElementById('userRole').textContent = roleText;
-    document.getElementById('userAvatar').textContent = (currentUserMetadata.nombre || currentUser.email).charAt(0).toUpperCase();
-    
-    const adminLink = document.getElementById('adminPanelLink');
-    if (adminLink) {
-        adminLink.style.display = currentUserMetadata.role === 'admin' ? 'block' : 'none';
+    // Abrir modal edición
+    function openEditModal() {
+        document.getElementById('editNombre').value = currentProfile.nombre || '';
+        document.getElementById('editEmail').value = currentUser.email;
+        document.getElementById('editTelefono').value = currentProfile.telefono || '';
+        document.getElementById('editPassword').value = '';
+        document.getElementById('modalEditar').style.display = 'flex';
     }
-    
-    navigateTo('inicio');
-}
 
-// ============================================
-// NAVEGACIÓN
-// ============================================
-function navigateTo(page) {
-    const content = document.getElementById('pageContent');
-    if (!content) return;
-    
-    if (page === 'inicio') {
-        content.innerHTML = `
-            <div class="page-header" style="margin-bottom:2rem;">
-                <h1>¡Bienvenido, ${currentUserMetadata.nombre.split(' ')[0]}! 👋</h1>
-                <p>Panel de control del Campus Virtual AOMA</p>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-value">8</div><div class="stat-label">Convenios CCT</div></div>
-                <div class="stat-card"><div class="stat-value">1</div><div class="stat-label">Categorías de Beneficios</div></div>
-                <div class="stat-card"><div class="stat-value">2</div><div class="stat-label">Cursos disponibles</div></div>
-                <div class="stat-card"><div class="stat-value">5</div><div class="stat-label">Leyes laborales</div></div>
-            </div>
-            <div class="section">
-                <h2 class="section-title">Accesos Rápidos</h2>
-                <div class="cards-grid">
-                    <div class="card" onclick="alert('Sección en desarrollo')">
-                        <div class="card-header" style="background:linear-gradient(135deg,#10b981,#059669);">
-                            <i class="fas fa-gift"></i>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-title">Beneficios Sociales</div>
-                            <div class="card-description">Reintegros de medicamentos, estadías, becas.</div>
-                        </div>
-                    </div>
-                    <div class="card" onclick="alert('Sección en desarrollo')">
-                        <div class="card-header" style="background:#1a1a1a;">
-                            <i class="fas fa-file-contract"></i>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-title">Convenios CCT</div>
-                            <div class="card-description">Por actividad y por empresa.</div>
-                        </div>
-                    </div>
-                    <div class="card" onclick="alert('Sección en desarrollo')">
-                        <div class="card-header" style="background:#f47b20;">
-                            <i class="fas fa-balance-scale"></i>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-title">Legislación Laboral</div>
-                            <div class="card-description">LCT, Ley de Higiene, Asociaciones Sindicales.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    } else if (page === 'perfil') {
-        content.innerHTML = `
-            <div class="profile-header">
-                <div class="profile-avatar">${(currentUserMetadata.nombre || currentUser.email).charAt(0).toUpperCase()}</div>
-                <h2>${currentUserMetadata.nombre}</h2>
-                <p>${currentUserMetadata.role === 'admin' ? 'Administrador' : currentUserMetadata.role === 'dirigente' ? 'Dirigente' : 'Afiliado'}</p>
-            </div>
-            <div class="section">
-                <h2 class="section-title">Información del Perfil</h2>
-                <div class="profile-info">
-                    <div class="profile-field">
-                        <label>Nombre completo</label>
-                        <span>${currentUserMetadata.nombre || 'No especificado'}</span>
-                    </div>
-                    <div class="profile-field">
-                        <label>Email</label>
-                        <span>${currentUser.email}</span>
-                    </div>
-                    <div class="profile-field">
-                        <label>Teléfono</label>
-                        <span>${currentUserMetadata.telefono || 'No especificado'}</span>
-                    </div>
-                    <div class="profile-field">
-                        <label>Rol</label>
-                        <span>${currentUserMetadata.role === 'admin' ? 'Administrador' : currentUserMetadata.role === 'dirigente' ? 'Dirigente' : 'Afiliado'}</span>
-                    </div>
-                    <div class="profile-field">
-                        <label>Estado</label>
-                        <span>${currentUserMetadata.activo ? '<span class="status-badge status-active">Activo</span>' : '<span class="status-badge status-pending">Pendiente</span>'}</span>
-                    </div>
-                </div>
-                <button class="btn" style="margin-top:2rem;max-width:300px;" onclick="abrirModalEditarPerfil()">
-                    <i class="fas fa-edit"></i> Editar Perfil
-                </button>
-            </div>
-        `;
-    } else if (page === 'admin') {
-        if (currentUserMetadata.role !== 'admin') {
-            content.innerHTML = '<div style="text-align:center;padding:3rem;"><h2 style="color:#ef4444;">Acceso denegado</h2><p>Solo los administradores pueden acceder a esta sección.</p></div>';
-            return;
-        }
-        content.innerHTML = `
-            <div class="section">
-                <h2 class="section-title"><i class="fas fa-users-cog"></i> Panel de Administración</h2>
-                <p style="margin-bottom:1rem;color:#6b7280;">Gestioná los registros de usuarios. Aprobá o rechazá las solicitudes de acceso.</p>
-                <table class="users-table">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Teléfono</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        <tr><td colspan="5" style="text-align:center;padding:2rem;">Cargando usuarios...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        `;
-        cargarUsuariosPendientes();
-    } else {
-        content.innerHTML = `<div style="text-align:center;padding:3rem;color:#6b7280;"><i class="fas fa-construction" style="font-size:3rem;"></i><h3>Página en construcción</h3></div>`;
+    // Logout
+    async function logout() {
+        if (!confirm('¿Cerrar sesión?')) return;
+        await supabase.auth.signOut();
+        localStorage.removeItem('aoma_session');
+        currentUser = null;
+        currentProfile = null;
+        showLogin();
     }
-}
 
-// ============================================
-// MODALES
-// ============================================
-function cerrarModalRegistro() {
-    document.getElementById('modalRegistro').style.display = 'none';
-}
-function mostrarRegistro() {
-    document.getElementById('modalRegistro').style.display = 'flex';
-    document.getElementById('regError').style.display = 'none';
-    document.getElementById('regSuccess').style.display = 'none';
-}
-function cerrarModalRecuperacion() {
-    document.getElementById('modalRecuperacion').style.display = 'none';
-}
-function mostrarRecuperacion() {
-    document.getElementById('modalRecuperacion').style.display = 'flex';
-    document.getElementById('recError').style.display = 'none';
-    document.getElementById('recSuccess').style.display = 'none';
-}
-function abrirModalEditarPerfil() {
-    document.getElementById('editNombre').value = currentUserMetadata.nombre || '';
-    document.getElementById('editEmail').value = currentUser.email;
-    document.getElementById('editTelefono').value = currentUserMetadata.telefono || '';
-    document.getElementById('editPassword').value = '';
-    document.getElementById('editError').style.display = 'none';
-    document.getElementById('editSuccess').style.display = 'none';
-    document.getElementById('modalEditarPerfil').style.display = 'flex';
-}
-function cerrarModalEditarPerfil() {
-    document.getElementById('modalEditarPerfil').style.display = 'none';
-}
-
-// ============================================
-// INICIALIZACIÓN
-// ============================================
-async function init() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-        const { data: perfil } = await supabase
-            .from('perfiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .maybeSingle();
-        if (perfil && perfil.activo) {
-            currentUser = session.user;
-            currentUserMetadata = perfil;
-            mostrarApp();
-            return;
-        } else {
+    // Inicialización
+    async function init() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+            const { data: perfil } = await supabase.from('perfiles').select('*').eq('id', session.user.id).maybeSingle();
+            if (perfil && perfil.activo) {
+                currentUser = session.user;
+                currentProfile = perfil;
+                showApp();
+                return;
+            }
             await supabase.auth.signOut();
         }
+        showLogin();
     }
-    mostrarLogin();
-}
 
-document.addEventListener('DOMContentLoaded', init);
+    // API pública
+    return {
+        togglePass,
+        showModal,
+        hideModal,
+        navigate,
+        approveUser,
+        deleteUser,
+        openEditModal,
+        logout,
+        init
+    };
+})();
+
+// Iniciar app
+document.addEventListener('DOMContentLoaded', () => app.init());
 </script>
 </body>
 </html>
