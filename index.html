@@ -54,7 +54,8 @@
         .stat-value { font-size:2rem; font-weight:800; }
         .stat-label { color:#6b7280; font-size:0.8rem; text-transform:uppercase; }
         .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:1.5rem; }
-        .card { background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.08); border:1px solid #e5e7eb; cursor:pointer; }
+        .card { background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.08); border:1px solid #e5e7eb; cursor:pointer; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-3px); }
         .card-header { height:120px; background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:3rem; color:white; position:relative; }
         .card-badge { position:absolute; top:1rem; left:1rem; background:#f47b20; padding:0.25rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:700; }
         .card-body { padding:1.25rem; }
@@ -72,10 +73,11 @@
         .status-active { background:#d1fae5; color:#065f46; }
         .status-pending { background:#fef3c7; color:#92400e; }
         .status-inactive { background:#fee2e2; color:#b91c1c; }
-        .btn-small { padding:0.5rem 1rem; font-size:0.875rem; border-radius:6px; border:none; cursor:pointer; }
+        .btn-small { padding:0.5rem 1rem; font-size:0.875rem; border-radius:6px; border:none; cursor:pointer; margin-right: 0.5rem; margin-bottom: 0.5rem;}
         .btn-approve { background:#10b981; color:white; }
+        .btn-approve:hover { background:#059669; }
         .btn-reject { background:#ef4444; color:white; }
-        .btn-edit { background:#3b82f6; color:white; }
+        .btn-reject:hover { background:#dc2626; }
         
         /* Perfil de usuario */
         .profile-header { background:linear-gradient(135deg,#f47b20,#d96b1a); color:white; padding:2rem; border-radius:12px; margin-bottom:2rem; text-align:center; }
@@ -83,14 +85,14 @@
         .profile-info { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
         .profile-field { background:#f9fafb; padding:1rem; border-radius:8px; }
         .profile-field label { display:block; font-size:0.875rem; color:#6b7280; margin-bottom:0.25rem; }
-        .profile-field value { font-weight:600; font-size:1rem; }
+        .profile-field span { font-weight:600; font-size:1rem; }
         
         @media (max-width:768px) { 
             .header { padding:0 1rem; } 
             .stats-grid { grid-template-columns:1fr 1fr; } 
             .profile-info { grid-template-columns:1fr; }
-            .users-table { font-size:0.875rem; }
-            .users-table th, .users-table td { padding:0.75rem 0.5rem; }
+            .users-table { font-size:0.875rem; display: block; overflow-x: auto; }
+            .users-table th, .users-table td { padding:0.75rem 0.5rem; white-space: nowrap; }
         }
         @media (max-width:480px) { 
             .stats-grid { grid-template-columns:1fr; } 
@@ -236,7 +238,7 @@
             </div>
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" id="editEmail" readonly style="background:#e5e7eb;" />
+                <input type="email" id="editEmail" readonly style="background:#e5e7eb; cursor: not-allowed;" />
             </div>
             <div class="form-group">
                 <label>Teléfono</label>
@@ -256,10 +258,11 @@
     </div>
 </div>
 
+<!-- SCRIPT DE SUPABASE (UNA SOLA VEZ) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ============================================
-// CONFIGURACIÓN SUPABASE
+// CONFIGURACIÓN SUPABASE (UNA SOLA DECLARACIÓN)
 // ============================================
 const supabaseUrl = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
@@ -317,28 +320,28 @@ document.getElementById('formRegistro').addEventListener('submit', async (e) => 
                     nombre: nombre, 
                     telefono: telefono,
                     role: 'afiliado',
-                    activo: false // Los nuevos usuarios quedan pendientes de aprobación
+                    activo: false
                 }
             }
         });
 
         if (error) throw error;
 
-        // Crear perfil en la tabla perfiles
+        // Upsert asegura que si el trigger ya lo creó, no falle por duplicado
         const { error: perfilError } = await supabase
             .from('perfiles')
-            .insert([{
+            .upsert({
                 id: data.user.id,
                 nombre: nombre,
                 email: email,
                 telefono: telefono,
                 role: 'afiliado',
                 activo: false
-            }]);
+            }, { onConflict: 'id' });
 
         if (perfilError) throw perfilError;
 
-        document.getElementById('regSuccess').textContent = '✅ Registro exitoso. Tu cuenta está pendiente de aprobación por el administrador. Recibirás un email cuando sea activada.';
+        document.getElementById('regSuccess').textContent = '✅ Registro exitoso. Tu cuenta está pendiente de aprobación por el administrador.';
         document.getElementById('regSuccess').style.display = 'block';
         
         setTimeout(() => {
@@ -371,7 +374,6 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
         if (error) throw error;
 
-        // Obtener perfil del usuario
         const { data: perfil, error: perfilError } = await supabase
             .from('perfiles')
             .select('*')
@@ -381,7 +383,6 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         if (perfilError) throw perfilError;
 
         if (!perfil) {
-            // Crear perfil si no existe
             const { error: insertError } = await supabase
                 .from('perfiles')
                 .insert([{
@@ -406,7 +407,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         } else {
             if (!perfil.activo) {
                 await supabase.auth.signOut();
-                document.getElementById('loginError').textContent = '❌ Tu cuenta aún no ha sido aprobada por el administrador. Recibirás un email cuando sea activada.';
+                document.getElementById('loginError').textContent = '❌ Tu cuenta aún no ha sido aprobada por el administrador.';
                 document.getElementById('loginError').style.display = 'block';
                 return;
             }
@@ -465,25 +466,19 @@ document.getElementById('formEditarPerfil').addEventListener('submit', async (e)
     document.getElementById('editSuccess').style.display = 'none';
 
     try {
-        // Actualizar perfil en la tabla perfiles
         const { error: perfilError } = await supabase
             .from('perfiles')
-            .update({ 
-                nombre: nombre,
-                telefono: telefono
-            })
+            .update({ nombre: nombre, telefono: telefono })
             .eq('id', currentUser.id);
 
         if (perfilError) throw perfilError;
 
-        // Actualizar metadata en auth
         const { error: metadataError } = await supabase.auth.updateUser({
             data: { nombre: nombre, telefono: telefono }
         });
 
         if (metadataError) throw metadataError;
 
-        // Si hay nueva contraseña, actualizarla
         if (newPassword && newPassword.length >= 6) {
             const { error: passError } = await supabase.auth.updateUser({
                 password: newPassword
@@ -491,12 +486,10 @@ document.getElementById('formEditarPerfil').addEventListener('submit', async (e)
             if (passError) throw passError;
         }
 
-        // Actualizar datos locales
         currentUserMetadata.nombre = nombre;
         currentUserMetadata.telefono = telefono;
         localStorage.setItem('aoma_session', JSON.stringify({ user: currentUser, profile: currentUserMetadata }));
         
-        // Actualizar UI
         document.getElementById('userName').textContent = nombre;
         document.getElementById('userAvatar').textContent = nombre.charAt(0).toUpperCase();
 
@@ -588,25 +581,18 @@ async function aprobarUsuario(userId) {
 }
 
 async function eliminarUsuario(userId) {
-    if (!confirm('¿Eliminar este usuario? Esta acción no se puede deshacer.')) return;
+    if (!confirm('¿Desactivar y eliminar este usuario? Esta acción no se puede deshacer desde la plataforma.')) return;
 
     try {
-        // Eliminar de la tabla perfiles
+        // Desactivamos el perfil para que no pueda entrar
         const { error: perfilError } = await supabase
             .from('perfiles')
-            .delete()
+            .update({ activo: false, nombre: 'Usuario Eliminado' })
             .eq('id', userId);
 
         if (perfilError) throw perfilError;
 
-        // Eliminar de auth (solo admin puede hacerlo)
-        const { error: authError } = await supabase.auth.admin.deleteUser(userId);
-        
-        if (authError && authError.status !== 404) {
-            console.warn('No se pudo eliminar de auth:', authError);
-        }
-
-        alert('✅ Usuario eliminado correctamente');
+        alert('✅ Usuario desactivado correctamente.\n\nNota: Para eliminarlo completamente de la base de datos de autenticación, debes hacerlo manualmente desde el panel "Authentication" en Supabase.');
         cargarUsuariosPendientes();
     } catch (error) {
         alert('❌ Error: ' + error.message);
@@ -721,23 +707,23 @@ function navigateTo(page) {
                 <div class="profile-info">
                     <div class="profile-field">
                         <label>Nombre completo</label>
-                        <value>${currentUserMetadata.nombre || 'No especificado'}</value>
+                        <span>${currentUserMetadata.nombre || 'No especificado'}</span>
                     </div>
                     <div class="profile-field">
                         <label>Email</label>
-                        <value>${currentUser.email}</value>
+                        <span>${currentUser.email}</span>
                     </div>
                     <div class="profile-field">
                         <label>Teléfono</label>
-                        <value>${currentUserMetadata.telefono || 'No especificado'}</value>
+                        <span>${currentUserMetadata.telefono || 'No especificado'}</span>
                     </div>
                     <div class="profile-field">
                         <label>Rol</label>
-                        <value>${currentUserMetadata.role === 'admin' ? 'Administrador' : currentUserMetadata.role === 'dirigente' ? 'Dirigente' : 'Afiliado'}</value>
+                        <span>${currentUserMetadata.role === 'admin' ? 'Administrador' : currentUserMetadata.role === 'dirigente' ? 'Dirigente' : 'Afiliado'}</span>
                     </div>
                     <div class="profile-field">
                         <label>Estado</label>
-                        <value>${currentUserMetadata.activo ? '<span class="status-badge status-active">Activo</span>' : '<span class="status-badge status-pending">Pendiente</span>'}</value>
+                        <span>${currentUserMetadata.activo ? '<span class="status-badge status-active">Activo</span>' : '<span class="status-badge status-pending">Pendiente</span>'}</span>
                     </div>
                 </div>
                 <button class="btn" style="margin-top:2rem;max-width:300px;" onclick="abrirModalEditarPerfil()">
