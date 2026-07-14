@@ -6,54 +6,18 @@
     <title>Plataforma de Capacitación - Sindicato Minero</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* === CSS (igual que antes) === */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 20px;
-        }
-        .container {
-            background: white;
-            padding: 2rem 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 600px;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 20px; }
+        .container { background: white; padding: 2rem 2.5rem; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 600px; }
         h1, h2 { color: #1a3b5d; margin-bottom: 1.5rem; text-align: center; }
         h1 { font-size: 1.8rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
         h2 { font-size: 1.4rem; }
         .form-group { margin-bottom: 1.2rem; }
         label { display: block; font-weight: 600; margin-bottom: 0.3rem; color: #2d3748; }
-        input, select {
-            width: 100%;
-            padding: 0.7rem 1rem;
-            border: 1px solid #cbd5e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #3182ce;
-            box-shadow: 0 0 0 3px rgba(49,130,206,0.2);
-        }
-        .btn {
-            background: #3182ce;
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.2s;
-        }
+        input, select { width: 100%; padding: 0.7rem 1rem; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
+        input:focus, select:focus { outline: none; border-color: #3182ce; box-shadow: 0 0 0 3px rgba(49,130,206,0.2); }
+        .btn { background: #3182ce; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s; }
         .btn:hover { background: #2b6cb0; }
         .btn-secondary { background: #718096; }
         .btn-secondary:hover { background: #4a5568; }
@@ -64,44 +28,19 @@
         .toggle-link { text-align: center; margin-top: 1rem; }
         .toggle-link a { color: #3182ce; cursor: pointer; text-decoration: underline; }
         .hidden { display: none !important; }
-        .card {
-            background: #f7fafc;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border-left: 4px solid #3182ce;
-        }
-        .user-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
+        .card { background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #3182ce; }
+        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0; }
         .user-item:last-child { border-bottom: none; }
         .user-info { flex: 1; }
         .user-info strong { display: block; }
-        .badge {
-            background: #edf2f7;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: #2d3748;
-        }
+        .badge { background: #edf2f7; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.8rem; color: #2d3748; }
         .badge-pendiente { background: #fefcbf; color: #975a16; }
         .badge-aprobado { background: #c6f6d5; color: #276749; }
         .btn-small { padding: 0.3rem 0.8rem; font-size: 0.8rem; width: auto; }
         #logoutBtn { background: #e53e3e; margin-top: 1rem; }
         #logoutBtn:hover { background: #c53030; }
         @media (max-width: 500px) { .container { padding: 1.5rem; } }
-        .pendiente-msg {
-            margin-top: 1rem;
-            padding: 0.8rem;
-            background: #fefcbf;
-            border-radius: 8px;
-            color: #975a16;
-            border: 1px solid #f6e05e;
-        }
+        .pendiente-msg { margin-top: 1rem; padding: 0.8rem; background: #fefcbf; border-radius: 8px; color: #975a16; border: 1px solid #f6e05e; }
     </style>
 </head>
 <body>
@@ -218,13 +157,15 @@
 
 <script>
     // ============================================================
-    // CONFIGURACIÓN SUPABASE (YA CON TUS DATOS)
+    // CONFIGURACIÓN SUPABASE (¡CORREGIDA!)
     // ============================================================
-    const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co';
+    const SUPABASE_URL = 'https://irvacaxwrzaouqzwwxlq.supabase.co';   // <--- URL CORRECTA
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmFjYXh3cnphb3Vxend3eGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NjQ4MzUsImV4cCI6MjA5OTU0MDgzNX0.D-NR-o7NzJ0RaJqZ7xYyMm6fgAwlg0_l-SFQr4voNCA';
 
     // Creamos el cliente con nombre único
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    console.log('🚀 Conectando a Supabase:', SUPABASE_URL);
 
     // ============================================================
     // REFERENCIAS DOM
