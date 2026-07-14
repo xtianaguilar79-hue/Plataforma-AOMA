@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Panel de administración de la plataforma AOMA San Juan"
+    >
+
+    <meta
+        name="theme-color"
+        content="#111111"
+    >
+
+    <title>Administración | AOMA San Juan</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/admin.css"
+    >
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-helmet-safety"></i>
+                </div>
+
+                <div>
+                    <strong>AOMA</strong>
+                    <span>Seccional San Juan</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-item active" type="button">
+                    <i class="fa-solid fa-user-clock"></i>
+                    Solicitudes
+                </button>
+
+                <button class="nav-item" type="button" disabled>
+                    <i class="fa-solid fa-users"></i>
+                    Usuarios
+                </button>
+
+                <button class="nav-item" type="button" disabled>
+                    <i class="fa-solid fa-building"></i>
+                    Empresas
+                </button>
+
+                <button class="nav-item" type="button" disabled>
+                    <i class="fa-solid fa-file-contract"></i>
+                    Convenios
+                </button>
+            </nav>
+
+            <button id="logoutButton" class="logout-button" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                Cerrar sesión
+            </button>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Panel institucional</p>
+                    <h1>Administración</h1>
+                </div>
+
+                <div class="admin-profile">
+                    <div class="admin-avatar" id="adminAvatar">A</div>
+
+                    <div>
+                        <strong id="adminName">Administrador</strong>
+                        <span>Administrador</span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="summary-grid">
+                <article class="summary-card">
+                    <div class="summary-icon pending">
+                        <i class="fa-solid fa-user-clock"></i>
+                    </div>
+
+                    <div>
+                        <span>Solicitudes pendientes</span>
+                        <strong id="pendingCount">0</strong>
+                    </div>
+                </article>
+
+                <article class="summary-card">
+                    <div class="summary-icon approved">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+
+                    <div>
+                        <span>Usuarios aprobados</span>
+                        <strong id="approvedCount">0</strong>
+                    </div>
+                </article>
+
+                <article class="summary-card">
+                    <div class="summary-icon total">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                    <div>
+                        <span>Total registrado</span>
+                        <strong id="totalCount">0</strong>
+                    </div>
+                </article>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">Gestión de acceso</p>
+                        <h2>Solicitudes pendientes</h2>
+                        <p>
+                            Revisá los datos antes de aprobar o rechazar
+                            cada solicitud.
+                        </p>
+                    </div>
+
+                    <button
+                        id="reloadButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        <i class="fa-solid fa-rotate"></i>
+                        Actualizar
+                    </button>
+                </div>
+
+                <div
+                    id="pageMessage"
+                    class="page-message hidden"
+                    role="alert"
+                    aria-live="polite"
+                ></div>
+
+                <div id="loadingState" class="loading-state">
+                    <span class="spinner"></span>
+                    Cargando solicitudes...
+                </div>
+
+                <div id="emptyState" class="empty-state hidden">
+                    <i class="fa-regular fa-circle-check"></i>
+                    <h3>No hay solicitudes pendientes</h3>
+                    <p>
+                        Cuando una persona se registre, aparecerá en esta sección.
+                    </p>
+                </div>
+
+                <div
+                    id="usersContainer"
+                    class="users-grid hidden"
+                ></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
