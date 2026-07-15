@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Documento institucional SIGCA",
+  "type": "object",
+  "required": ["schemaVersion", "id", "tipo", "numero", "titulo", "categoria", "contenidoHtml"],
+  "properties": {
+    "schemaVersion": { "type": "integer" },
+    "id": { "type": "string" },
+    "tipo": { "enum": ["ley", "convenio", "reglamento", "manual", "resolucion"] },
+    "numero": { "type": "string" },
+    "titulo": { "type": "string" },
+    "categoria": { "type": "string" },
+    "resumen": { "type": "string" },
+    "palabrasClave": { "type": "array", "items": { "type": "string" } },
+    "contenidoHtml": { "type": "string" }
+  }
+}
