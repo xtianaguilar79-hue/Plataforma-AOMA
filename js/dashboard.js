@@ -60,6 +60,8 @@
   var _a18;
   (_a18 = $("#closeCourseButton")) == null ? void 0 : _a18.addEventListener("click", closeCourse);
   var _a19;
+  var _a18b;
+  (_a18b = $("#startCourseButton")) == null ? void 0 : _a18b.addEventListener("click", startCourseLearning);
   (_a19 = $("#courseModal")) == null ? void 0 : _a19.addEventListener("click", (e) => {
     if (e.target.id === "courseModal") closeCourse();
   });
@@ -200,7 +202,8 @@
     items.forEach((item) => {
       const a = document.createElement("article");
       a.className = "library-card";
-      a.innerHTML = `<div class="library-card-top"><span class="document-icon"><i class="fa-solid ${item.icono || "fa-file-lines"}"></i></span><span class="type-badge">${item.tipo === "ley" ? "Ley" : "Convenio"}</span></div><p class="document-number">${esc(item.numero)}</p><h3>${esc(item.titulo)}</h3><p class="document-summary">${esc(item.resumen || "")}</p><div class="library-card-footer"><span>${esc(item.categoria || "")}</span><button>Consultar <i class="fa-solid fa-arrow-right"></i></button></div>`;
+      const kind = item.tipo === "ley" ? "LEY" : "CONVENIO COLECTIVO";
+      a.innerHTML = `<div class="document-cover document-cover-${item.tipo}"><span>${kind}</span><strong>${esc(item.numero)}</strong><small>${esc(item.categoria || "Documento institucional")}</small></div><div class="document-card-body"><p class="document-number">${esc(item.numero)}</p><h3>${esc(item.titulo)}</h3><p class="document-summary">${esc(item.resumen || "")}</p><div class="library-card-footer"><span>${item.tipo === "ley" ? "Legislación" : "Normativa convencional"}</span><button>Leer documento <i class="fa-solid fa-arrow-right"></i></button></div></div>`;
       a.querySelector("button").onclick = () => openDocument(item);
       $("#libraryGrid").appendChild(a);
     });
@@ -296,13 +299,20 @@
   function updateProgress() {
     var _a24;
     const total = ((_a24 = course == null ? void 0 : course.modulos) == null ? void 0 : _a24.length) || 8, done = progressSet().size, p = Math.round(done / total * 100);
-    ["deskCoursePercent", "coursePercent"].forEach((id) => $("#" + id).textContent = p + "%");
-    ["deskProgressBar", "courseProgressBar"].forEach((id) => $("#" + id).style.width = p + "%");
+    ["deskCoursePercent", "coursePercent", "courseLandingPercent"].forEach((id) => $("#" + id).textContent = p + "%");
+    ["deskProgressBar", "courseProgressBar", "courseLandingProgressBar"].forEach((id) => $("#" + id).style.width = p + "%");
   }
   function openCourse() {
     if (!course) return message("El curso todavía está cargando.", "warning");
     $("#courseModal").classList.remove("hidden");
+    $("#courseLanding").classList.remove("hidden");
+    $("#courseLearningView").classList.add("hidden");
     document.body.style.overflow = "hidden";
+    updateProgress();
+  }
+  function startCourseLearning() {
+    $("#courseLanding").classList.add("hidden");
+    $("#courseLearningView").classList.remove("hidden");
     renderModules();
     showLesson(activeModule);
   }
@@ -389,7 +399,7 @@
     });
   }
   function renderOrg() {
-    const nacional = [["Secretario General", "Laplace Héctor Oscar"], ["Secretario Adjunto", "Malla Iván Marcelo"], ["Secretario Administrativo", "Molina Gustavo Gabriel"], ["Tesorero", "Savid Héctor Horacio"], ["Secretario Gremial e Interior", "Santillán Alejandro José"], ["Secretario Social y Turismo", "Galina Emanuel"], ["Secretario de Prensa y Cultura", "Castro Javier Omar"], ["Secretario de Higiene, Seguridad y Medicina del Trabajo", "Castro Emanuel Maximiliano"]];
+    const nacional = [["Secretario General", "Laplace Héctor Oscar"], ["Secretario Adjunto", "Malla Iván Marcelo"], ["Secretario Administrativo", "Molina Gustavo Gabriel"], ["Tesorero", "Savid Héctor Horacio"], ["Secretario Gremial e Interior", "Santillán Alejandro José"], ["Secretario Social y Turismo", "Gauna Emmanuel"], ["Secretario de Prensa y Cultura", "Castro Javier Omar"], ["Secretario de Higiene, Seguridad y Medicina del Trabajo", "Castro Emanuel Maximiliano"]];
     const sj = [["Secretario General", "Malla Iván Marcelo"], ["Secretario Adjunto", "Malla Raúl Edgardo"], ["Secretario Administrativo", "Ortiz Rubén Eloy"], ["Tesorero", "Frías Juan Norberto"], ["Secretario Gremial e Interior", "Soria Cristian Daniel"], ["Secretario Social y Turismo", "Martín Arenas Rubén"], ["Secretario de Higiene, Seguridad y Medicina del Trabajo", "Aguilar Cristian"]];
     $("#orgNacional").innerHTML = orgHtml("Consejo Directivo Nacional · Período 2026–2030", nacional);
     $("#orgSanJuan").innerHTML = orgHtml("Comisión Directiva San Juan · Período 2026–2030", sj);
